@@ -1,4 +1,4 @@
-package is.murmur;
+package is.murmur.Controller;
 
 import java.io.*;
 import jakarta.servlet.http.*;
