@@ -1,7 +1,5 @@
 package is.murmur.Model.DAO;
-
 import is.murmur.Model.Entities.Profession;
-
 import java.util.List;
 
 public abstract class Profession_DAO {

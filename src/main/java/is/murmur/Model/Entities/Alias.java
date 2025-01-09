@@ -2,33 +2,17 @@ package is.murmur.Model.Entities;
 
 public class Alias {
 
-    /*
-   CREATE TABLE IF NOT EXISTS alias (
-    id SERIAL,
-    user_id BIGINT UNSIGNED NOT NULL,
-    FOREIGN KEY (user_id)
-        REFERENCES logged_in_user (id)
-        ON DELETE CASCADE,
-    PRIMARY KEY (id, user_id)
-);
-
-
-
-     */
-
     private Long id;
-    private Long userId;
+    private Long user_id;
 
-    public Alias(Long id, Long userId) {
+    public Alias(Long id, Long user_id) {
         this.id = id;
-        this.userId = userId;
+        this.user_id = user_id;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getUserId() {
-        return userId;
-    }
+    public Long getUser_id() { return user_id; }
+    public void setUser_id(Long user_id) { this.user_id = user_id; }
 }

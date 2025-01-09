@@ -18,12 +18,12 @@ public abstract class Alias_DAO {
     }
 
     public static boolean delete(Alias alias) {
-        Object[] keysValues = {alias.getId(), alias.getUserId()};
+        Object[] keysValues = {alias.getId(), alias.getUser_id()};
         return Generic_DAO.doDelete(Alias.class, KEYS, keysValues);
     }
 
     public static boolean update(Alias alias, String fieldName, Object value) {
-        Object[] keysValues = {alias.getId(), alias.getUserId()};
+        Object[] keysValues = {alias.getId(), alias.getUser_id()};
         if (fieldName.equals("id") || fieldName.equals("user_id")) return false;
         return Generic_DAO.doUpdate(Alias.class, KEYS, keysValues, fieldName, value);
     }

@@ -18,12 +18,12 @@ public abstract class Career_DAO {
     }
 
     public static boolean delete(Career career) {
-        Object[] keysValues = {career.getWorkerId(), career.getProfession()};
+        Object[] keysValues = {career.getWorker_id(), career.getProfession()};
         return Generic_DAO.doDelete(Career.class, KEYS, keysValues);
     }
 
     public static boolean update(Career career, String fieldName, Object value) {
-        Object[] keysValues = {career.getWorkerId(), career.getProfession()};
+        Object[] keysValues = {career.getWorker_id(), career.getProfession()};
         if (fieldName.equals("worker_id") || fieldName.equals("profession")) return false;
         return Generic_DAO.doUpdate(Career.class, KEYS, keysValues, fieldName, value);
     }
