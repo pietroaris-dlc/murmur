@@ -16,16 +16,16 @@ public class Application {
     }
 
     private Long id;
-    private LocalDateTime submission_date;
+    private LocalDateTime submissionDate;
     private String docsURL;
-    private Status approval_status;
+    private Status status;
     private Type type;
 
-    public Application(Long id, LocalDateTime submission_date, String docsURL, Status approval_status, Type type){
+    public Application(Long id, LocalDateTime submissionDate, String docsURL, Status status, Type type){
         this.id = id;
-        this.submission_date = submission_date;
+        this.submissionDate = submissionDate;
         this.docsURL = docsURL;
-        this.approval_status = approval_status;
+        this.status = status;
         this.type = type;
     }
 
@@ -35,11 +35,11 @@ public class Application {
     public void setId(Long id) {
         this.id = id;
     }
-    public LocalDateTime getSubmission_date() {
-        return submission_date;
+    public LocalDateTime getSubmissionDate() {
+        return submissionDate;
     }
-    public void setSubmission_date(LocalDateTime submission_date) {
-        this.submission_date = submission_date;
+    public void setSubmissionDate(LocalDateTime submissionDate) {
+        this.submissionDate = submissionDate;
     }
     public String getDocsURL() {
         return docsURL;
@@ -47,11 +47,11 @@ public class Application {
     public void setDocsURL(String docsURL) {
         this.docsURL = docsURL;
     }
-    public Status getApproval_status() {
-        return approval_status;
+    public Status getStatus() {
+        return status;
     }
-    public void setApproval_status(Status approval_status) {
-        this.approval_status = approval_status;
+    public void setStatus(Status status) {
+        this.status = status;
     }
     public Type getType() {
         return type;

@@ -1,0 +1,125 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('WALLPAPERS/tramonto.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #eaeaea;
+    height: 100vh;
+    width: 100%;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    width: 90%;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+label {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    outline: none;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+select:hover {
+    background: rgba(64, 64, 64, 0.8);
+    border-color: rgba(128, 128, 128, 1);
+}
+
+select:focus {
+    border-color: rgba(255, 165, 0, 0.8);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+option {
+    background: #222;
+    color: #ffffff;
+}
+
+button#submit {
+    background: linear-gradient(135deg, #FF9C33, #FF7733);
+    color: #ffffff;
+    border: 1px solid #FF9C33;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 15px #FF9C33, 0 0 30px #FF7733;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+button#submit:hover {
+    background: linear-gradient(135deg, #FF7733, #FF9C33);
+    color: #ffffff;
+    box-shadow: 0 0 15px #FF7733, 0 0 30px #FF9C33;
+    transform: scale(1.05);
+}
+
+button#submit:active {
+    transform: scale(0.95);
+}
+
+p#dbPasswordError {
+    margin-top: 1rem;
+    color: #ff4d4d;
+    font-size: 1rem;
+    text-align: center;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    form {
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    label {
+        font-size: 1rem;
+    }
+
+    button#submit {
+        font-size: 0.9rem;
+    }
+}

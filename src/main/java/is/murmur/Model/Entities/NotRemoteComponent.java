@@ -1,57 +1,51 @@
 package is.murmur.Model.Entities;
 
-public class Location {
-    private Long id;
+public class NotRemoteComponent {
+    private long contractId;
     private String city;
-    private String street;
-    private Short streetNumber;
+    private String streetName;
+    private int streetNumber;
     private String region;
     private String country;
 
-    public Location(Long id, String city, String street, Short streetNumber, String region, String country) {
-        this.id = id;
+    public NotRemoteComponent(long contractId, String city, String streetName, int streetNumber, String region, String country) {
+        this.contractId = contractId;
         this.city = city;
-        this.street = street;
+        this.streetName = streetName;
         this.streetNumber = streetNumber;
         this.region = region;
         this.country = country;
     }
-
-    public Long getId() {
-        return id;
+    public long getContractId() {
+        return contractId;
     }
-    public void setId(Long id) {
-        this.id = id;
+    public void setContractId(long contractId) {
+        this.contractId = contractId;
     }
-
     public String getCity() {
         return city;
     }
     public void setCity(String city) {
         this.city = city;
     }
-
-    public String getStreet() {
-        return street;
+    public String getStreetName() {
+        return streetName;
     }
-    public void setStreet(String street) {
-        this.street = street;
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
     }
-
-    public Short getStreetNumber() {
+    public int getStreetNumber() {
         return streetNumber;
     }
-    public void setStreetNumber(Short streetNumber) {
+    public void setStreetNumber(int streetNumber) {
         this.streetNumber = streetNumber;
     }
-
     public String getRegion() {
         return region;
     }
     public void setRegion(String region) {
         this.region = region;
     }
-
     public String getCountry() {
         return country;
     }
