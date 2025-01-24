@@ -1,0 +1,16 @@
+<%
+    boolean loggedInFooter = (boolean) session.getAttribute("loggedIn");
+%>
+
+<footer id="footer">
+    <% if(loggedInFooter){%>
+    <form method="post" action="<%= request.getContextPath() %>/logout">
+        <button type="submit" id="logoutButton">Login</button>
+    </form>
+    <form method="post" action="<%= request.getContextPath() %>/deleteAccount">
+        <button type="submit" id="deleteAccountButton">Delete account</button>
+    </form>
+    <%}else{%>
+    <p id="guestParagraph"> Login or Sign in to send an offer to a worker.</p>
+    <%}%>
+</footer>

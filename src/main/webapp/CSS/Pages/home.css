@@ -1,0 +1,246 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('WALLPAPERS/tramonto.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #eaeaea;
+}
+
+#header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    margin-bottom: 1rem;
+    width: 90%;
+    max-width: 1200px;
+}
+
+#header img {
+    max-width: 150px;
+    height: auto;
+    display: block;
+}
+
+#pageForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+#pageNameSelect {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#pageNameSelect:hover {
+    background: rgba(64, 64, 64, 0.8);
+    border-color: rgba(128, 128, 128, 1);
+}
+
+#pageNameSelect:focus {
+    border-color: rgba(255, 165, 0, 0.8);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+option {
+    background: #222;
+    color: #eaeaea;
+}
+
+#infoDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    width: 90%;
+    max-width: 800px;
+    height: 90%;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+}
+
+#aboutUsDiv {
+    text-align: justify;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #555 #222;
+}
+
+#aboutUsDiv::-webkit-scrollbar {
+    width: 8px;
+}
+
+#aboutUsDiv::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 10px;
+}
+
+#aboutUsDiv::-webkit-scrollbar-track {
+    background-color: #222;
+}
+
+#aboutUsParagraph {
+    line-height: 1.8;
+    font-size: 1rem;
+    color: #e0e0e0;
+    margin: 0;
+}
+
+#aboutUsTitle {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+#contactsDiv {
+    text-align: center;
+    width: 100%;
+}
+
+#contactsTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+#contactsList {
+    list-style: none;
+    padding: 0;
+    font-size: 1rem;
+}
+
+#contactsList li {
+    margin: 0.5rem 0;
+    color: #e0e0e0;
+}
+
+#footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    width: 90%;
+    max-width: 1200px;
+    margin: 1rem auto;
+    text-align: center;
+}
+
+#footer button {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 150px;
+}
+
+#logoutButton:hover {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    color: #ffffff;
+    border-color: #FF79A0;
+    box-shadow: 0 0 15px #FF79A0, 0 0 30px #FF5680;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+#deleteAccountButton:hover {
+    background: linear-gradient(135deg, #9055FF, #7A3DFF);
+    color: #ffffff;
+    border-color: #9055FF;
+    box-shadow: 0 0 15px #9055FF, 0 0 30px #7A3DFF;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    #header, #footer {
+        gap: 0.75rem;
+    }
+    #infoDiv {
+        height: 85%;
+    }
+}
+
+@media (max-width: 768px) {
+    #header, #footer {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    #footer button {
+        width: 100%;
+        max-width: 200px;
+    }
+    #infoDiv {
+        height: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    #aboutUsTitle, #contactsTitle {
+        font-size: 1.4rem;
+    }
+    #aboutUsParagraph {
+        font-size: 0.9rem;
+    }
+    #contactsList li {
+        font-size: 0.9rem;
+    }
+    #infoDiv {
+        height: 75%;
+    }
+}

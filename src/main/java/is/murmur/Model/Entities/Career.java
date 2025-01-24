@@ -2,26 +2,26 @@ package is.murmur.Model.Entities;
 
 public class Career {
 
-    private Long worker_id;
+    private Long workerId;
     private String profession;
-    private double hourly_rate;
+    private double hourlyRate;
     private int seniority;
 
-    public Career(Long worker_id, String profession, double hourly_rate, int seniority) {
-        this.worker_id = worker_id;
+    public Career(Long workerId, String profession, double hourlyRate, int seniority) {
+        this.workerId = workerId;
         this.profession = profession;
-        this.hourly_rate = hourly_rate;
+        this.hourlyRate = hourlyRate;
         this.seniority = seniority;
     }
 
-    public Long getWorker_id() { return worker_id; }
-    public void setWorker_id(Long worker_id) { this.worker_id = worker_id; }
+    public Long getWorkerId() { return workerId; }
+    public void setWorkerId(Long workerId) { this.workerId = workerId; }
 
     public String getProfession() { return profession; }
     public void setProfession(String profession) { this.profession = profession; }
 
-    public double getHourly_rate() { return hourly_rate; }
-    public void setHourly_rate(double hourly_rate) { this.hourly_rate = hourly_rate; }
+    public double getHourlyRate() { return hourlyRate; }
+    public void setHourlyRate(double hourlyRate) { this.hourlyRate = hourlyRate; }
 
     public int getSeniority() { return seniority; }
     public void setSeniority(int seniority) { this.seniority = seniority; }
