@@ -4,42 +4,32 @@ html, body {
     font-family: Arial, sans-serif;
     background: url('WALLPAPERS/tramonto.jpg') no-repeat center center fixed;
     background-size: cover;
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-}
-
-body {
+    height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100%;
+    justify-content: flex-start;
     color: #eaeaea;
+    overflow: hidden;
 }
 
 #header {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 20px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.7);
-    margin-bottom: 1rem;
+    gap: 0.5rem;
+    padding: 0.5rem;
     width: 90%;
     max-width: 1200px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
 }
 
 #header img {
     max-width: 150px;
     height: auto;
-    display: block;
 }
 
 #pageForm {
@@ -47,14 +37,13 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    width: 100%;
     max-width: 300px;
+    width: 100%;
 }
 
 #pageNameSelect {
     background: rgba(0, 0, 0, 0.5);
     color: #eaeaea;
-    border: 1px solid rgba(0, 0, 0, 0.7);
     border-radius: 10px;
     padding: 0.5rem;
     font-size: 1rem;
@@ -67,11 +56,9 @@ body {
 
 #pageNameSelect:hover {
     background: rgba(64, 64, 64, 0.8);
-    border-color: rgba(128, 128, 128, 1);
 }
 
 #pageNameSelect:focus {
-    border-color: rgba(255, 165, 0, 0.8);
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
 }
 
@@ -80,81 +67,57 @@ option {
     color: #eaeaea;
 }
 
+#aboutUsTitle {
+    font-size: 1.5rem;
+    text-align: center;
+    color: #ffffff;
+    margin-top: 0;
+    padding-top: 0;
+}
+
 #infoDiv {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 2rem;
-    width: 90%;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
     max-width: 800px;
-    height: 90%;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 20px;
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.7);
-    overflow: hidden;
+    padding: 1.5rem;
+    margin-top: 0.3rem;
 }
 
 #aboutUsDiv {
     text-align: justify;
     width: 100%;
-    max-height: 300px;
+    max-height: 360px;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 1.2rem;
     box-sizing: border-box;
     scrollbar-width: thin;
     scrollbar-color: #555 #222;
 }
 
-#aboutUsDiv::-webkit-scrollbar {
-    width: 8px;
-}
-
-#aboutUsDiv::-webkit-scrollbar-thumb {
-    background-color: #555;
-    border-radius: 10px;
-}
-
-#aboutUsDiv::-webkit-scrollbar-track {
-    background-color: #222;
-}
-
-#aboutUsParagraph {
-    line-height: 1.8;
-    font-size: 1rem;
-    color: #e0e0e0;
-    margin: 0;
-}
-
-#aboutUsTitle {
-    font-size: 1.8rem;
-    text-align: center;
-    margin-bottom: 1rem;
-    color: #ffffff;
-}
-
 #contactsDiv {
     text-align: center;
     width: 100%;
-}
-
-#contactsTitle {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #ffffff;
+    padding-bottom: 0.5rem;
 }
 
 #contactsList {
     list-style: none;
     padding: 0;
     font-size: 1rem;
+    margin: 0;
 }
 
 #contactsList li {
-    margin: 0.5rem 0;
+    margin: 0.3rem 0;
     color: #e0e0e0;
 }
 
@@ -162,31 +125,29 @@ option {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 20px;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.7);
-    width: 90%;
-    max-width: 1200px;
-    margin: 1rem auto;
-    text-align: center;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    margin-top: 0.3rem;
 }
 
 #footer button {
     background: rgba(0, 0, 0, 0.5);
     color: #eaeaea;
-    border: 1px solid rgba(0, 0, 0, 0.7);
     border-radius: 10px;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 2rem;
     font-size: 1rem;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 150px;
+    width: 220px;
+    margin: 0 0.5rem;
 }
 
 #logoutButton:hover {
@@ -195,7 +156,6 @@ option {
     border-color: #FF79A0;
     box-shadow: 0 0 15px #FF79A0, 0 0 30px #FF5680;
     transform: scale(1.05);
-    transition: all 0.3s ease;
 }
 
 #deleteAccountButton:hover {
@@ -204,43 +164,27 @@ option {
     border-color: #9055FF;
     box-shadow: 0 0 15px #9055FF, 0 0 30px #7A3DFF;
     transform: scale(1.05);
-    transition: all 0.3s ease;
-}
-
-@media (max-width: 1024px) {
-    #header, #footer {
-        gap: 0.75rem;
-    }
-    #infoDiv {
-        height: 85%;
-    }
 }
 
 @media (max-width: 768px) {
     #header, #footer {
-        flex-wrap: wrap;
         gap: 0.5rem;
     }
-    #footer button {
-        width: 100%;
-        max-width: 200px;
-    }
     #infoDiv {
-        height: 80%;
+        flex-grow: 1;
+        width: 95%;
     }
 }
 
 @media (max-width: 480px) {
     #aboutUsTitle, #contactsTitle {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
-    #aboutUsParagraph {
-        font-size: 0.9rem;
-    }
-    #contactsList li {
+    #aboutUsParagraph, #contactsList li {
         font-size: 0.9rem;
     }
     #infoDiv {
-        height: 75%;
+        width: 100%;
+        padding: 0.5rem;
     }
 }

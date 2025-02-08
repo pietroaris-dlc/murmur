@@ -1,26 +1,10 @@
 <%@ page import="is.murmur.Model.Entities.*" %>
 <%
-    String pageName = "Home Page";
+    String pageName = "Home";
     if(session.getAttribute("pageName") != null)
         pageName = session.getAttribute("pageName").toString();
-    GenericUser user = (GenericUser) session.getAttribute("user");
-    Guest guest = null;
-    Client client = null;
-    Worker worker = null;
-    int userType = -1;
-    boolean isAdmin = false;
-
-    if(user instanceof Guest){
-        guest = (Guest) user;
-    } else if(user instanceof Client){
-        client = (Client) user;
-        userType = 0;
-        isAdmin = client.isAdmin();
-    } else{
-        worker = (Worker) user;
-        userType = 1;
-        isAdmin = worker.isAdmin();
-    }
+    int userType = (int) session.getAttribute("userType");
+    boolean isAdmin= (boolean) session.getAttribute("isAdmin");
     boolean loggedInHeader = (boolean) session.getAttribute("loggedIn");
 %>
 
@@ -32,7 +16,7 @@
             <option value="" disabled selected><%=pageName%></option>
             <option value="home page">Home Page</option>
             <option value="search page">Search Page</option>
-            <option value="drafts page">My Drafts</option>
+            <option value="contracts page">My Contracts</option>
             <% if(userType > -1) { %>
             <option value="personal infos page">My Personal Infos</option>
             <option value="planner page">My Planner</option>
@@ -41,9 +25,9 @@
             <% if(userType > 0) { %>
             <option value="activity area page">My Activity Area</option>
             <option value="career page">My Career</option>
-            <option value="contracts page">My Contracts</option>
             <% if(isAdmin) { %>
             <option value="admin page">Administration</option>
+            <option value="locks page">Locks</option>
             <% } %>
             <% } %>
             <% } %>
