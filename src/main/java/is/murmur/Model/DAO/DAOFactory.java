@@ -1,10 +1,10 @@
 package is.murmur.Model.DAO;
 
-import is.murmur.Model.Entities.*;
+import is.murmur.Model.Entities.DBEntities.*;
 
 public class DAOFactory {
 
-    public static DAOStrategy<RegisteredUser> authenticatedUser() {
+    public static DAOStrategy<RegisteredUser> registeredUser() {
         return new DAOStrategy<>("RegisteredUser", RegisteredUser.class, new String[]{"id"});
     }
 
@@ -58,6 +58,10 @@ public class DAOFactory {
 
     public static DAOStrategy<NotRemoteComponent> notRemoteComponent() {
         return new DAOStrategy<>("NotRemoteComponent", NotRemoteComponent.class, new String[]{"contractId"});
+    }
+
+    public static DAOStrategy<OfferComponent> offerComponent(){
+        return new DAOStrategy<>("OfferComponent", OfferComponent.class, new String[]{"contractId"});
     }
 
     public static DAOStrategy<Application> application() {

@@ -1,6 +1,5 @@
 package is.murmur.Controller;
 
-import is.murmur.Model.Entities.Guest;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -37,6 +36,8 @@ public class ConnectDBServlet extends HttpServlet {
             session.setAttribute("loggedIn", false);
             Guest guest = new Guest();
             session.setAttribute("user", guest);
+            session.setAttribute("userType", -1);
+            session.setAttribute("isAdmin", false);
             resp.sendRedirect("home.jsp");
         }
     }
