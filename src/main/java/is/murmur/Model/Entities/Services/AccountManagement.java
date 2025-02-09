@@ -76,10 +76,6 @@ public class AccountManagement {
 
     public static boolean accountDeletion(RegisteredUser registeredUser, DataAccessFacade dataAccessFacade){
         long userId = registeredUser.getId();
-
-        List<Contract> contracts = dataAccessFacade.executeCommand(
-                CommandFactory.select(DAOFactory.contract(), )
-        );
         return false;
     }
     public static boolean upgradeApplication(){
