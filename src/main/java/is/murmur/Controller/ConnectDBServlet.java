@@ -34,8 +34,6 @@ public class ConnectDBServlet extends HttpServlet {
         }else{
             session.setAttribute("dbPassword", dbPassword);
             session.setAttribute("loggedIn", false);
-            Guest guest = new Guest();
-            session.setAttribute("user", guest);
             session.setAttribute("userType", -1);
             session.setAttribute("isAdmin", false);
             resp.sendRedirect("home.jsp");
