@@ -39,6 +39,22 @@ public class Contract {
         this.status = status;
     }
 
+    public Contract(String profession, double hourlyRate, String city, String street, int streetNumber, String region, String country, Long clientAlias, Long workerAlias, Long scheduleId, double totalFee, ServiceMode serviceMode, ContractStatus status) {
+        this.profession = profession;
+        this.hourlyRate = hourlyRate;
+        this.city = city;
+        this.street = street;
+        this.streetNumber = streetNumber;
+        this.region = region;
+        this.country = country;
+        this.clientAlias = clientAlias;
+        this.workerAlias = workerAlias;
+        this.scheduleId = scheduleId;
+        this.totalFee = totalFee;
+        this.serviceMode = serviceMode;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

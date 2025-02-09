@@ -8,7 +8,9 @@ import is.murmur.Model.Entities.DBEntities.RegisteredUser;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AccountManagement {
 
@@ -36,30 +38,44 @@ public class AccountManagement {
         );
     }
 
-    public static boolean logIn(String[] loginInfo, DataAccessFacade dataAccessFacade){
+    public static boolean logIn(String[] loginInfo, DataAccessFacade dataAccessFacade, List<Contract> drafts){
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("email", loginInfo[EMAIL]);
         RegisteredUser registeredUser = dataAccessFacade.executeCommand(
-                CommandFactory.select(DAOFactory.registeredUser(),loginInfo[EMAIL])
+                CommandFactory.singleSelect(DAOFactory.registeredUser(),filters)
         );
+        boolean checkPsw = false;
         if(registeredUser != null){
-            return BCrypt.checkpw(loginInfo[PASSWORD], registeredUser.getPassword());
+            checkPsw = BCrypt.checkpw(loginInfo[PASSWORD], registeredUser.getPassword());
         }
-        return false;
+        if(drafts != null && !drafts.isEmpty() && checkPsw){
+            for(Contract draft : drafts){
+                    dataAccessFacade.executeCommand(
+                            CommandFactory.insert(DAOFactory.contract(), draft)
+                    );
+            }
+        }
+        return checkPsw;
     }
 
     public static boolean logout(List<Contract> drafts, DataAccessFacade dataAccessFacade){
+        Map<String, Object> filters = new HashMap<>();
         for(Contract draft : drafts){
+            filters.put("id", draft.getId());
             if(dataAccessFacade.executeCommand(
-                    CommandFactory.select(DAOFactory.contract(), draft.getId())
-            ) != null){
+                    CommandFactory.select(DAOFactory.contract(), filters)
+            ) == null){
                 dataAccessFacade.executeCommand(
                         CommandFactory.insert(DAOFactory.contract(), draft)
                 );
             }
+            filters.clear();
         }
         return false;
     }
 
     public static boolean accountDeletion(RegisteredUser registeredUser, DataAccessFacade dataAccessFacade){
+        long userId = registeredUser.getId();
         return false;
     }
     public static boolean upgradeApplication(){
