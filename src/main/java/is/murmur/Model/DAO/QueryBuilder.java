@@ -1,5 +1,14 @@
 package is.murmur.Model.DAO;
 
+import is.murmur.Model.DAO.Command.CommandFactory;
+import is.murmur.Model.DAO.Command.DataAccessFacade;
+import is.murmur.Model.Entities.DBEntities.Contract;
+import is.murmur.Model.Entities.DBEntities.RegisteredUser;
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.time.LocalDate;
+import java.util.List;
+
 public class QueryBuilder {
     private final StringBuilder query;
     private QueryState state;
