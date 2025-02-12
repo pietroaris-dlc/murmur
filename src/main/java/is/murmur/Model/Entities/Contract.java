@@ -19,14 +19,22 @@ public class Contract {
     @Column(name = "hourlyRate", nullable = false, precision = 10, scale = 2)
     private BigDecimal hourlyRate;
 
+    // Mappatura corretta per clientAlias (composite key)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "clientAlias", nullable = false, referencedColumnName = "id")
+    @JoinColumns({
+            @JoinColumn(name = "client_alias_id", referencedColumnName = "id", nullable = false),
+            @JoinColumn(name = "client_alias_userId", referencedColumnName = "userId", nullable = false)
+    })
     private Alias clientAlias;
 
+    // Mappatura corretta per workerAlias (composite key)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "workerAlias", nullable = false, referencedColumnName = "id")
+    @JoinColumns({
+            @JoinColumn(name = "worker_alias_id", referencedColumnName = "id", nullable = false),
+            @JoinColumn(name = "worker_alias_userId", referencedColumnName = "userId", nullable = false)
+    })
     private Alias workerAlias;
 
     @Column(name = "scheduleId", nullable = false)
@@ -42,6 +50,8 @@ public class Contract {
     @Lob
     @Column(name = "status", nullable = false)
     private String status;
+
+    // Getters e Setters
 
     public Long getId() {
         return id;
@@ -114,5 +124,4 @@ public class Contract {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }

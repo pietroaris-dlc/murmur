@@ -11,8 +11,6 @@
 
 <%@include file="JSPF/header.jspf"%>
 
-
-
 <div id="infoDiv">
     <div id="aboutUsDiv">
         <h1 id="aboutUsTitle">About us</h1>

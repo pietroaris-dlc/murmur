@@ -1,0 +1,345 @@
+/* ========= Impostazioni Globali ========= */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('WALLPAPERS/tramonto.jpg') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    color: #eaeaea;
+    /* Disabilita lo scroll globale (verticale gestito localmente) */
+    overflow: hidden;
+}
+
+/* ========= Header ========= */
+#header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 90%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
+}
+
+#header img {
+    max-width: 150px;
+    height: auto;
+}
+
+#pageNameSelect {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border-radius: 10px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#pageNameSelect:hover {
+    background: rgba(64, 64, 64, 0.8);
+}
+
+#pageNameSelect:focus {
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+/* ========= Contenitore centrale (layout 35%-65%) ========= */
+#body {
+    display: grid;
+    grid-template-columns: 35% 65%;
+    gap: 1rem;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 1rem;
+    height: calc(100vh - 140px);
+    /* Impostiamo scroll verticale e nascondiamo quello orizzontale */
+    overflow: hidden;
+}
+
+#searchForm,
+#results {
+    height: 100%;
+    overflow-y: auto; /* Scroll verticale indipendente */
+    min-width: 0;     /* Evita scroll orizzontale indesiderato */
+}
+
+/* ========= Search Form ========= */
+#searchForm {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    /* Extra padding in basso per non tagliare il pulsante */
+    padding: 1rem 1rem 2rem 1rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem; /* Distanza verticale tra i blocchi */
+}
+
+/* riga di form: label e input affiancati */
+#searchForm .form-row {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 0.5rem; /* Distanza orizzontale tra label e input */
+    margin-bottom: 0.3rem;
+}
+
+/* Label: allineamento a destra, larghezza fissa */
+#searchForm .form-row label {
+    text-align: right;
+    width: 120px;
+    font-weight: bold;
+}
+
+/* Input/Select: dimensioni ridotte */
+#searchForm .form-row input[type="text"],
+#searchForm .form-row input[type="number"],
+#searchForm .form-row input[type="date"],
+#searchForm .form-row input[type="time"],
+#searchForm .form-row select {
+    width: 180px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border: none;
+    border-radius: 10px;
+    padding: 0.4rem;
+    font-size: 0.95rem;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+/* Hover e focus sugli input */
+#searchForm .form-row input[type="text"]:hover,
+#searchForm .form-row input[type="number"]:hover,
+#searchForm .form-row select:hover {
+    background: rgba(64, 64, 64, 0.8);
+}
+#searchForm .form-row input[type="text"]:focus,
+#searchForm .form-row input[type="number"]:focus,
+#searchForm .form-row select:focus {
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+/* Sezioni #scheduleCriteria e #serviceModeCriteria */
+#scheduleCriteria,
+#serviceModeCriteria {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* ========= Tabella e checkbox del Weekly Schedule ========= */
+#scheduleCriteria table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+#scheduleCriteria table th,
+#scheduleCriteria table td {
+    padding: 0.4rem 0.7rem;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+#scheduleCriteria table thead {
+    background-color: rgba(255,255,255,0.15);
+}
+#scheduleCriteria table tbody tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.05);
+}
+
+#scheduleCriteria table input[type="time"] {
+    width: 80px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 5px;
+    padding: 0.2rem;
+}
+
+#scheduleCriteria table input[type="checkbox"] {
+    transform: scale(1.2);
+    margin-right: 0.3rem;
+    cursor: pointer;
+}
+
+/* riga del pulsante "Search" */
+#searchForm .submit-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+#searchForm .submit-row input[type="submit"] {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border: none;
+    border-radius: 10px;
+    padding: 0.5rem 2rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+#searchForm .submit-row input[type="submit"]:hover {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    color: #ffffff;
+    box-shadow: 0 0 15px #FF79A0, 0 0 30px #FF5680;
+    transform: scale(1.05);
+}
+
+/* ========= Area dei Risultati ========= */
+#results {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+}
+
+#resultsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#resultsList li {
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
+#resultsList li.no-results {
+    font-size: 1.2rem;
+    color: #ffcc00;
+    font-style: italic;
+}
+
+.resultForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.resultForm label {
+    font-weight: bold;
+}
+
+.resultForm input {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    outline: none;
+    width: 100%;
+}
+
+/* ========= Footer ========= */
+#footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    margin-top: 0.3rem;
+}
+
+#footer button {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border-radius: 10px;
+    padding: 0.4rem 2rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 220px;
+    margin: 0 0.5rem;
+}
+
+#logoutButton:hover {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    color: #ffffff;
+    border-color: #FF79A0;
+    box-shadow: 0 0 15px #FF79A0, 0 0 30px #FF5680;
+    transform: scale(1.05);
+}
+
+#deleteAccountButton:hover {
+    background: linear-gradient(135deg, #9055FF, #7A3DFF);
+    color: #ffffff;
+    border-color: #9055FF;
+    box-shadow: 0 0 15px #9055FF, 0 0 30px #7A3DFF;
+    transform: scale(1.05);
+}
+
+/* ========= Custom Scrollbar Styling per tutti i form + #results ========= */
+::-webkit-scrollbar,
+#results::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track,
+#results::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb,
+#results::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover,
+#results::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FF5680, #FF79A0);
+}
+
+/* ========= Media Query per la Responsività ========= */
+@media (max-width: 1024px) {
+    #body {
+        grid-template-columns: 1fr 1fr;
+        height: calc(100vh - 140px);
+    }
+}
+@media (max-width: 768px) {
+    #body {
+        grid-template-columns: 1fr;
+        height: calc(100vh - 140px);
+    }
+}
+@media (max-width: 480px) {
+    /* Riduciamo ulteriormente le larghezze nelle form-row */
+    #searchForm .form-row label {
+        width: 90px;
+        font-size: 0.9rem;
+    }
+    #searchForm .form-row input {
+        width: 140px;
+        font-size: 0.85rem;
+    }
+    #searchForm .submit-row input[type="submit"] {
+        font-size: 0.9rem;
+        padding: 0.5rem 1.5rem;
+    }
+}
