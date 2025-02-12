@@ -4,7 +4,7 @@ import is.murmur.Model.Entities.*;
 import is.murmur.Model.Enums.ApplicationStatus;
 import is.murmur.Model.Enums.ApplicationType;
 import is.murmur.Model.Enums.UserType;
-import is.murmur.Model.JPAUtil;
+import is.murmur.Model.Helpers.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
@@ -102,37 +102,32 @@ public class AccountManagement {
             transaction.begin();
 
             // Ricerca dell'utente in base all'email
-            TypedQuery<Registereduser> query = em.createQuery(
+            Registereduser toLogin = em.createQuery(
                     "select u from Registereduser u where u.email = :email",
                     Registereduser.class
-            );
-            query.setParameter("email", loginInputs[0]);
-            List<Registereduser> users = query.getResultList();
-            if (users.isEmpty()) {
+            ).setParameter("email", loginInputs[0]).getSingleResult();
+            if (toLogin == null) {
                 transaction.rollback();
                 return null;
-            }
-            Registereduser toLogin = users.get(0);
-
-            // Verifica della password
-            if (!BCrypt.checkpw(loginInputs[1], toLogin.getPassword())) {
+            }else if (!BCrypt.checkpw(loginInputs[1], toLogin.getPassword())) {
                 transaction.rollback();
                 return null;
-            }
-
-            // Gestione dei draft: se il draft non ha ancora un ID, viene creato un nuovo Alias
-            for (Contract draft : drafts) {
-                if (draft.getId() == null) {
-                    Alias alias = new Alias();
-                    alias.setUser(toLogin);
-                    em.persist(alias);
-                    draft.setClientAlias(alias);
-                    em.persist(draft);
+            } else {
+                // Gestione dei draft: se il draft non ha ancora un ID, viene creato un nuovo Alias
+                for (Contract draft : drafts) {
+                    if (draft.getId() == null) {
+                        Alias alias = new Alias();
+                        alias.setUser(toLogin);
+                        em.persist(alias);
+                        draft.setClientAlias(alias);
+                        em.persist(draft);
+                    }
                 }
+                transaction.commit();
+                if(!toLogin.getLocked()){
+                    return null;
+                } else return toLogin;
             }
-
-            transaction.commit();
-            return toLogin;
 
         } catch (Exception e) {
             if (transaction.isActive()) {

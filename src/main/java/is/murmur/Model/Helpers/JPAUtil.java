@@ -1,4 +1,4 @@
-package is.murmur.Model;
+package is.murmur.Model.Helpers;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

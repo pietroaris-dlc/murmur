@@ -13,41 +13,41 @@ public class PageRouter {
         String pageName = req.getParameter("pageName");
 
         try {
-            switch (pageName) {
-                case "home page":
+            switch (pageName.toLowerCase().replace(" ","")) {
+                case "homepage":
                     forwardRequest(req, resp, "/loadHomePage", session, "Home");
                     break;
-                case "search page":
+                case "searchpage":
                     forwardRequest(req, resp, "/loadSearchPage", session, "Search");
                     break;
-                case "personal infos page":
+                case "personalinfospage":
                     forwardRequest(req, resp, "/loadPersonalInfosPage", session, "My Personal Infos");
                     break;
-                case "planner page":
+                case "plannerpage":
                     forwardRequest(req, resp, "/loadPlannerPage", session, "My Planner");
                     break;
-                case "activity area page":
+                case "activityareapage":
                     forwardRequest(req, resp, "/loadActivityAreaPage", session, "My Activity Area");
                     break;
-                case "career page":
+                case "careerpage":
                     forwardRequest(req, resp, "/loadCareerPage", session, "My Career");
                     break;
-                case "contracts page":
+                case "contractspage":
                     forwardRequest(req, resp, "/loadContractsPage", session, "My Contracts");
                     break;
-                case "applications page":
+                case "applicationspage":
                     forwardRequest(req, resp, "/loadApplicationsPage", session, "My Applications");
                     break;
-                case "admin page":
+                case "adminpage":
                     forwardRequest(req, resp, "/loadAdministrationPage", session, "My Administration");
                     break;
-                case "locks page":
+                case "lockspage":
                     forwardRequest(req, resp, "/loadLocksPage", session, "Locks");
                     break;
-                case "login page":
+                case "loginpage":
                     forwardRequest(req, resp, "/loadLoginPage", session, "Login");
                     break;
-                case "sign in page":
+                case "signinpage":
                     forwardRequest(req, resp, "/loadSigninPage", session, "Sign in");
                     break;
                 default:
