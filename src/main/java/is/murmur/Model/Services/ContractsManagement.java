@@ -5,7 +5,7 @@ import is.murmur.Model.Enums.ApplicationStatus;
 import is.murmur.Model.Enums.ApplicationType;
 import is.murmur.Model.Enums.*;
 import is.murmur.Model.Enums.UserType;
-import is.murmur.Model.JPAUtil;
+import is.murmur.Model.Helpers.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;

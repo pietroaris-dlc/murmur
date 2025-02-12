@@ -1,7 +1,8 @@
 package is.murmur.Model.Services;
 
 import is.murmur.Model.Entities.*;
-import is.murmur.Model.JPAUtil;
+import is.murmur.Model.Helpers.Collision;
+import is.murmur.Model.Helpers.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public class WorkerSide {
+public class WorkerSide implements Collision {
 
     public static List<Career> getCareers(Registereduser worker) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
@@ -244,6 +245,13 @@ public class WorkerSide {
 
             Schedule schedule = em.find(Schedule.class, contract.getScheduleId());
             if (schedule == null) {
+                return null;
+            }
+
+            boolean clientOk = Collision.detect(client, schedule.getId());
+            boolean workerOk = Collision.detect(worker, schedule.getId());
+            if (!clientOk || !workerOk) {
+                transaction.rollback();
                 return null;
             }
 
