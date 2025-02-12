@@ -303,26 +303,65 @@ public class ContractsManagement {
         }
     }
 
-    public static boolean writeDraft(Contract contract) {
+    public static Contract writeDraft(String[] args) {
+        if (args == null || args.length < 10) {
+            return null;
+        }
+
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = em.getTransaction();
 
         try {
             transaction.begin();
+
+            Long contractId = Long.parseLong(args[0]);
+            String profession = args[1];
+            BigDecimal hourlyRate = new BigDecimal(args[2]);
+            Long clientAliasId = Long.parseLong(args[3]);
+            Long clientAliasUserId = Long.parseLong(args[4]);
+            Long workerAliasId = Long.parseLong(args[5]);
+            Long workerAliasUserId = Long.parseLong(args[6]);
+            Long scheduleId = Long.parseLong(args[7]);
+            BigDecimal totalFee = new BigDecimal(args[8]);
+            String serviceMode = args[9];
+
+            TypedQuery<Alias> clientAliasQuery = em.createQuery(
+                    "SELECT a FROM Alias a WHERE a.id = :aliasId AND a.user.id = :userId", Alias.class);
+            clientAliasQuery.setParameter("aliasId", clientAliasId);
+            clientAliasQuery.setParameter("userId", clientAliasUserId);
+            Alias clientAlias = clientAliasQuery.getSingleResult();
+
+            TypedQuery<Alias> workerAliasQuery = em.createQuery(
+                    "SELECT a FROM Alias a WHERE a.id = :aliasId AND a.user.id = :userId", Alias.class);
+            workerAliasQuery.setParameter("aliasId", workerAliasId);
+            workerAliasQuery.setParameter("userId", workerAliasUserId);
+            Alias workerAlias = workerAliasQuery.getSingleResult();
+
+            Contract contract = new Contract();
+            contract.setId(contractId);
+            contract.setProfession(profession);
+            contract.setHourlyRate(hourlyRate);
+            contract.setClientAlias(clientAlias);
+            contract.setWorkerAlias(workerAlias);
+            contract.setScheduleId(scheduleId);
+            contract.setTotalFee(totalFee);
+            contract.setServiceMode(serviceMode);
             contract.setStatus("DRAFT");
+
             em.persist(contract);
             transaction.commit();
+            return contract;
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             e.printStackTrace();
-            return false;
+            return null;
         } finally {
             em.close();
-            return true;
         }
     }
+
 
     public static boolean sendOffer(Contract contract) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
