@@ -1,43 +1,54 @@
 package is.murmur.Model.Services;
 
-import is.murmur.Model.Entities.*;
-import is.murmur.Model.Enums.ApplicationStatus;
-import is.murmur.Model.Enums.ApplicationType;
-import is.murmur.Model.Enums.*;
-import is.murmur.Model.Enums.UserType;
+import is.murmur.Model.Beans.*;
+import is.murmur.Model.Helpers.Collision;
 import is.murmur.Model.Helpers.JPAUtil;
+import is.murmur.Model.Helpers.ScheduleHandler;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContractsManagement {
-    public static List<Contract> getDrafts(Registereduser registeredUser) {
+    public static List<Contract> getContracts(Registereduser user, String status) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
-
-            TypedQuery<Alias> aliasQuery = em.createQuery(
-                    "SELECT a FROM Alias a WHERE a.user.id = :userId", Alias.class);
-            aliasQuery.setParameter("userId", registeredUser.getId());
-            List<Alias> aliases = aliasQuery.getResultList();
+            List<Alias> aliases = em.createQuery(
+                    "SELECT a FROM Alias a WHERE a.user = :user",
+                    Alias.class).setParameter("user", user).getResultList();
 
             if (aliases.isEmpty()) {
-                return null;
+                return new ArrayList<Contract>();
             }
 
-            TypedQuery<Contract> contractQuery = em.createQuery(
-                    "SELECT c FROM Contract c WHERE c.status = :status AND c.clientAlias IN :aliases",
-                    Contract.class);
-            contractQuery.setParameter("status", ContractStatus.DRAFT);
-            contractQuery.setParameter("aliases", aliases);
+            return em.createQuery(
+                            "SELECT c FROM Contract c WHERE c.status = :status AND c.clientAlias IN :aliases",
+                            Contract.class)
+                    .setParameter("status", status)
+                    .setParameter("aliases", aliases)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 
-            return contractQuery.getResultList();
+    public static Review getReview(Contract expired){
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            if (!"EXPIRED".equals(expired.getStatus()))
+                return null;
+
+            return em.createQuery(
+                            "SELECT r FROM Review r WHERE r.contract = :contract",
+                            Review.class)
+                    .setParameter("contract", expired)
+                    .getSingleResult();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -47,133 +58,47 @@ public class ContractsManagement {
         }
     }
 
-    public static List<Contract> getOffers (Registereduser registeredUser){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        try {
-
-            TypedQuery<Alias> aliasQuery = em.createQuery(
-                    "SELECT a FROM Alias a WHERE a.user.id = :userId", Alias.class);
-            aliasQuery.setParameter("userId", registeredUser.getId());
-            List<Alias> aliases = aliasQuery.getResultList();
-
-            if (aliases.isEmpty()) {
-                return null;
-            }
-
-            TypedQuery<Contract> contractQuery = em.createQuery(
-                    "SELECT c FROM Contract c WHERE c.status = :status AND c.clientAlias IN :aliases",
-                    Contract.class);
-            contractQuery.setParameter("status", ContractStatus.OFFER);
-            contractQuery.setParameter("aliases", aliases);
-
-            return contractQuery.getResultList();
-        }
-        catch (Exception e) {
-            e.printStackTrace(); //da inserire miglior gestione dell'errore
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public static List<Contract> getActiveContracts(Registereduser registeredUser){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        try {
-
-            TypedQuery<Alias> aliasQuery = em.createQuery(
-                    "SELECT a FROM Alias a WHERE a.user.id = :userId", Alias.class);
-            aliasQuery.setParameter("userId", registeredUser.getId());
-            List<Alias> aliases = aliasQuery.getResultList();
-
-            if (aliases.isEmpty()) {
-                return null;
-            }
-
-            TypedQuery<Contract> contractQuery = em.createQuery(
-                    "SELECT c FROM Contract c WHERE c.status = :status AND c.clientAlias IN :aliases",
-                    Contract.class);
-            contractQuery.setParameter("status", ContractStatus.ACTIVE);
-            contractQuery.setParameter("aliases", aliases);
-
-            return contractQuery.getResultList();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public static List<Contract> getExpiredContracts(Registereduser registeredUser){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        try {
-
-            TypedQuery<Alias> aliasQuery = em.createQuery(
-                    "SELECT a FROM Alias a WHERE a.user.id = :userId", Alias.class);
-            aliasQuery.setParameter("userId", registeredUser.getId());
-            List<Alias> aliases = aliasQuery.getResultList();
-
-            if (aliases.isEmpty()) {
-                return null;
-            }
-
-            TypedQuery<Contract> contractQuery = em.createQuery(
-                    "SELECT c FROM Contract c WHERE c.status = :status AND c.clientAlias IN :aliases",
-                    Contract.class);
-            contractQuery.setParameter("status", ContractStatus.EXPIRED);
-            contractQuery.setParameter("aliases", aliases);
-
-            return contractQuery.getResultList();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public static Review getReview(Contract contract){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        try {
-            if (!"EXPIRED".equals(contract.getStatus()))
-                return null;
-
-            TypedQuery<Review> reviewQuery = em.createQuery(
-                    "SELECT r FROM Review r WHERE r.contract = :contract",
-                    Review.class);
-            reviewQuery.setParameter("contract", contract);
-            return reviewQuery.getSingleResult();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public static boolean defineOffer(Contract contract, boolean approval){
+    public static boolean defineOffer(Contract offer, boolean approval){
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
-            if (!"OFFER".equals(contract.getStatus()))
+            if (!"OFFER".equals(offer.getStatus()))
                 return false;
 
-            if (approval)
-                contract.setStatus("ACTIVE");
-            else contract.setStatus("REJECTED");
-
-            em.merge(contract);
+            if (approval){
+                Schedule schedule = em.find(Schedule.class, offer.getScheduleId());
+                if(
+                        Collision.detect(offer.getClientAlias().getUser(), schedule.getId())
+                                || Collision.detect(offer.getWorkerAlias().getUser(), schedule.getId())
+                ) {
+                    transaction.rollback();
+                    return false;
+                }
+                if(schedule.getType().equals("DAILY")){
+                    Daily daily = em.find(Daily.class, offer.getScheduleId());
+                    ScheduleHandler.addDailyToPlanner(em, offer.getClientAlias().getUser(), daily);
+                    ScheduleHandler.addDailyToPlanner(em, offer.getWorkerAlias().getUser(), daily);
+                } else if (schedule.getType().equals("WEEKLY")){
+                    Weekly weekly = em.find(Weekly.class, offer.getScheduleId());
+                    List<Weekday> weekday = em.createQuery(
+                            "select wd from Weekday wd where wd.weekly = :weekly"
+                            ,Weekday.class
+                    )
+                            .setParameter("weekly", weekly)
+                            .getResultList();
+                    for(Weekday wd : weekday){
+                        ScheduleHandler.addWeekdayToPlanner(em, offer.getClientAlias().getUser(), wd);
+                        ScheduleHandler.addWeekdayToPlanner(em, offer.getWorkerAlias().getUser(), wd);
+                    }
+                }
+                offer.setStatus("ACTIVE");
+            } else{
+                offer.setStatus("REJECTED");
+            }
+            em.merge(offer);
             transaction.commit();
             return true;
-        }
-        catch (Exception e) {
-            if (transaction.isActive())
-                transaction.rollback();
-            return false;
         } finally {
             em.close();
         }
@@ -185,14 +110,16 @@ public class ContractsManagement {
 
         try {
             transaction.begin();
-            if (!ContractStatus.ACTIVE.equals(contract.getStatus())) {
+            if (!contract.getStatus().equals("ACTIVE")) {
                 return null;
             }
-            TypedQuery<Cancellationrequest> query = em.createQuery(
-                    "SELECT c FROM Cancellationrequest c WHERE c.contract = :contract",
-                    Cancellationrequest.class);
-            query.setParameter("contract", contract);
-            List<Cancellationrequest> existingRequests = query.getResultList();
+
+            List<Cancellationrequest> existingRequests = em.createQuery(
+                    "SELECT cr FROM Cancellationrequest cr WHERE cr.contract = :contract and cr.status = 'PENDING'",
+                    Cancellationrequest.class)
+                    .setParameter("contract", contract)
+                    .getResultList();
+
             if (!existingRequests.isEmpty()) {
                 return null;
             }
@@ -202,7 +129,7 @@ public class ContractsManagement {
             cancellationRequest.setId(contract.getId());
             cancellationRequest.setSubmissionDate(Instant.now());
             cancellationRequest.setDescription(description);
-            cancellationRequest.setStatus(CancellationRequestStatus.PENDING.name());
+            cancellationRequest.setStatus("PENDING");
 
             em.persist(cancellationRequest);
             transaction.commit();
@@ -222,166 +149,252 @@ public class ContractsManagement {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
 
         try {
-            TypedQuery<Cancellationrequest> query = em.createQuery(
+            return em.createQuery(
                     "SELECT cr FROM Cancellationrequest cr WHERE cr.contract = :contract",
-                    Cancellationrequest.class
-            );
-            query.setParameter("contract", contract);
-            return query.getSingleResult();
-        } catch (jakarta.persistence.NoResultException e) {
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+                            Cancellationrequest.class
+                    )
+                    .setParameter("contract", contract)
+                    .getSingleResult();
         } finally {
             em.close();
         }
     }
 
-
-    public static boolean defineCancellationRequests(Cancellationrequest request, boolean approve) {
+    public static boolean defineCancellationRequests(Cancellationrequest request, boolean approval) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
 
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-
             Cancellationrequest managedRequest = em.find(Cancellationrequest.class, request.getId());
-            if (managedRequest == null) {
-                return false;
-            }
+            if (managedRequest == null) return false;
 
-            if (approve) {
+            if (approval) {
                 managedRequest.setStatus("APPROVED");
                 Contract contract = managedRequest.getContract();
                 if (contract != null) {
-                    contract.setStatus("REJECTED");
+                    contract.setStatus("EXPIRED");
+                    Schedule schedule = em.find(Schedule.class, contract.getScheduleId());
+                    if (schedule.getType().equals("DAILY")) {
+                        Daily daily = em.find(Daily.class, schedule.getId());
+                        if (daily.getDay().isBefore(LocalDate.now())) {
+                            contract.setStatus("REJECTED");
+                            em.merge(contract);
+                            em.flush();
+                        } else if (daily.getDay().equals(LocalDate.now())) {
+                            if (daily.getStartHour().isBefore(LocalTime.now())) {
+                                contract.setStatus("REJECTED");
+                                em.merge(contract);
+                                em.flush();
+                            } else if (
+                                    daily.getEndHour().isBefore(LocalTime.now())
+                                            || daily.getEndHour().equals(LocalTime.now())
+                            ) {
+                                daily.setEndHour(LocalTime.now());
+                                em.merge(daily);
+                                em.flush();
+                            }
+                        }
+                    } else if (schedule.getType().equals("WEEKLY")) {
+                        Weekly weekly = em.find(Weekly.class, schedule.getId());
+                        if (weekly.getStartDate().isBefore(LocalDate.now())) {
+                            contract.setStatus("REJECTED");
+                            em.merge(contract);
+                            em.flush();
+                        } else if (
+                                weekly.getStartDate().isAfter(LocalDate.now())
+                                        && weekly.getEndDate().isBefore(LocalDate.now())
+                        ) {
+                            LocalDate oldEnd = weekly.getEndDate();
+                            weekly.setEndDate(LocalDate.now());
+                            em.merge(weekly);
+
+                            List<Weekday> weekdays = em.createQuery(
+                                            "select wd from Weekday wd where wd.weekly = :weekly"
+                                            , Weekday.class
+                                    )
+                                    .setParameter("weekly", weekly)
+                                    .getResultList();
+
+                            List<Daily> dailyPlannerClient = ScheduleHandler.getDailyPlanner(em, contract.getClientAlias().getUser());
+                            List<Daily> dailyPlannerWorker = ScheduleHandler.getDailyPlanner(em, contract.getWorkerAlias().getUser());
+
+                            for (Weekday weekday : weekdays) {
+                                for (Daily daily : dailyPlannerClient) {
+                                    if (
+                                            daily.getDay().getDayOfWeek().equals(weekday.getId().getDayOfWeek())
+                                                    && (daily.getDay().isBefore(oldEnd) && daily.getDay().isAfter(weekly.getEndDate()))
+                                                    && daily.getStartHour().equals(weekday.getStartHour()) && daily.getEndHour().equals(weekday.getEndHour())
+                                    ) {
+                                        em.remove(daily.getSchedule());
+                                        em.flush();
+                                    }
+                                }
+                            }
+                            for (Weekday weekday : weekdays) {
+                                for (Daily daily : dailyPlannerWorker) {
+                                    if (
+                                            daily.getDay().getDayOfWeek().equals(weekday.getId().getDayOfWeek())
+                                                    && (daily.getDay().isBefore(oldEnd) && daily.getDay().isAfter(weekly.getEndDate()))
+                                                    && daily.getStartHour().equals(weekday.getStartHour()) && daily.getEndHour().equals(weekday.getEndHour())
+                                    ) {
+                                        em.remove(daily.getSchedule());
+                                        em.flush();
+                                    }
+                                }
+                            }
+                        } else if (weekly.getEndDate().equals(LocalDate.now())) {
+                            return false;
+                        }
+                    }
                     em.merge(contract);
+                    em.flush();
                 }
-            } else {
-                managedRequest.setStatus("REJECTED");
-            }
+            } else managedRequest.setStatus("REJECTED");
 
             em.merge(managedRequest);
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return false;
-        } finally {
-            em.close();
         }
     }
 
-    public static boolean deleteDraft(Contract contract) {
+    public static boolean deleteDraft(Contract draft) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
 
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-            if (!"DRAFT".equals(contract.getStatus())) {
+            if (!"DRAFT".equals(draft.getStatus())) {
                 return false;
             }
-            Contract managedContract = em.find(Contract.class, contract.getId());
+            Contract managedContract = em.find(Contract.class, draft.getId());
             if (managedContract != null) {
                 em.remove(managedContract);
             }
             transaction.commit();
             return true;
-
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return false;
-        } finally {
-            em.close();
         }
     }
 
-    public static Contract writeDraft(String[] args) {
-        if (args == null || args.length < 10) {
-            return null;
-        }
-
+    public static Contract writeDraft(
+            Registereduser user,
+            String profession,
+            BigDecimal hourlyRate,
+            Alias workerAlias,
+            Long scheduleId,
+            BigDecimal totalFee
+    ) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
 
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-
-            Long contractId = Long.parseLong(args[0]);
-            String profession = args[1];
-            BigDecimal hourlyRate = new BigDecimal(args[2]);
-            Long clientAliasId = Long.parseLong(args[3]);
-            Long clientAliasUserId = Long.parseLong(args[4]);
-            Long workerAliasId = Long.parseLong(args[5]);
-            Long workerAliasUserId = Long.parseLong(args[6]);
-            Long scheduleId = Long.parseLong(args[7]);
-            BigDecimal totalFee = new BigDecimal(args[8]);
-            String serviceMode = args[9];
-
-            TypedQuery<Alias> clientAliasQuery = em.createQuery(
-                    "SELECT a FROM Alias a WHERE a.id = :aliasId AND a.user.id = :userId", Alias.class);
-            clientAliasQuery.setParameter("aliasId", clientAliasId);
-            clientAliasQuery.setParameter("userId", clientAliasUserId);
-            Alias clientAlias = clientAliasQuery.getSingleResult();
-
-            TypedQuery<Alias> workerAliasQuery = em.createQuery(
-                    "SELECT a FROM Alias a WHERE a.id = :aliasId AND a.user.id = :userId", Alias.class);
-            workerAliasQuery.setParameter("aliasId", workerAliasId);
-            workerAliasQuery.setParameter("userId", workerAliasUserId);
-            Alias workerAlias = workerAliasQuery.getSingleResult();
-
-            Contract contract = new Contract();
-            contract.setId(contractId);
-            contract.setProfession(profession);
-            contract.setHourlyRate(hourlyRate);
-            contract.setClientAlias(clientAlias);
-            contract.setWorkerAlias(workerAlias);
-            contract.setScheduleId(scheduleId);
-            contract.setTotalFee(totalFee);
-            contract.setServiceMode(serviceMode);
-            contract.setStatus("DRAFT");
-
-            em.persist(contract);
+            Contract draft = new Contract();
+            draft.setWorkerAlias(workerAlias);
+            draft.setHourlyRate(hourlyRate);
+            draft.setTotalFee(totalFee);
+            draft.setProfession(profession);
+            draft.setServiceMode("REMOTE");
+            draft.setStatus("DRAFT");
+            if (Collision.detect(user, scheduleId)) {
+                transaction.rollback();
+                return null;
+            }
+            if (Collision.detect(draft.getWorkerAlias().getUser(), scheduleId)) {
+                transaction.rollback();
+                return null;
+            }
+            em.persist(draft);
             transaction.commit();
-            return contract;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();
+            return draft;
         }
     }
 
+    public static Contract writeDraft(
+            Registereduser user,
+            String profession,
+            BigDecimal hourlyRate,
+            Alias workerAlias,
+            Long scheduleId,
+            BigDecimal totalFee,
+            String city,
+            String street,
+            Short streetNumber,
+            String district,
+            String region,
+            String country
+    ) {
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
 
-    public static boolean sendOffer(Contract contract) {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+            Contract draft = new Contract();
+            draft.setWorkerAlias(workerAlias);
+            draft.setHourlyRate(hourlyRate);
+            draft.setTotalFee(totalFee);
+            draft.setProfession(profession);
+            draft.setServiceMode("REMOTE");
+            draft.setStatus("DRAFT");
+            if (Collision.detect(user, scheduleId)) {
+                transaction.rollback();
+                return null;
+            }
+            if (Collision.detect(draft.getWorkerAlias().getUser(), scheduleId)) {
+                transaction.rollback();
+                return null;
+            }
+            em.persist(draft);
+            em.flush();
+
+            Notremotecomponent notremotecomponent;
+            notremotecomponent = new Notremotecomponent();
+            notremotecomponent.setId(draft.getId());
+            notremotecomponent.setContract(draft);
+            notremotecomponent.setCity(city);
+            notremotecomponent.setStreet(street);
+            notremotecomponent.setStreetNumber(streetNumber);
+            notremotecomponent.setDistrict(district);
+            notremotecomponent.setRegion(region);
+            notremotecomponent.setCountry(country);
+            em.persist(notremotecomponent);
+
+            transaction.commit();
+            return draft;
+        }
+    }
+
+    public static boolean sendOffer(Registereduser user, Contract draft, String specialRequests) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = em.getTransaction();
 
         try {
             transaction.begin();
-            if (!ContractStatus.DRAFT.equals(contract.getStatus())) {
+            if (!draft.getStatus().equals("DRAFT")) return false;
+            if(Collision.detect(user,draft.getScheduleId())){
+                transaction.rollback();
+                em.remove(draft);
+                em.flush();
                 return false;
             }
-            contract.setStatus("OFFER");
-            em.merge(contract);
+            if(Collision.detect(draft.getWorkerAlias().getUser(), user.getId())){
+                transaction.rollback();
+                em.remove(draft);
+                em.flush();
+                return false;
+            }
+            draft.setStatus("OFFER");
+
+            Offercomponent offercomponent = new Offercomponent();
+            offercomponent.setId(draft.getId());
+            offercomponent.setSpecialRequests(specialRequests);
+            offercomponent.setContract(draft);
+            em.persist(offercomponent);
+            em.flush();
+
+            em.merge(draft);
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return false;
         } finally {
             em.close();
         }

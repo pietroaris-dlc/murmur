@@ -1,8 +1,8 @@
 package is.murmur.Model.Services.SearchStrategy;
 
-import is.murmur.Model.Entities.Alias;
-import is.murmur.Model.Entities.AliasId;
-import is.murmur.Model.Entities.Registereduser;
+import is.murmur.Model.Beans.Alias;
+import is.murmur.Model.Beans.AliasId;
+import is.murmur.Model.Beans.Registereduser;
 import is.murmur.Model.Helpers.Criteria;
 import is.murmur.Model.Helpers.JPAUtil;
 import is.murmur.Model.Helpers.Result;
@@ -11,6 +11,7 @@ import jakarta.persistence.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -40,47 +41,46 @@ public class DailyHomeDeliverySearchStrategy implements SearchStrategy {
             String region = criteria.getRegion();
             String country = criteria.getCountry();
 
-            String jpql = "SELECT u.id, c.profession, c.hourlyRate, wc.priority, c.seniority, aa.location.streetNumber " +
-                    "FROM Registereduser u " +
-                    "JOIN Career c ON u.id = c.worker.id " +
-                    "JOIN Workercomponent wc ON u.id = wc.id " +
-                    "JOIN Activityarea aa ON u.id = aa.worker.id " +
-                    "JOIN Location l ON aa.location.id = l.id " +
-                    "WHERE u.type = 'WORKER' " +
-                    "  AND c.profession = :profession " +
-                    "  AND c.hourlyRate BETWEEN :hourlyRateMin AND :hourlyRateMax " +
-                    "  AND l.city = :city " +
-                    "  AND l.district = :district " +
-                    "  AND l.region = :region " +
-                    "  AND l.country = :country " +
-                    "  AND l.street = :street " +
-                    "  AND NOT EXISTS ( " +
-                    "       SELECT p FROM Planner p, Daily d " +
-                    "       WHERE p.user.id = u.id " +
-                    "         AND p.schedule.id = d.id " +
-                    "         AND d.day = :day " +
-                    "         AND d.startHour < :endHour " +
-                    "         AND d.endHour > :startHour " +
-                    "  ) " +
-                    "  AND NOT EXISTS ( " +
-                    "       SELECT p FROM Planner p, Weekly w, Weekday wd, Daily d " +
-                    "       WHERE p.user.id = u.id " +
-                    "         AND p.schedule.id = w.id " +
-                    "         AND wd.weekly.id = w.id " +
-                    "         AND d.id = wd.daily.id " +
-                    "         AND :day BETWEEN w.startDate AND w.endDate " +
-                    "         AND wd.id.dayOfWeek = :dayOfWeek " +
-                    "         AND d.startHour < :endHour " +
-                    "         AND d.endHour > :startHour " +
-                    "  )";
-            Query query = em.createQuery(jpql);
-            query.setParameter("profession", profession);
-            query.setParameter("hourlyRateMin", hourlyRateMin);
-            query.setParameter("hourlyRateMax", hourlyRateMax);
-            query.setParameter("day", day);
-            query.setParameter("startHour", startHour);
-            query.setParameter("endHour", endHour);
-            query.setParameter("dayOfWeek", dayOfWeek);
+            Query query = em.createQuery(
+                    "select u.id, c.profession, c.hourlyRate, wc.priority, c.seniority, aa.location.streetNumber " +
+                            "from Registereduser u " +
+                            "join Career c on u.id = c.worker.id " +
+                            "join Workercomponent wc on u.id = wc.id " +
+                            "join Activityarea aa on u.id = aa.worker.id " +
+                            "join Location l on aa.location.id = l.id " +
+                            "where u.type = 'WORKER' " +
+                            "  and c.profession = :profession " +
+                            "  and c.hourlyRate between :hourlyRateMin and :hourlyRateMax " +
+                            "  and l.city = :city " +
+                            "  and l.district = :district " +
+                            "  and l.region = :region " +
+                            "  and l.country = :country " +
+                            "  and l.street = :street " +
+                            "  and not exists ( " +
+                            "       select p from Planner p " +
+                            "       join Daily d on p.schedule = d.schedule"+
+                            "       where p.user.id = u.id " +
+                            "         and d.day = :day " +
+                            "         and d.startHour < :endHour " +
+                            "         and d.endHour > :startHour " +
+                            "  ) " +
+                            "  and not exists ( " +
+                            "       select p from Planner p, Weekly w, Weekday wd, Daily d " +
+                            "       where p.user.id = u.id " +
+                            "         and p.schedule.id = w.id " +
+                            "         and wd.weekly.id = w.id " +
+                            "         and d.id = wd.weekly.id " +
+                            "         and :day between w.startDate and w.endDate " +
+                            "         and d.startHour < :endHour " +
+                            "         and d.endHour > :startHour " +
+                            "  )"
+            );
+            query.setParameter("profession", criteria.getProfession());
+            query.setParameter("hourlyRateMin", criteria.getHourlyRateMin());
+            query.setParameter("hourlyRateMax", criteria.getHourlyRateMax());
+            query.setParameter("day", criteria.getDay());
+            query.setParameter("startHour", criteria.getDailyStartHour());
+            query.setParameter("endHour", criteria.getDailyEndHour());
             query.setParameter("city", city);
             query.setParameter("street", street);
             query.setParameter("district", district);
@@ -93,14 +93,13 @@ public class DailyHomeDeliverySearchStrategy implements SearchStrategy {
             for (Object[] row : queryResults) {
                 Long workerId = (Long) row[0];
                 String profVal = (String) row[1];
-                Double hrRate = (Double) row[2];
+                BigDecimal hrRate = (BigDecimal) row[2];
                 Double priority = (Double) row[3];
                 Integer seniority = (Integer) row[4];
                 Short streetNumber = (Short) row[5];  // Estratto anche il valore streetNumber
-                resultsList.add(new Result(workerId, profVal, hrRate, streetNumber, priority, seniority));
+                resultsList.add(new Result(workerId,null, profVal, hrRate, streetNumber, priority, seniority));
             }
 
-            // Creazione dei record alias per ciascun worker trovato
             em.getTransaction().begin();
             for (Result res : resultsList) {
                 Registereduser worker = em.find(Registereduser.class, res.getWorkerId());
@@ -112,7 +111,7 @@ public class DailyHomeDeliverySearchStrategy implements SearchStrategy {
                 newAlias.setUser(worker);
                 em.persist(newAlias);
                 em.flush();
-                res.setAliasId(newAlias.getId().getId());
+                res.setWorkerAlias(newAlias);
             }
             em.getTransaction().commit();
 
@@ -138,7 +137,7 @@ public class DailyHomeDeliverySearchStrategy implements SearchStrategy {
             JSONArray resultsArray = new JSONArray();
             for (Result res : resultsList) {
                 JSONObject workerJson = new JSONObject();
-                workerJson.put("alias", "workerAlias" + res.getAliasId());
+                workerJson.put("alias", "workerAlias" + res.getWorkerAlias().getId());
                 workerJson.put("profession", res.getProfession());
                 workerJson.put("hourlyRate", res.getHourlyRate());
                 workerJson.put("streetNumber", res.getStreetNumber());  // Aggiunto streetNumber nell'output

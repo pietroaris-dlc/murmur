@@ -1,16 +1,21 @@
 package is.murmur.Model.Helpers;
 
+import is.murmur.Model.Beans.Alias;
+
+import java.math.BigDecimal;
+
 public class Result {
     private final Long workerId;
+    private Alias workerAlias;
     private final String profession;
-    private final Double hourlyRate;
+    private final BigDecimal hourlyRate;
     private final Short streetNumber;
     private final Double priority;
     private final Integer seniority;
-    private Long aliasId;
 
-    public Result(Long workerId, String profession, Double hourlyRate, Short streetNumber,Double priority, Integer seniority) {
+    public Result(Long workerId, Alias workerAlias, String profession, BigDecimal hourlyRate, Short streetNumber, Double priority, Integer seniority) {
         this.workerId = workerId;
+        this.workerAlias = workerAlias;
         this.profession = profession;
         this.hourlyRate = hourlyRate;
         this.streetNumber = streetNumber;
@@ -19,31 +24,12 @@ public class Result {
     }
 
     public Long getWorkerId() { return workerId; }
-
-    public String getProfession() {
-        return profession;
-    }
-
-    public Double getHourlyRate() {
-        return hourlyRate;
-    }
-
+    public Alias getWorkerAlias() { return workerAlias; }
+    public void setWorkerAlias(Alias workerAlias) { this.workerAlias = workerAlias;}
+    public String getProfession() { return profession;}
+    public BigDecimal getHourlyRate() { return hourlyRate;}
     public Short getStreetNumber() { return streetNumber; }
-
-    public Double getPriority() {
-        return priority;
-    }
-
-    public Integer getSeniority() {
-        return seniority;
-    }
-
-    public Long getAliasId() {
-        return aliasId;
-    }
-
-    public void setAliasId(Long aliasId) {
-        this.aliasId = aliasId;
-    }
+    public Double getPriority() { return priority;}
+    public Integer getSeniority() { return seniority;}
 }
 

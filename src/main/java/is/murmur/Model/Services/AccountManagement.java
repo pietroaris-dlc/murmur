@@ -1,9 +1,6 @@
 package is.murmur.Model.Services;
 
-import is.murmur.Model.Entities.*;
-import is.murmur.Model.Enums.ApplicationStatus;
-import is.murmur.Model.Enums.ApplicationType;
-import is.murmur.Model.Enums.UserType;
+import is.murmur.Model.Beans.*;
 import is.murmur.Model.Helpers.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -67,7 +64,7 @@ public class AccountManagement {
             u.setBirthDistrict(signinInputs[6]);
             u.setBirthCountry(signinInputs[7]);
             u.setTaxCode(signinInputs[8]);
-            u.setType(String.valueOf(UserType.CLIENT));
+            u.setType("CLIENT");
             u.setAdmin(false);
             u.setLocked(false);
 
@@ -282,8 +279,8 @@ public class AccountManagement {
             app.setSubmissionDate(LocalDate.parse(upgradeInputs[0]));
             app.setSubmissionHour(LocalTime.parse(upgradeInputs[1]));
             app.setDocsUrl(upgradeInputs[2]);
-            app.setStatus(String.valueOf(ApplicationStatus.PENDING));
-            app.setType(String.valueOf(ApplicationType.UPGRADE));
+            app.setStatus("STATUS");
+            app.setType("UPGRADE");
             em.persist(app);
 
             // Creazione del componente di upgrade associato alla Application
@@ -332,8 +329,8 @@ public class AccountManagement {
             app.setSubmissionDate(LocalDate.parse(collabInputs[0]));
             app.setSubmissionHour(LocalTime.parse(collabInputs[1]));
             app.setDocsUrl(collabInputs[2]);
-            app.setStatus(String.valueOf(ApplicationStatus.PENDING));
-            app.setType(String.valueOf(ApplicationType.COLLAB));
+            app.setStatus("PENDING");
+            app.setType("COLLAB");
             em.persist(app);
 
             transaction.commit();
@@ -363,12 +360,12 @@ public class AccountManagement {
             transaction.begin();
 
             // Aggiornamento del tipo di utente a WORKER
-            registereduser.setType(String.valueOf(UserType.WORKER));
+            registereduser.setType("WORKER");
             em.merge(registereduser);
 
             // Aggiornamento dello status dell'application associata all'upgrade
             Application app = upgradecomponent.getApplication();
-            app.setStatus(String.valueOf(ApplicationStatus.APPROVED));
+            app.setStatus("APPROVED");
             em.merge(app);
 
             // Aggiunta dell'area di attività e della carriera
@@ -412,7 +409,7 @@ public class AccountManagement {
             em.merge(registereduser);
 
             // Approva l'application di collaborazione
-            collabApplication.setStatus(String.valueOf(ApplicationStatus.APPROVED));
+            collabApplication.setStatus("APPROVED");
             em.merge(collabApplication);
 
             transaction.commit();
