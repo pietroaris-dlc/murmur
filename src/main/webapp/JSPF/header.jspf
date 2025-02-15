@@ -1,4 +1,4 @@
-<%@ page import="is.murmur.Model.Entities.*" %>
+<%@ page import="is.murmur.Model.Beans.*" %>
 <%
     String pageName = "Home";
     if(session.getAttribute("pageName") != null)

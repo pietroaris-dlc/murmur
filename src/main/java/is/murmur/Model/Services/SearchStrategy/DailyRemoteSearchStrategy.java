@@ -1,7 +1,7 @@
 package is.murmur.Model.Services.SearchStrategy;
-import is.murmur.Model.Entities.Alias;
-import is.murmur.Model.Entities.AliasId;
-import is.murmur.Model.Entities.Registereduser;
+import is.murmur.Model.Beans.Alias;
+import is.murmur.Model.Beans.AliasId;
+import is.murmur.Model.Beans.Registereduser;
 import is.murmur.Model.Helpers.Criteria;
 import is.murmur.Model.Helpers.JPAUtil;
 import is.murmur.Model.Helpers.Result;
@@ -10,6 +10,7 @@ import jakarta.persistence.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -72,16 +73,16 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
             for (Object[] row : queryResults) {
                 Long workerId = (Long) row[0];
                 String prof = (String) row[1];
-                Double hrRate = (Double) row[2];
+                BigDecimal hrRate = (BigDecimal) row[2];
                 Double priority = (Double) row[3];
                 Integer seniority = (Integer) row[4];
-                resultsList.add(new Result(workerId, prof, hrRate, null,priority, seniority));
+                resultsList.add(new Result(workerId, null,prof, hrRate, null,priority, seniority));
             }
 
             // Creazione dei record alias per ciascun worker
             em.getTransaction().begin();
             for (Result res : resultsList) {
-                Registereduser worker = em.find(Registereduser.class, res.getWorkerId());
+                Registereduser worker = em.find(Registereduser.class, res.getWorkerAlias().getUser());
                 Alias newAlias = new Alias();
                 AliasId aliasId = new AliasId();
                 aliasId.setUserId(worker.getId());
@@ -90,7 +91,7 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
                 newAlias.setUser(worker);
                 em.persist(newAlias);
                 em.flush();
-                res.setAliasId(newAlias.getId().getId());
+                res.setWorkerAlias(newAlias);
             }
             em.getTransaction().commit();
 
@@ -111,7 +112,7 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
             JSONArray resultsArray = new JSONArray();
             for (Result res : resultsList) {
                 JSONObject workerJson = new JSONObject();
-                workerJson.put("alias", "workerAlias" + res.getAliasId());
+                workerJson.put("alias", "workerAlias" + res.getWorkerAlias().getId());
                 workerJson.put("profession", res.getProfession());
                 workerJson.put("hourlyRate", res.getHourlyRate());
                 workerJson.put("priority", res.getPriority());

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JpaBuddyIdeaProjectConfig">
-    <option name="reLastEntityCreationPackage" value="src/main/java/is/murmur/Model/Entities" />
-    <option name="reverseEngineeringLastDbConnectionId" value="cb5b48f7-15a6-4f78-a034-6471e9408639" />
+    <option name="reLastEntityCreationPackage" value="src/main/java/is/murmur/Model/Beans" />
+    <option name="reverseEngineeringLastDbConnectionId" value="c65baede-6c5b-4e8d-bd11-c1fd8bd0f68e" />
   </component>
 </project>

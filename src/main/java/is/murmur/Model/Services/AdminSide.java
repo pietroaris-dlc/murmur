@@ -1,178 +1,173 @@
 package is.murmur.Model.Services;
 
 
-import is.murmur.Model.Entities.*;
-import is.murmur.Model.Enums.ApplicationStatus;
-import is.murmur.Model.Enums.ApplicationType;
-import is.murmur.Model.Enums.UserType;
-import is.murmur.Model.JPAUtil;
+import is.murmur.Model.Beans.*;
+import is.murmur.Model.Helpers.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
+
 import java.util.List;
 
 public class AdminSide {
 
-    public static List<Application> getApplications(Registereduser admin) {
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-
-        try {
-            TypedQuery<Application> query = em.createQuery(
-                    "SELECT a FROM Application a WHERE a.user = :adminId", Application.class);
-            query.setParameter("adminId", admin.getId());
-            if(query.getSingleResult().getStatus() == String.valueOf(ApplicationStatus.PENDING) )
-                return query.getResultList();
-            if( query.getSingleResult().getStatus() == String.valueOf(ApplicationStatus.CHECKED ) ){
-
-                return query.getResultList();
-
-            }
-            return query.getResultList();
-
-        } catch (Exception e) {
-            return null;
-
+    public static List<Application> getApplications(Registereduser admin, String type) {
+        try (EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager()) {
+            return em.createQuery(
+                            "select a from Application a " +
+                                    "where a.type = :type " +
+                                    "  and ( a.status = 'PENDING' " +
+                                    "        or (a.status = 'CHECKED' " +
+                                    "            and exists (" +
+                                    "                select cc from Checkedcomponent cc " +
+                                    "                where cc.application = a " +
+                                    "                  and cc.admin = :admin" +
+                                    "            )" +
+                                    "        )" +
+                                    "      )",
+                            Application.class)
+                    .setParameter("type", type)
+                    .setParameter("admin", admin)
+                    .getResultList();
         }
     }
+
     public static boolean documentationCheck(Registereduser admin, Application application) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-            Checkedcomponent chkdcmp = new Checkedcomponent();
-            if (application.getStatus() == String.valueOf(ApplicationStatus.PENDING)) {
+            application.setStatus("CHECKED");
+            em.merge(application);
+            em.flush();
 
-                chkdcmp.setAdmin(admin);
-                chkdcmp.setApplication(application);
+            Checkedcomponent checkedcomponent;
+            checkedcomponent = new Checkedcomponent();
+            checkedcomponent.setApplication(application);
+            checkedcomponent.setId(application.getId());
+            checkedcomponent.setAdmin(admin);
+            em.persist(checkedcomponent);
 
-                application.setStatus(String.valueOf(ApplicationStatus.CHECKED));
-                em.persist(chkdcmp);
-                em.persist(application);
-
-                transaction.commit();
-
-                return true;
-            }
-            return false;
-
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
-        }
-
-
-    }
-
-    public static boolean defineApplication(Application application, boolean state) {
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-
-        try {
-            transaction.begin();
-            Application a = new Application();
-
-            a.setStatus(application.getStatus());
-
-            // Update the approval status of the application
-            if(state == true) {
-                a.setStatus(String.valueOf(ApplicationStatus.APPROVED));
-            }else if (state == false) {
-                a.setStatus(String.valueOf(ApplicationStatus.REJECTED ));
-            }
-
-            em.merge(a);
-
-            // Commit transaction to save changes
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-                return false;
-            }
-        } finally {
-            em.close();
         }
-
-        return false;
     }
 
-
-
-    public static boolean lockUser( Registereduser admin) {
+    public static boolean approveApplication(Application application) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-
-            // Fetch the specific user using a JPQL query
-            TypedQuery<Registereduser> query = em.createQuery(
-                    "SELECT u FROM Registereduser u WHERE u.id = :adminId", Registereduser.class
-            );
-            query.setParameter("adminId", admin.getId());
-            List<Registereduser> admins = query.getResultList();
-            if(admins.isEmpty()) {
-                return false;
+            application.setStatus("APPROVED");
+            em.merge(application);
+            em.flush();
+            switch (application.getType().toLowerCase()) {
+                case "upgrade":
+                    Upgradecomponent upgradeComponent = em.createQuery(
+                            "select up from Upgradecomponent up where up.application = :application",
+                            Upgradecomponent.class)
+                            .setParameter("application", application)
+                            .getSingleResult();
+                    if(WorkerSide.addCareer(
+                            application.getUser(),
+                            em.find(Profession.class, upgradeComponent.getProfessionName()),
+                            upgradeComponent.getHourlyRate(),
+                            upgradeComponent.getSeniority()
+                    ) == null) {
+                        transaction.rollback();
+                        return rejectApplication(application, "Errore durante l'inserimento della carriera");
+                    }
+                    if(WorkerSide.addToActivityArea(
+                            application.getUser(),
+                            upgradeComponent.getCity(),
+                            upgradeComponent.getStreet(),
+                            upgradeComponent.getStreetNumber(),
+                            upgradeComponent.getDistrict(),
+                            upgradeComponent.getRegion(),
+                            upgradeComponent.getCountry()
+                    )==null) {
+                        transaction.rollback();
+                        return rejectApplication(application, "Errore durante l'inserimento della location");
+                    }
+                    break;
+                case "job":
+                    Jobcomponent jobComponent = em.createQuery(
+                            "select j from Jobcomponent j where j.application = :application",
+                            Jobcomponent.class)
+                            .setParameter("application", application)
+                            .getSingleResult();
+                    if(WorkerSide.addCareer(
+                        application.getUser(),
+                        em.find(Profession.class, jobComponent.getProfessionName()),
+                        jobComponent.getHourlyRate(),
+                        jobComponent.getSeniority()
+                    ) == null){
+                        transaction.rollback();
+                        return rejectApplication(application, "Errore durante l'inserimento della carriera");
+                    }
+                    break;
+                case "collab":
+                    application.setStatus("REJECTED");
+                    em.merge(application);
+                    em.flush();
+                    Registereduser user = application.getUser();
+                    user.setAdmin(true);
+                    em.merge(user);
+                    em.flush();
+                    break;
+                default:
+                    transaction.rollback();
+                    return false;
             }
-
-            Registereduser u = new Registereduser();
-            u.setLocked(true);
-            em.merge(u);
             transaction.commit();
-
             return true;
-
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
         } finally {
             em.close();
         }
-
-
     }
 
-    public static boolean unlockUser( Registereduser admin ) {
+    public static boolean rejectApplication(Application application, String rejectionNote) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-
-            // Fetch the specific user using a JPQL query
-            TypedQuery<Registereduser> query = em.createQuery(
-                    "SELECT u FROM Registereduser u WHERE u.id = :adminId", Registereduser.class
-            );
-            query.setParameter("adminId", admin.getId());
-            List<Registereduser> admins = query.getResultList();
-            if(admins.isEmpty()) {
-                return false;
-            }
-
-            Registereduser u = new Registereduser();
-            u.setLocked(false);
-            em.merge(u);
+            application.setStatus("REJECTED");
+            em.merge(application);
+            em.flush();
+            Rejectedcomponent rejectedcomponent = new Rejectedcomponent();
+            rejectedcomponent.setApplication(application);
+            rejectedcomponent.setId(application.getId());
+            rejectedcomponent.setRejectionNote(rejectionNote);
+            em.persist(rejectedcomponent);
             transaction.commit();
-
-            return true;
-
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
             return false;
-        } finally {
-            em.close();
         }
-
-
     }
 
+    public static boolean lockUnlockUser(Long toLockId) {
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+            Registereduser toLock = em.find(Registereduser.class, toLockId);
+            if (toLock != null && !toLock.getLocked()) {
+                toLock.setLocked(true);
+            } else {
+                assert toLock != null;
+                toLock.setLocked(false);
+            }
+            em.merge(toLock);
+            transaction.commit();
+            return true;
+        }
+    }
+
+    public static Registereduser getUser(String email){
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        return em.createQuery(
+                "select u from Registereduser u where u.email = :email"
+                ,Registereduser.class
+        )
+                .setParameter("email", email)
+                .getSingleResult();
+    }
 }
