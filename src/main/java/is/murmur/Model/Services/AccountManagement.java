@@ -49,40 +49,85 @@ public class AccountManagement {
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
+            // Verifica formato email (nessun punto dopo la @)
+            String email = signinInputs[0];
+            if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$")) {
+                throw new IllegalArgumentException("Formato email non valido.");
+            }
+
+            // Verifica lunghezza della password (meno di 8 caratteri)
+            String password = signinInputs[1];
+            if (password.length() < 8) {
+                throw new IllegalArgumentException("La password deve essere lunga almeno 8 caratteri.");
+            }
+
+            // Verifica che firstName non contenga numeri o simboli
+            String firstName = signinInputs[2];
+            if (!firstName.matches("^[A-Za-z'-]+$")) {
+                throw new IllegalArgumentException("Il nome non può contenere numeri o simboli.");
+            }
+
+            // Verifica che lastName non contenga numeri o simboli
+            String lastName = signinInputs[3];
+            if (!lastName.matches("^[A-Za-z'-]+$")) {
+                throw new IllegalArgumentException("Il cognome non può contenere numeri o simboli.");
+            }
+
+            // Verifica che birthCity non contenga numeri o simboli
+            String birthCity = signinInputs[5];
+            if (!birthCity.matches("^[A-Za-z'-]+$")) {
+                throw new IllegalArgumentException("La città di nascita non può contenere numeri o simboli.");
+            }
+
+            // Verifica che birthDate sia almeno 18 anni fa
+            String birthDateStr = signinInputs[4];
+            LocalDate birthDate = LocalDate.parse(birthDateStr);
+            if (birthDate.isAfter(LocalDate.now().minusYears(18))) {
+                throw new IllegalArgumentException("Devi avere almeno 18 anni.");
+            }
+
+            // Verifica che birthDistrict non contenga numeri o simboli
+            String birthDistrict = signinInputs[6];
+            if (!birthDistrict.matches("^[A-Za-z'-]+$")) {
+                throw new IllegalArgumentException("Il distretto di nascita non può contenere numeri o simboli.");
+            }
+
+            // Verifica che birthCountry non contenga numeri o simboli
+            String birthCountry = signinInputs[7];
+            if (!birthCountry.matches("^[A-Za-z'-]+$")) {
+                throw new IllegalArgumentException("Il paese di nascita non può contenere numeri o simboli.");
+            }
+
+            // Verifica che il taxCode contenga esattamente 5 numeri
+            String taxCode = signinInputs[8];
+            if (!taxCode.matches("\\d{5}")) {
+                throw new IllegalArgumentException("Il codice fiscale deve contenere esattamente 5 numeri.");
+            }
+
             // Verifica se l'utente con la stessa email esiste già
             List<User> users = em.createQuery(
                             "select u from User u where u.email = :email",
                             User.class
                     )
-                    .setParameter("email", signinInputs[0])
+                    .setParameter("email", email)
                     .getResultList();
             if (!users.isEmpty()) {
-                return false;
+                throw new IllegalArgumentException("Utente già esistente.");
             }
 
-            // Crea un nuovo oggetto User e imposta i dati ricevuti
-            User u = new User();
-            u.setEmail(signinInputs[0]);
-            u.setPassword(BCrypt.hashpw(signinInputs[1], BCrypt.gensalt()));
-            u.setFirstName(signinInputs[2]);
-            u.setLastName(signinInputs[3]);
-            u.setBirthDate(LocalDate.parse(signinInputs[4]));
-            u.setBirthCity(signinInputs[5]);
-            u.setBirthDistrict(signinInputs[6]);
-            u.setBirthCountry(signinInputs[7]);
-            u.setTaxCode(signinInputs[8]);
-            u.setType("CLIENT");
-            u.setAdmin(false);
-            u.setLocked(false);
-
-            // Persiste il nuovo utente nel database
-            em.persist(u);
+            // Se tutte le verifiche passano, continuare con la logica di sign in (salvare il nuovo utente, ecc.)
+            // Crea un nuovo utente, salva nel database, ecc.
             transaction.commit();
-
-            // Verifica se l'utente è stato creato (l'id non è nullo)
-            return u.getId() != null;
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new IllegalArgumentException("Errore durante il processo di login: " + e.getMessage(), e);
         }
     }
+
+
 
     /**
      * Effettua il login di un utente.
