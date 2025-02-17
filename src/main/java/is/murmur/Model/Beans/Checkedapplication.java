@@ -5,8 +5,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "rejectedcomponent")
-public class Rejectedcomponent {
+@Table(name = "checkedapplication")
+public class Checkedapplication {
     @Id
     @Column(name = "applicationId", nullable = false)
     private Long id;
@@ -17,9 +17,10 @@ public class Rejectedcomponent {
     @JoinColumn(name = "applicationId", nullable = false)
     private Application application;
 
-    @Lob
-    @Column(name = "rejectionNote", nullable = false)
-    private String rejectionNote;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "adminId", nullable = false)
+    private User admin;
 
     public Long getId() {
         return id;
@@ -37,12 +38,12 @@ public class Rejectedcomponent {
         this.application = application;
     }
 
-    public String getRejectionNote() {
-        return rejectionNote;
+    public User getAdmin() {
+        return admin;
     }
 
-    public void setRejectionNote(String rejectionNote) {
-        this.rejectionNote = rejectionNote;
+    public void setAdmin(User admin) {
+        this.admin = admin;
     }
 
 }

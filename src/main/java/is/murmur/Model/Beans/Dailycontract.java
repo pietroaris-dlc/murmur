@@ -7,8 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "daily")
-public class Daily {
+@Table(name = "dailycontract")
+public class Dailycontract {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
@@ -17,7 +17,7 @@ public class Daily {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id", nullable = false)
-    private Schedule schedule;
+    private Contract contract;
 
     @Column(name = "day", nullable = false)
     private LocalDate day;
@@ -28,6 +28,8 @@ public class Daily {
     @Column(name = "endHour", nullable = false)
     private LocalTime endHour;
 
+    // Getters e Setters
+
     public Long getId() {
         return id;
     }
@@ -36,12 +38,12 @@ public class Daily {
         this.id = id;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
+    public Contract getContract() {
+        return contract;
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
+    public void setContract(Contract contract) {
+        this.contract = contract;
     }
 
     public LocalDate getDay() {

@@ -1,35 +1,71 @@
 package is.murmur.Model.Helpers;
 
-import is.murmur.Model.Beans.Alias;
+import is.murmur.Model.Beans.Career;
+import is.murmur.Model.Beans.User;
 
-import java.math.BigDecimal;
-
+/**
+ * La classe {@code Result} rappresenta un risultato della ricerca di lavoratori.
+ * <p>
+ * Ogni oggetto {@code Result} contiene informazioni sull'utente lavoratore,
+ * la sua carriera e, opzionalmente, il numero civico associato alla sua attività.
+ * </p>
+ *
+ 
+ */
 public class Result {
-    private final Long workerId;
-    private Alias workerAlias;
-    private final String profession;
-    private final BigDecimal hourlyRate;
+    private final User worker;
+    private final Career career;
     private final Short streetNumber;
-    private final Double priority;
-    private final Integer seniority;
 
-    public Result(Long workerId, Alias workerAlias, String profession, BigDecimal hourlyRate, Short streetNumber, Double priority, Integer seniority) {
-        this.workerId = workerId;
-        this.workerAlias = workerAlias;
-        this.profession = profession;
-        this.hourlyRate = hourlyRate;
+    /**
+     * Costruttore per creare un {@code Result} con informazioni complete.
+     *
+     * @param worker       L'utente lavoratore.
+     * @param career       La carriera associata al lavoratore.
+     * @param streetNumber Il numero civico (opzionale) relativo alla localizzazione del lavoratore.
+     */
+    public Result(User worker, Career career, Short streetNumber) {
+        this.worker = worker;
+        this.career = career;
         this.streetNumber = streetNumber;
-        this.priority = priority;
-        this.seniority = seniority;
     }
 
-    public Long getWorkerId() { return workerId; }
-    public Alias getWorkerAlias() { return workerAlias; }
-    public void setWorkerAlias(Alias workerAlias) { this.workerAlias = workerAlias;}
-    public String getProfession() { return profession;}
-    public BigDecimal getHourlyRate() { return hourlyRate;}
-    public Short getStreetNumber() { return streetNumber; }
-    public Double getPriority() { return priority;}
-    public Integer getSeniority() { return seniority;}
-}
+    /**
+     * Costruttore per creare un {@code Result} senza il numero civico.
+     *
+     * @param worker L'utente lavoratore.
+     * @param career La carriera associata al lavoratore.
+     */
+    public Result(User worker, Career career) {
+        this.worker = worker;
+        this.career = career;
+        this.streetNumber = null;
+    }
 
+    /**
+     * Restituisce l'utente lavoratore associato al risultato.
+     *
+     * @return l'oggetto {@link User} rappresentante il lavoratore.
+     */
+    public User getWorker() {
+        return worker;
+    }
+
+    /**
+     * Restituisce la carriera associata al risultato.
+     *
+     * @return l'oggetto {@link Career} relativo al lavoratore.
+     */
+    public Career getCareer() {
+        return career;
+    }
+
+    /**
+     * Restituisce il numero civico associato al risultato, se presente.
+     *
+     * @return il numero civico come {@link Short}, oppure {@code null} se non impostato.
+     */
+    public Short getStreetNumber() {
+        return streetNumber;
+    }
+}

@@ -5,10 +5,12 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "workercomponent")
-public class Workercomponent {
+@Table(name = "worker")
+public class Worker {
     @Id
     @Column(name = "userId", nullable = false)
     private Long id;
@@ -17,7 +19,7 @@ public class Workercomponent {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userId", nullable = false)
-    private Registereduser registereduser;
+    private User user;
 
     @Column(name = "priority", nullable = false)
     private Double priority;
@@ -25,11 +27,14 @@ public class Workercomponent {
     @Column(name = "averageRating", nullable = false)
     private Double averageRating;
 
-    @Column(name = "lastMonthWorkdays", nullable = false)
-    private Integer lastMonthWorkdays;
+    @Column(name = "lastMonthWorkTime", nullable = false)
+    private Double lastMonthWorkTime;
 
     @Column(name = "totalProfit", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalProfit;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Workeralias> workeraliases = new LinkedHashSet<>();
 
     public Long getId() {
         return id;
@@ -39,12 +44,12 @@ public class Workercomponent {
         this.id = id;
     }
 
-    public Registereduser getRegistereduser() {
-        return registereduser;
+    public User getUser() {
+        return user;
     }
 
-    public void setRegistereduser(Registereduser registereduser) {
-        this.registereduser = registereduser;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Double getPriority() {
@@ -63,12 +68,12 @@ public class Workercomponent {
         this.averageRating = averageRating;
     }
 
-    public Integer getLastMonthWorkdays() {
-        return lastMonthWorkdays;
+    public Double getLastMonthWorkTime() {
+        return lastMonthWorkTime;
     }
 
-    public void setLastMonthWorkdays(Integer lastMonthWorkdays) {
-        this.lastMonthWorkdays = lastMonthWorkdays;
+    public void setLastMonthWorkTime(Double lastMonthWorkTime) {
+        this.lastMonthWorkTime = lastMonthWorkTime;
     }
 
     public BigDecimal getTotalProfit() {
@@ -77,6 +82,14 @@ public class Workercomponent {
 
     public void setTotalProfit(BigDecimal totalProfit) {
         this.totalProfit = totalProfit;
+    }
+
+    public Set<Workeralias> getWorkeraliases() {
+        return workeraliases;
+    }
+
+    public void setWorkeraliases(Set<Workeralias> workeraliases) {
+        this.workeraliases = workeraliases;
     }
 
 }

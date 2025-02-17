@@ -1,102 +1,102 @@
 package is.murmur.Model.Services.SearchStrategy;
-import is.murmur.Model.Beans.Alias;
-import is.murmur.Model.Beans.AliasId;
-import is.murmur.Model.Beans.Registereduser;
-import is.murmur.Model.Helpers.Criteria;
-import is.murmur.Model.Helpers.JPAUtil;
-import is.murmur.Model.Helpers.Result;
+
+import is.murmur.Model.Beans.*;
+import is.murmur.Model.Helpers.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Implementazione della strategia di ricerca remota giornaliera.
+ * <p>
+ * Questa classe implementa l'interfaccia {@link SearchStrategy} e definisce la logica
+ * per eseguire una ricerca di lavoratori (worker) che soddisfano i criteri giornalieri
+ * definiti, come la professione, il range di tariffa oraria e l'intervallo orario.
+ * </p>
+ *
+ 
+ */
 public class DailyRemoteSearchStrategy implements SearchStrategy {
 
+    /**
+     * Esegue la ricerca dei lavoratori in base ai criteri specificati.
+     * <p>
+     * Il metodo esegue una query sul database utilizzando JPA per recuperare
+     * utenti di tipo "WORKER" insieme alle loro informazioni di carriera, filtrando
+     * in base alla professione e alla tariffa oraria. Successivamente, controlla
+     * eventuali collisioni con l'orario specificato e ordina i risultati in base alla priorità.
+     * Infine, i risultati vengono formattati in un oggetto JSON.
+     * </p>
+     *
+     * @param criteria I criteri di ricerca che includono informazioni quali la professione,
+     *                 la tariffa oraria minima e massima, il giorno e l'intervallo orario.
+     * @return Una stringa in formato JSON contenente i criteri di ricerca e i risultati, oppure
+     *         un messaggio di errore in caso di eccezioni.
+     */
     @Override
     public String search(Criteria criteria) {
-        // Per Daily Remote utilizziamo i campi specifici per Daily
+        // Ottiene l'EntityManager per interagire con il database
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         String json = "";
         try {
+            // Estrae i parametri di ricerca dai criteri
             String profession = criteria.getProfession();
             double hourlyRateMin = criteria.getHourlyRateMin();
             double hourlyRateMax = criteria.getHourlyRateMax();
             LocalDate day = criteria.getDay();
             LocalTime startHour = criteria.getDailyStartHour();
             LocalTime endHour = criteria.getDailyEndHour();
-            String dayOfWeek = day.getDayOfWeek().toString();
 
-            String jpql = "SELECT u.id, c.profession, c.hourlyRate, wc.priority, c.seniority " +
-                    "FROM Registereduser u " +
-                    "JOIN Career c ON u.id = c.worker.id " +
-                    "JOIN Workercomponent wc ON u.id = wc.id " +
-                    "WHERE u.type = 'WORKER' " +
-                    "  AND c.profession = :profession " +
-                    "  AND c.hourlyRate BETWEEN :hourlyRateMin AND :hourlyRateMax " +
-                    "  AND NOT EXISTS ( " +
-                    "       SELECT p FROM Planner p, Daily d " +
-                    "       WHERE p.user.id = u.id " +
-                    "         AND p.schedule.id = d.id " +
-                    "         AND d.day = :day " +
-                    "         AND d.startHour < :endHour " +
-                    "         AND d.endHour > :startHour " +
-                    "  ) " +
-                    "  AND NOT EXISTS ( " +
-                    "       SELECT p FROM Planner p, Weekly w, Weekday wd, Daily d " +
-                    "       WHERE p.user.id = u.id " +
-                    "         AND p.schedule.id = w.id " +
-                    "         AND wd.weekly.id = w.id " +
-                    "         AND d.id = wd.daily.id " +
-                    "         AND :day BETWEEN w.startDate AND w.endDate " +
-                    "         AND wd.id.dayOfWeek = :dayOfWeek " +
-                    "         AND d.startHour < :endHour " +
-                    "         AND d.endHour > :startHour " +
-                    "  )";
-            Query query = em.createQuery(jpql);
-            query.setParameter("profession", profession);
-            query.setParameter("hourlyRateMin", hourlyRateMin);
-            query.setParameter("hourlyRateMax", hourlyRateMax);
-            query.setParameter("day", day);
-            query.setParameter("startHour", startHour);
-            query.setParameter("endHour", endHour);
-            query.setParameter("dayOfWeek", dayOfWeek);
+            // Crea la query per selezionare gli utenti e le loro carriere
+            Query query = em.createQuery(
+                            "select u, c from User u " +
+                                    "join Planner p on p.user.id = u.id " +
+                                    "join Career c on c.worker.id = u.id " +
+                                    "join Daily d on d.schedule.id = p.schedule.id " +
+                                    "join Activityarea aa on aa.worker.id = u.id " +
+                                    "where u.type = 'WORKER' " +
+                                    "and c.profession.name = :profession " +
+                                    "and c.hourlyRate > :hourlyRateMin " +
+                                    "and c.hourlyRate < :hourlyRateMax ")
+                    .setParameter("profession", criteria.getProfession())
+                    .setParameter("hourlyRateMin", criteria.getHourlyRateMin())
+                    .setParameter("hourlyRateMax", criteria.getHourlyRateMax());
 
+            // Esegue la query e ottiene i risultati
             @SuppressWarnings("unchecked")
             List<Object[]> queryResults = query.getResultList();
-            List<Result> resultsList = new ArrayList<>();
+            List<Result> results = new ArrayList<>();
+
+            // Itera sui risultati della query
             for (Object[] row : queryResults) {
-                Long workerId = (Long) row[0];
-                String prof = (String) row[1];
-                BigDecimal hrRate = (BigDecimal) row[2];
-                Double priority = (Double) row[3];
-                Integer seniority = (Integer) row[4];
-                resultsList.add(new Result(workerId, null,prof, hrRate, null,priority, seniority));
+                User worker = (User) row[0];
+                // Se viene rilevata una collisione nell'orario specificato, salta questo worker
+                if (Collision.detect(worker, criteria.getDay(), new TimeInterval(criteria.getDailyStartHour(), criteria.getDailyEndHour())))
+                    continue;
+                Career career = (Career) row[1];
+                // Aggiunge il risultato alla lista
+                results.add(new Result(worker, career));
             }
 
-            // Creazione dei record alias per ciascun worker
-            em.getTransaction().begin();
-            for (Result res : resultsList) {
-                Registereduser worker = em.find(Registereduser.class, res.getWorkerAlias().getUser());
-                Alias newAlias = new Alias();
-                AliasId aliasId = new AliasId();
-                aliasId.setUserId(worker.getId());
-                aliasId.setId(null);
-                newAlias.setId(aliasId);
-                newAlias.setUser(worker);
-                em.persist(newAlias);
-                em.flush();
-                res.setWorkerAlias(newAlias);
-            }
-            em.getTransaction().commit();
+            // Ordina i risultati in base alla priorità del lavoratore in ordine decrescente
+            results.sort(new Comparator<Result>() {
+                @Override
+                public int compare(Result o1, Result o2) {
+                    return (int) (o2.getWorker().getWorker().getPriority() - o1.getWorker().getWorker().getPriority());
+                }
+            });
 
-            // Costruzione dell'output JSON
+            // Crea l'oggetto JSON per l'output
             JSONObject output = new JSONObject();
+
+            // Crea e popola l'oggetto JSON con i criteri di ricerca
             JSONObject criteriaJson = new JSONObject();
             criteriaJson.put("scheduleType", criteria.getScheduleType());
             criteriaJson.put("serviceMode", criteria.getServiceMode());
@@ -106,28 +106,32 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
             criteriaJson.put("day", day.toString());
             criteriaJson.put("startHour", startHour.toString());
             criteriaJson.put("endHour", endHour.toString());
-            criteriaJson.put("dayOfWeek", dayOfWeek);
+
+            // Aggiunge i criteri di ricerca all'output
             output.put("searchCriteria", criteriaJson);
 
+            // Crea l'array JSON per contenere i risultati
             JSONArray resultsArray = new JSONArray();
-            for (Result res : resultsList) {
-                JSONObject workerJson = new JSONObject();
-                workerJson.put("alias", "workerAlias" + res.getWorkerAlias().getId());
-                workerJson.put("profession", res.getProfession());
-                workerJson.put("hourlyRate", res.getHourlyRate());
-                workerJson.put("priority", res.getPriority());
-                workerJson.put("seniority", res.getSeniority());
-                resultsArray.put(workerJson);
+            for (Result result : results) {
+                JSONObject resultJson = new JSONObject();
+                resultJson.put("user", result.getWorker());
+                resultJson.put("career", result.getCareer());
+                resultsArray.put(resultJson);
             }
+            // Aggiunge l'array dei risultati all'output
             output.put("results", resultsArray);
-            json = output.toString(2);
 
+            // Converte l'oggetto JSON in stringa con indentazione (2 spazi)
+            json = output.toString(2);
         } catch (Exception e) {
+            // Stampa lo stack trace in caso di eccezione
             e.printStackTrace();
+            // Crea un oggetto JSON per rappresentare l'errore
             JSONObject errorJson = new JSONObject();
             errorJson.put("error", "Server error occurred: " + e.getMessage());
             json = errorJson.toString();
         } finally {
+            // Chiude l'EntityManager per liberare le risorse
             em.close();
         }
         return json;

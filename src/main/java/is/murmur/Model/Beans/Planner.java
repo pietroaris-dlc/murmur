@@ -14,7 +14,7 @@ public class Planner {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userId", nullable = false)
-    private Registereduser user;
+    private User user;
 
     @MapsId("scheduleId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -30,11 +30,11 @@ public class Planner {
         this.id = id;
     }
 
-    public Registereduser getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Registereduser user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

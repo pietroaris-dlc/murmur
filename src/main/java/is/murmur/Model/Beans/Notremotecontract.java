@@ -5,8 +5,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "notremotecomponent")
-public class Notremotecomponent {
+@Table(name = "notremotecontract")
+public class Notremotecontract {
     @Id
     @Column(name = "contractId", nullable = false)
     private Long id;

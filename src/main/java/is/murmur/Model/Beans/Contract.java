@@ -1,15 +1,13 @@
 package is.murmur.Model.Beans;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "contract")
 public class Contract {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -19,21 +17,12 @@ public class Contract {
     @Column(name = "hourlyRate", nullable = false, precision = 10, scale = 2)
     private BigDecimal hourlyRate;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "clientAlias", nullable = false, referencedColumnName = "id")
-    private Alias clientAlias;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "workerAlias", nullable = false, referencedColumnName = "id")
-    private Alias workerAlias;
-
-    @Column(name = "scheduleId", nullable = false)
-    private Long scheduleId;
-
     @Column(name = "totalFee", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalFee;
+
+    @Lob
+    @Column(name = "scheduleType", nullable = false)
+    private String scheduleType;
 
     @Lob
     @Column(name = "serviceMode")
@@ -42,6 +31,27 @@ public class Contract {
     @Lob
     @Column(name = "status", nullable = false)
     private String status;
+
+    @OneToOne(mappedBy = "contract")
+    private Alias alias;
+
+    // Modifica qui: usa "contract" anziché "id"
+    @OneToOne(mappedBy = "contract")
+    private Dailycontract dailycontract;
+
+    @OneToOne(mappedBy = "contract")
+    private Notremotecontract notremotecontract;
+
+    @OneToOne(mappedBy = "contract")
+    private Offer offer;
+
+    @OneToOne(mappedBy = "contract")
+    private Review review;
+
+    @OneToOne(mappedBy = "contract")
+    private Weeklycontract weeklycontract;
+
+    // Getters e Setters
 
     public Long getId() {
         return id;
@@ -67,36 +77,20 @@ public class Contract {
         this.hourlyRate = hourlyRate;
     }
 
-    public Alias getClientAlias() {
-        return clientAlias;
-    }
-
-    public void setClientAlias(Alias clientAlias) {
-        this.clientAlias = clientAlias;
-    }
-
-    public Alias getWorkerAlias() {
-        return workerAlias;
-    }
-
-    public void setWorkerAlias(Alias workerAlias) {
-        this.workerAlias = workerAlias;
-    }
-
-    public Long getScheduleId() {
-        return scheduleId;
-    }
-
-    public void setScheduleId(Long scheduleId) {
-        this.scheduleId = scheduleId;
-    }
-
     public BigDecimal getTotalFee() {
         return totalFee;
     }
 
     public void setTotalFee(BigDecimal totalFee) {
         this.totalFee = totalFee;
+    }
+
+    public String getScheduleType() {
+        return scheduleType;
+    }
+
+    public void setScheduleType(String scheduleType) {
+        this.scheduleType = scheduleType;
     }
 
     public String getServiceMode() {
@@ -115,4 +109,51 @@ public class Contract {
         this.status = status;
     }
 
+    public Alias getAlias() {
+        return alias;
+    }
+
+    public void setAlias(Alias alias) {
+        this.alias = alias;
+    }
+
+    public Dailycontract getDailycontract() {
+        return dailycontract;
+    }
+
+    public void setDailycontract(Dailycontract dailycontract) {
+        this.dailycontract = dailycontract;
+    }
+
+    public Notremotecontract getNotremotecontract() {
+        return notremotecontract;
+    }
+
+    public void setNotremotecontract(Notremotecontract notremotecontract) {
+        this.notremotecontract = notremotecontract;
+    }
+
+    public Offer getOffer() {
+        return offer;
+    }
+
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+    }
+
+    public Review getReview() {
+        return review;
+    }
+
+    public void setReview(Review review) {
+        this.review = review;
+    }
+
+    public Weeklycontract getWeeklycontract() {
+        return weeklycontract;
+    }
+
+    public void setWeeklycontract(Weeklycontract weeklycontract) {
+        this.weeklycontract = weeklycontract;
+    }
 }

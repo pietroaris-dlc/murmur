@@ -9,8 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "weekly")
-public class Weekly {
+@Table(name = "weeklycontract")
+public class Weeklycontract {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
@@ -19,16 +19,16 @@ public class Weekly {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id", nullable = false)
-    private Schedule schedule;
+    private Contract contract;
 
-    @Column(name = "startDate", nullable = false)
+    @Column(name = "StartDate", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "endDate", nullable = false)
+    @Column(name = "EndDate", nullable = false)
     private LocalDate endDate;
 
     @OneToMany(mappedBy = "weekly")
-    private Set<Weekday> weekdays = new LinkedHashSet<>();
+    private Set<Weekdaycontract> weekdaycontracts = new LinkedHashSet<>();
 
     public Long getId() {
         return id;
@@ -38,12 +38,12 @@ public class Weekly {
         this.id = id;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
+    public Contract getContract() {
+        return contract;
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
+    public void setContract(Contract contract) {
+        this.contract = contract;
     }
 
     public LocalDate getStartDate() {
@@ -62,12 +62,12 @@ public class Weekly {
         this.endDate = endDate;
     }
 
-    public Set<Weekday> getWeekdays() {
-        return weekdays;
+    public Set<Weekdaycontract> getWeekdaycontracts() {
+        return weekdaycontracts;
     }
 
-    public void setWeekdays(Set<Weekday> weekdays) {
-        this.weekdays = weekdays;
+    public void setWeekdaycontracts(Set<Weekdaycontract> weekdaycontracts) {
+        this.weekdaycontracts = weekdaycontracts;
     }
 
 }

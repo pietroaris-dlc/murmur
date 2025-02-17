@@ -1,10 +1,10 @@
 package is.murmur.Model.Services;
 
 import is.murmur.Model.Beans.*;
+import is.murmur.Model.Helpers.DraftBuffer;
 import is.murmur.Model.Helpers.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.math.BigDecimal;
@@ -13,48 +13,55 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * La classe AccountManagement gestisce le operazioni relative agli account:
- * registrazione, login, logout, cancellazione account, invio di application per upgrade
- * o collaborazione, upgrade account, avvio collaborazione e visualizzazione delle informazioni personali.
+ * Classe di gestione degli account.
+ * <p>
+ * Questa classe fornisce metodi statici per operazioni di gestione degli account,
+ * quali la registrazione (sign in), l'accesso (log in), il logout, la cancellazione dell'account,
+ * la gestione delle applicazioni (upgrade, collaborazione, cancellazione) e l'aggiornamento dell'account.
+ * </p>
+ *
  */
 public class AccountManagement {
 
     /**
-     * Registra un nuovo utente nel sistema.
+     * Registra un nuovo utente (sign in).
+     * <p>
+     * Il metodo controlla se l'email fornita esiste già e, se non esiste, crea un nuovo utente
+     * impostando i dati forniti e hashando la password tramite BCrypt.
+     * </p>
      *
-     * @param signinInputs array di input contenente:
+     * @param signinInputs Array di stringhe contenente i seguenti dati:
      *                     [0] - email,
      *                     [1] - password,
-     *                     [2] - firstName,
-     *                     [3] - lastName,
-     *                     [4] - birthDate (formato yyyy-MM-dd),
-     *                     [5] - birthCity,
-     *                     [6] - birthDistrict,
-     *                     [7] - birthCountry,
-     *                     [8] - taxCode.
-     * @return true se l'utente è stato creato con successo, false altrimenti.
+     *                     [2] - nome,
+     *                     [3] - cognome,
+     *                     [4] - data di nascita (formato ISO),
+     *                     [5] - città di nascita,
+     *                     [6] - distretto di nascita,
+     *                     [7] - paese di nascita,
+     *                     [8] - codice fiscale.
+     * @return {@code true} se la registrazione è avvenuta con successo, {@code false} altrimenti.
      */
     public static boolean signIn(String[] signinInputs) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        // Utilizzo di try-with-resources per garantire la chiusura dell'EntityManager
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Verifica se esiste già un utente con la stessa email
-            TypedQuery<Registereduser> query = em.createQuery(
-                    "select u from Registereduser u where u.email = :email",
-                    Registereduser.class
-            );
-            query.setParameter("email", signinInputs[0]);
-            List<Registereduser> results = query.getResultList();
-            if (!results.isEmpty()) {
-                // Esiste già un utente con la stessa email, rollback e uscita
-                transaction.rollback();
+            // Verifica se l'utente con la stessa email esiste già
+            List<User> users = em.createQuery(
+                            "select u from User u where u.email = :email",
+                            User.class
+                    )
+                    .setParameter("email", signinInputs[0])
+                    .getResultList();
+            if (!users.isEmpty()) {
                 return false;
             }
 
-            // Creazione e popolamento del nuovo utente
-            Registereduser u = new Registereduser();
+            // Crea un nuovo oggetto User e imposta i dati ricevuti
+            User u = new User();
             u.setEmail(signinInputs[0]);
             u.setPassword(BCrypt.hashpw(signinInputs[1], BCrypt.gensalt()));
             u.setFirstName(signinInputs[2]);
@@ -68,493 +75,377 @@ public class AccountManagement {
             u.setAdmin(false);
             u.setLocked(false);
 
+            // Persiste il nuovo utente nel database
             em.persist(u);
             transaction.commit();
 
+            // Verifica se l'utente è stato creato (l'id non è nullo)
             return u.getId() != null;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
      * Effettua il login di un utente.
+     * <p>
+     * Il metodo recupera l'utente tramite l'email, verifica la password usando BCrypt e,
+     * in caso di successo, salva eventuali bozze (drafts) sul lato client.
+     * </p>
      *
-     * @param loginInputs array di input contenente:
+     * @param loginInputs Array di stringhe contenente i dati di login:
      *                    [0] - email,
      *                    [1] - password.
-     * @param drafts      lista di contratti (drafts) che, se privi di ID, verranno associati all'utente
-     *                    tramite un nuovo alias.
-     * @return l'oggetto Registereduser se il login ha successo, null altrimenti.
+     * @param drafts      Lista di {@link DraftBuffer} da salvare per l'utente.
+     * @return L'oggetto {@link User} se il login avviene con successo, {@code null} altrimenti.
      */
-    public static Registereduser logIn(String[] loginInputs, List<Contract> drafts) {
+    public static User logIn(String[] loginInputs, List<DraftBuffer> drafts) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Ricerca dell'utente in base all'email
-            Registereduser toLogin = em.createQuery(
-                    "select u from Registereduser u where u.email = :email",
-                    Registereduser.class
+            // Recupera l'utente in base all'email
+            User toLogin = em.createQuery(
+                    "select u from User u where u.email = :email",
+                    User.class
             ).setParameter("email", loginInputs[0]).getSingleResult();
-            if (toLogin == null) {
-                transaction.rollback();
-                return null;
-            }else if (!BCrypt.checkpw(loginInputs[1], toLogin.getPassword())) {
-                transaction.rollback();
+
+            // Se l'utente non esiste oppure la password non corrisponde, ritorna null
+            if (toLogin == null || !BCrypt.checkpw(loginInputs[1], toLogin.getPassword())) {
                 return null;
             } else {
-                // Gestione dei draft: se il draft non ha ancora un ID, viene creato un nuovo Alias
-                for (Contract draft : drafts) {
-                    if (draft.getId() == null) {
-                        Alias alias = new Alias();
-                        alias.setUser(toLogin);
-                        em.persist(alias);
-                        draft.setClientAlias(alias);
-                        em.persist(draft);
-                    }
+                // Salva le bozze (drafts) lato client
+                for (DraftBuffer draftBuffer : drafts) {
+                    ClientSide.saveDraft(toLogin, draftBuffer);
                 }
                 transaction.commit();
-                if(!toLogin.getLocked()){
+                // Se l'utente non è sbloccato, ritorna null; altrimenti, ritorna l'utente
+                if (!toLogin.getLocked()) {
                     return null;
-                } else return toLogin;
-            }
-
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Effettua il logout dell'utente gestendo i drafts relativi.
-     *
-     * @param toLogout utente che effettua il logout.
-     * @param drafts   lista di contratti (drafts) che, se privi di ID, verranno associati all'utente
-     *                 tramite un nuovo alias.
-     * @return true se l'operazione di logout è andata a buon fine, false altrimenti.
-     */
-    public static boolean logout(Registereduser toLogout, List<Contract> drafts) {
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
-            transaction.begin();
-            for (Contract draft : drafts) {
-                if (draft.getId() == null) {
-                    Alias alias = new Alias();
-                    alias.setUser(toLogout);
-                    em.persist(alias);
-                    draft.setClientAlias(alias);
-                    em.persist(draft);
+                } else {
+                    return toLogin;
                 }
             }
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
-     * Elimina l'account dell'utente se non sono presenti contratti in stati "DRAFT", "OFFER" o "ACTIVE".
-     * In caso contrario, non esegue la cancellazione.
+     * Esegue il logout di un utente.
+     * <p>
+     * Il metodo salva le bozze (drafts) lato client e avvia la transazione di logout.
+     * </p>
      *
-     * @param registereduser utente da eliminare.
-     * @return true se l'account è stato eliminato (ovvero, se non esistevano contratti in stato attivo),
-     *         false altrimenti.
+     * @param toLogout L'utente da disconnettere.
+     * @param drafts   Lista di {@link DraftBuffer} da salvare.
+     * @return {@code true} se il logout avviene con successo.
      */
-    public static boolean accountDeletion(Registereduser registereduser) {
+    public static boolean logout(User toLogout, List<DraftBuffer> drafts) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+            // Salva ogni bozza per l'utente
+            for (DraftBuffer draft : drafts) {
+                ClientSide.saveDraft(toLogout, draft);
+            }
+            // Nota: non viene eseguito commit della transazione; si presume che il salvataggio
+            // delle bozze sia sufficiente per completare il logout.
+            return true;
+        }
+    }
+
+    /**
+     * Richiede la cancellazione dell'account di un utente.
+     * <p>
+     * Il metodo verifica che non esistano contratti attivi (DRAFT, OFFER, ACTIVE) relativi all'utente.
+     * Se non esistono, rimuove anche le applicazioni associate e permette la cancellazione.
+     * </p>
+     *
+     * @param user L'utente per il quale si richiede la cancellazione dell'account.
+     * @return {@code true} se la cancellazione è possibile, {@code false} altrimenti.
+     */
+    public static boolean accountDeletion(User user) {
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Verifica dell'esistenza di contratti in stati non cancellabili
-            TypedQuery<Contract> contractQuery = em.createQuery(
-                    "select c from Contract c " +
-                            "where c.status in ('DRAFT', 'OFFER', 'ACTIVE') " +
-                            "  and (c.clientAlias.user.id = :userId or c.workerAlias.user.id = :userId)",
-                    Contract.class);
-            contractQuery.setParameter("userId", registereduser.getId());
+            // Recupera i contratti attivi, in offerta o in draft associati all'utente
+            List<Contract> contracts = em.createQuery(
+                            "select c from Contract c " +
+                                    "where c.status in ('DRAFT', 'OFFER', 'ACTIVE') " +
+                                    "  and (c.alias.clientAlias.user = :user or c.alias.workerAlias.user.user = :user)",
+                            Contract.class)
+                    .setParameter("user", user)
+                    .getResultList();
 
-            if (!contractQuery.getResultList().isEmpty()) {
-                transaction.rollback();
+            // Se esistono contratti attivi, l'account non può essere cancellato
+            if (!contracts.isEmpty()) {
                 return false;
             }
 
-            // Rimozione delle application associate all'utente
-            TypedQuery<Application> applicationQuery = em.createQuery(
-                    "select a from Application a where a.user.id = :userId",
-                    Application.class);
-            applicationQuery.setParameter("userId", registereduser.getId());
-
-            List<Application> applications = applicationQuery.getResultList();
+            // Recupera e rimuove tutte le applicazioni associate all'utente
+            List<Application> applications = em.createQuery(
+                            "select a from Application a where a.user.id = :user",
+                            Application.class)
+                    .setParameter("user", user)
+                    .getResultList();
             for (Application app : applications) {
                 em.remove(app);
             }
 
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
-     * Cancella una application.
+     * Cancella un'applicazione.
+     * <p>
+     * Il metodo rimuove un'applicazione dal database.
+     * </p>
      *
-     * @param application l'application da cancellare.
-     * @return true se l'application è stata cancellata con successo, false altrimenti.
+     * @param application L'applicazione da cancellare.
+     * @return {@code true} se l'applicazione viene cancellata con successo, {@code false} altrimenti.
      */
     public static boolean cancelApplication(Application application) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Se l'oggetto non è gestito, viene unito al contesto di persistenza
+            // Se l'applicazione non è gestita dall'EntityManager, la fonde (merge)
             if (!em.contains(application)) {
                 application = em.merge(application);
             }
+            // Rimuove l'applicazione
             em.remove(application);
+
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
-     * Invia una richiesta di upgrade per l'utente.
+     * Invia una richiesta di upgrade.
+     * <p>
+     * Il metodo crea una nuova applicazione di tipo "UPGRADE" e un oggetto {@link Upgradeapplication}
+     * con i dati forniti, e li persiste nel database.
+     * </p>
      *
-     * @param upgradeInputs array di input contenente:
-     *                      [0] - submissionDate (formato yyyy-MM-dd),
-     *                      [1] - submissionHour (formato HH:mm:ss),
-     *                      [2] - docsUrl,
-     *                      [3] - professionName,
-     *                      [4] - hourlyRate (può contenere valori decimali),
-     *                      [5] - city,
-     *                      [6] - street,
-     *                      [7] - streetNumber,
-     *                      [8] - district,
-     *                      [9] - country.
-     * @param registereduser utente che richiede l'upgrade.
-     * @return true se la richiesta è stata registrata con successo, false altrimenti.
+     * @param upgradeInputs Array di stringhe contenente i seguenti dati:
+     *                      [0] - URL dei documenti,
+     *                      [1] - nome della professione,
+     *                      [2] - tariffa oraria,
+     *                      [3] - anzianità (seniority),
+     *                      [4] - città,
+     *                      [5] - via,
+     *                      [6] - numero civico,
+     *                      [7] - distretto,
+     *                      [8] - paese.
+     * @param user          L'utente che richiede l'upgrade.
+     * @return {@code true} se la richiesta di upgrade è inviata con successo, {@code false} altrimenti.
      */
-    public static boolean upgradeApplication(String[] upgradeInputs, Registereduser registereduser) {
+    public static boolean upgradeApplication(String[] upgradeInputs, User user) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Creazione della Application per l'upgrade
-            Application app = new Application();
-            app.setUser(registereduser);
-            app.setSubmissionDate(LocalDate.parse(upgradeInputs[0]));
-            app.setSubmissionHour(LocalTime.parse(upgradeInputs[1]));
-            app.setDocsUrl(upgradeInputs[2]);
-            app.setStatus("STATUS");
-            app.setType("UPGRADE");
-            em.persist(app);
+            // Crea una nuova applicazione per l'upgrade
+            Application application = new Application();
+            application.setUser(user);
+            application.setSubmissionDate(LocalDate.now());
+            application.setSubmissionHour(LocalTime.now());
+            application.setDocsUrl(upgradeInputs[0]);
+            application.setStatus("STATUS");
+            application.setType("UPGRADE");
+            em.persist(application);
 
-            // Creazione del componente di upgrade associato alla Application
-            Upgradecomponent upgradecomponent = new Upgradecomponent();
-            upgradecomponent.setApplication(app);
-            upgradecomponent.setProfessionName(upgradeInputs[3]);
-            upgradecomponent.setHourlyRate(new BigDecimal(upgradeInputs[4])); // Gestisce valori decimali
-            upgradecomponent.setCity(upgradeInputs[5]);
-            upgradecomponent.setStreet(upgradeInputs[6]);
-            upgradecomponent.setStreetNumber(Short.valueOf(upgradeInputs[7]));
-            upgradecomponent.setDistrict(upgradeInputs[8]);
-            upgradecomponent.setCountry(upgradeInputs[9]);
-            em.persist(upgradecomponent);
+            // Crea un oggetto Upgradeapplication con i dettagli dell'upgrade
+            Upgradeapplication upgradeApplication = new Upgradeapplication();
+            upgradeApplication.setId(application.getId());
+            upgradeApplication.setApplication(application);
+            upgradeApplication.setProfessionName(upgradeInputs[1]);
+            upgradeApplication.setHourlyRate(new BigDecimal(upgradeInputs[2]));
+            upgradeApplication.setSeniority(Integer.valueOf(upgradeInputs[3]));
+            upgradeApplication.setCity(upgradeInputs[4]);
+            upgradeApplication.setStreet(upgradeInputs[5]);
+            upgradeApplication.setStreetNumber(Short.valueOf(upgradeInputs[6]));
+            upgradeApplication.setDistrict(upgradeInputs[7]);
+            upgradeApplication.setCountry(upgradeInputs[8]);
+            em.persist(upgradeApplication);
 
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
-     * Invia una richiesta di collaborazione.
+     * Invia una richiesta di collaborazione (collab).
+     * <p>
+     * Il metodo crea una nuova applicazione di tipo "COLLAB" con stato "PENDING" e la persiste.
+     * </p>
      *
-     * @param collabInputs array di input contenente:
-     *                     [0] - submissionDate (formato yyyy-MM-dd),
-     *                     [1] - submissionHour (formato HH:mm:ss),
-     *                     [2] - docsUrl.
-     * @param registereduser utente che richiede la collaborazione.
-     * @return true se la richiesta è stata registrata con successo, false altrimenti.
+     * @param user    L'utente che richiede la collaborazione.
+     * @param docsUrl L'URL dei documenti relativi alla richiesta.
+     * @return {@code true} se la richiesta viene inviata con successo, {@code false} altrimenti.
      */
-    public static boolean collabApplication(String[] collabInputs, Registereduser registereduser) {
+    public static boolean collabApplication(User user, String docsUrl) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Creazione della Application per la collaborazione
-            Application app = new Application();
-            app.setUser(registereduser);
-            app.setSubmissionDate(LocalDate.parse(collabInputs[0]));
-            app.setSubmissionHour(LocalTime.parse(collabInputs[1]));
-            app.setDocsUrl(collabInputs[2]);
-            app.setStatus("PENDING");
-            app.setType("COLLAB");
-            em.persist(app);
+            // Crea una nuova applicazione per la collaborazione
+            Application application = new Application();
+            application.setUser(user);
+            application.setSubmissionDate(LocalDate.now());
+            application.setSubmissionHour(LocalTime.now());
+            application.setDocsUrl(docsUrl);
+            application.setStatus("PENDING");
+            application.setType("COLLAB");
+            em.persist(application);
 
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
-     * Esegue l'upgrade dell'account dell'utente a WORKER, approvando l'application associata
-     * e aggiungendo la prima Activity Area e la prima Career.
+     * Aggiorna l'account di un utente in seguito a una richiesta di upgrade.
+     * <p>
+     * Il metodo aggiorna il tipo dell'utente a "WORKER", approva l'applicazione di upgrade e
+     * esegue l'upgrade tramite il metodo privato {@code doUpgrade}.
+     * </p>
      *
-     * @param registereduser  utente da aggiornare.
-     * @param upgradecomponent componente di upgrade contenente le informazioni aggiuntive.
-     * @return true se l'upgrade è completato con successo, false altrimenti.
+     * @param user               L'utente da aggiornare.
+     * @param upgradeApplication L'oggetto {@link Upgradeapplication} contenente i dettagli dell'upgrade.
+     * @return {@code true} se l'upgrade viene eseguito con successo, {@code false} altrimenti.
      */
-    public static boolean upgradeAccount(Registereduser registereduser, Upgradecomponent upgradecomponent) {
+    public static boolean upgradeAccount(User user, Upgradeapplication upgradeApplication) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Aggiornamento del tipo di utente a WORKER
-            registereduser.setType("WORKER");
-            em.merge(registereduser);
+            // Imposta il tipo dell'utente a WORKER
+            user.setType("WORKER");
+            em.merge(user);
 
-            // Aggiornamento dello status dell'application associata all'upgrade
-            Application app = upgradecomponent.getApplication();
+            // Approva l'applicazione di upgrade
+            Application app = upgradeApplication.getApplication();
             app.setStatus("APPROVED");
             em.merge(app);
 
-            // Aggiunta dell'area di attività e della carriera
-            if (!addFirstActivityArea(em, registereduser, upgradecomponent)) {
-                transaction.rollback();
-                return false;
-            }
-            if (!addFirstCareer(em, registereduser, upgradecomponent)) {
+            // Esegue l'upgrade dell'account; in caso di errore, rollback e ritorna false
+            if (!doUpgrade(em, user, upgradeApplication)) {
                 transaction.rollback();
                 return false;
             }
 
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
-     * Avvia la collaborazione rendendo l'utente amministratore e approvando l'application di collaborazione.
+     * Avvia la collaborazione per un utente.
+     * <p>
+     * Il metodo imposta l'utente come amministratore e approva l'applicazione di collaborazione.
+     * </p>
      *
-     * @param registereduser  utente che diventerà amministratore.
-     * @param collabApplication application di collaborazione da approvare.
-     * @return true se l'operazione ha successo, false altrimenti.
+     * @param user              L'utente per il quale avviare la collaborazione.
+     * @param collabApplication L'applicazione di collaborazione.
+     * @return {@code true} se l'operazione viene completata con successo, {@code false} altrimenti.
      */
-    public static boolean startCollab(Registereduser registereduser, Application collabApplication) {
+    public static boolean startCollab(User user, Application collabApplication) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // L'utente diventa amministratore
-            registereduser.setAdmin(true);
-            em.merge(registereduser);
+            // Imposta l'utente come amministratore
+            user.setAdmin(true);
+            em.merge(user);
 
-            // Approva l'application di collaborazione
+            // Approva l'applicazione di collaborazione
             collabApplication.setStatus("APPROVED");
             em.merge(collabApplication);
 
             transaction.commit();
             return true;
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            em.close();
         }
     }
 
     /**
-     * Restituisce un array di stringhe contenente le informazioni personali dell'utente.
+     * Visualizza le informazioni personali di un utente.
+     * <p>
+     * Il metodo restituisce un array di stringhe contenente le informazioni personali dell'utente.
+     * </p>
      *
-     * @param registereduser utente di cui si vogliono visualizzare le informazioni.
-     * @return array di stringhe con i seguenti dati:
-     *         email, firstName, lastName, birthDate, birthCity,
-     *         birthDistrict, birthCountry, taxCode, totalExpenditure, type, admin.
+     * @param user L'utente di cui visualizzare le informazioni.
+     * @return Un array di stringhe contenente:
+     *         [0] - email,
+     *         [1] - nome,
+     *         [2] - cognome,
+     *         [3] - data di nascita,
+     *         [4] - città di nascita,
+     *         [5] - distretto di nascita,
+     *         [6] - paese di nascita,
+     *         [7] - codice fiscale,
+     *         [8] - spesa totale,
+     *         [9] - tipo utente,
+     *         [10] - se è amministratore.
      */
-    public static String[] personalInfosView(Registereduser registereduser) {
+    public static String[] personalInfosView(User user) {
         return new String[]{
-                registereduser.getEmail(),
-                registereduser.getFirstName(),
-                registereduser.getLastName(),
-                String.valueOf(registereduser.getBirthDate()),
-                registereduser.getBirthCity(),
-                registereduser.getBirthDistrict(),
-                registereduser.getBirthCountry(),
-                registereduser.getTaxCode(),
-                String.valueOf(registereduser.getTotalExpenditure()),
-                registereduser.getType(),
-                String.valueOf(registereduser.getAdmin())
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                String.valueOf(user.getBirthDate()),
+                user.getBirthCity(),
+                user.getBirthDistrict(),
+                user.getBirthCountry(),
+                user.getTaxCode(),
+                String.valueOf(user.getTotalExpenditure()),
+                user.getType(),
+                String.valueOf(user.getAdmin())
         };
     }
 
     /**
-     * Metodo helper che aggiunge la prima Activity Area per l'utente che effettua l'upgrade.
-     * Se esiste già una Location con le stesse informazioni, la utilizza; altrimenti ne crea una nuova.
+     * Esegue l'upgrade dell'account.
      * <p>
-     * Si assume che la transazione sia già attiva.
+     * Metodo privato che esegue le operazioni necessarie per l'upgrade dell'account,
+     * aggiungendo l'utente all'area di attività e alla carriera tramite i metodi di {@link WorkerSide}.
      * </p>
      *
-     * @param em               EntityManager in uso (con transazione attiva).
-     * @param registereduser   utente per il quale aggiungere l'Activity Area.
-     * @param upgradecomponent componente di upgrade contenente le informazioni per la Location.
-     * @return true se l'Activity Area è stata aggiunta con successo, false altrimenti.
+     * @param em                 L'EntityManager da utilizzare per le operazioni di persistenza.
+     * @param user               L'utente da aggiornare.
+     * @param upgradeApplication L'oggetto {@link Upgradeapplication} contenente i dettagli dell'upgrade.
+     * @return {@code true} se tutte le operazioni sono completate con successo, {@code false} altrimenti.
      */
-    private static boolean addFirstActivityArea(EntityManager em,
-                                                Registereduser registereduser,
-                                                Upgradecomponent upgradecomponent) {
-        try {
-            // Ricerca di una Location esistente con gli stessi dati
-            TypedQuery<Location> locationQuery = em.createQuery(
-                    "select l from Location l " +
-                            "where l.city = :city " +
-                            "  and l.street = :street " +
-                            "  and l.streetNumber = :streetNumber " +
-                            "  and l.district = :district " +
-                            "  and l.country = :country",
-                    Location.class
-            );
-            locationQuery.setParameter("city", upgradecomponent.getCity());
-            locationQuery.setParameter("street", upgradecomponent.getStreet());
-            locationQuery.setParameter("streetNumber", upgradecomponent.getStreetNumber());
-            locationQuery.setParameter("district", upgradecomponent.getDistrict());
-            locationQuery.setParameter("country", upgradecomponent.getCountry());
-
-            List<Location> locations = locationQuery.getResultList();
-            Location locationToUse;
-            if (!locations.isEmpty()) {
-                // Utilizzo della Location esistente
-                locationToUse = locations.get(0);
-            } else {
-                // Creazione di una nuova Location
-                locationToUse = new Location();
-                locationToUse.setCity(upgradecomponent.getCity());
-                locationToUse.setStreet(upgradecomponent.getStreet());
-                locationToUse.setStreetNumber(upgradecomponent.getStreetNumber());
-                locationToUse.setDistrict(upgradecomponent.getDistrict());
-                locationToUse.setCountry(upgradecomponent.getCountry());
-                em.persist(locationToUse);
-            }
-
-            // Creazione e persistenza della nuova Activity Area
-            Activityarea activityArea = new Activityarea();
-            activityArea.setWorker(registereduser);
-            activityArea.setLocation(locationToUse);
-            em.persist(activityArea);
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+    private static boolean doUpgrade(EntityManager em, User user, Upgradeapplication upgradeApplication) {
+        // Aggiunge l'utente all'area di attività; se fallisce, ritorna false
+        if (!WorkerSide.addToActivityArea(
+                em,
+                user,
+                upgradeApplication.getCity(),
+                upgradeApplication.getStreet(),
+                upgradeApplication.getStreetNumber(),
+                upgradeApplication.getDistrict(),
+                upgradeApplication.getRegion(),
+                upgradeApplication.getCountry()
+        )) {
             return false;
         }
-    }
-
-    /**
-     * Metodo helper che aggiunge la prima Career per l'utente che effettua l'upgrade.
-     * Se esiste già una Profession con lo stesso nome, la utilizza; altrimenti ne crea una nuova.
-     * <p>
-     * Si assume che la transazione sia già attiva.
-     * </p>
-     *
-     * @param em               EntityManager in uso (con transazione attiva).
-     * @param registereduser   utente per il quale aggiungere la Career.
-     * @param upgradecomponent componente di upgrade contenente le informazioni per la Profession.
-     * @return true se la Career è stata aggiunta con successo, false altrimenti.
-     */
-    private static boolean addFirstCareer(EntityManager em,
-                                          Registereduser registereduser,
-                                          Upgradecomponent upgradecomponent) {
-        try {
-            // Ricerca di una Profession esistente con lo stesso nome
-            TypedQuery<Profession> professionQuery = em.createQuery(
-                    "select p from Profession p where p.name = :professionName",
-                    Profession.class
-            );
-            professionQuery.setParameter("professionName", upgradecomponent.getProfessionName());
-            List<Profession> professions = professionQuery.getResultList();
-            Profession professionToUse;
-            if (!professions.isEmpty()) {
-                // Utilizzo della Profession esistente
-                professionToUse = professions.get(0);
-            } else {
-                // Creazione di una nuova Profession
-                professionToUse = new Profession();
-                professionToUse.setName(upgradecomponent.getProfessionName());
-                em.persist(professionToUse);
-            }
-
-            // Creazione e persistenza della nuova Career
-            Career career = new Career();
-            career.setWorker(registereduser);
-            career.setProfession(professionToUse);
-            career.setHourlyRate(upgradecomponent.getHourlyRate());
-            career.setSeniority(upgradecomponent.getSeniority());
-            em.persist(career);
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        // Aggiunge l'utente alla carriera; ritorna true se l'operazione ha successo
+        return WorkerSide.addCareer(
+                em,
+                user,
+                upgradeApplication.getProfessionName(),
+                upgradeApplication.getHourlyRate(),
+                upgradeApplication.getSeniority()
+        );
     }
 }

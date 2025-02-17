@@ -16,7 +16,7 @@ public class Career {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "workerId", nullable = false)
-    private Registereduser worker;
+    private User worker;
 
     @MapsId("profession")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -38,11 +38,11 @@ public class Career {
         this.id = id;
     }
 
-    public Registereduser getWorker() {
+    public User getWorker() {
         return worker;
     }
 
-    public void setWorker(Registereduser worker) {
+    public void setWorker(User worker) {
         this.worker = worker;
     }
 
