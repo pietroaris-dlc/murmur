@@ -5,10 +5,19 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * La classe {@code Criteria} rappresenta i criteri di ricerca per la selezione di
+ * lavoratori in base a vari parametri come il tipo di schedule (daily o weekly),
+ * la modalità di servizio (REMOTE, ONSITE, HOMEDELIVERY), la professione, le tariffe,
+ * gli orari e la localizzazione.
+ * <p>
+ * Questa classe è immutabile e utilizza il pattern Builder per la sua costruzione.
+ * </p>
+ */
 public class Criteria {
     // Campi comuni obbligatori
     private final String scheduleType; // DAILY o WEEKLY
-    private final String serviceMode;    // REMOTE, ONSITE, HOMEDELIVERY
+    private final String serviceMode;  // REMOTE, ONSITE, HOMEDELIVERY
     private final String profession;
     private final double hourlyRateMin;
     private final double hourlyRateMax;
@@ -31,6 +40,11 @@ public class Criteria {
     private final String region;
     private final String country;
 
+    /**
+     * Costruttore privato utilizzato dal Builder per creare un'istanza immutabile di {@code Criteria}.
+     *
+     * @param builder L'istanza del Builder contenente i valori da assegnare.
+     */
     private Criteria(Builder builder) {
         this.scheduleType = builder.scheduleType;
         this.serviceMode = builder.serviceMode;
@@ -50,28 +64,163 @@ public class Criteria {
         this.country = builder.country;
     }
 
-    // Getters per tutti i campi (omessi per brevità)
-    public String getScheduleType() { return scheduleType; }
-    public String getServiceMode() { return serviceMode; }
-    public String getProfession() { return profession; }
-    public double getHourlyRateMin() { return hourlyRateMin; }
-    public double getHourlyRateMax() { return hourlyRateMax; }
-    public LocalDate getDay() { return day; }
-    public LocalTime getDailyStartHour() { return dailyStartHour; }
-    public LocalTime getDailyEndHour() { return dailyEndHour; }
-    public LocalDate getStartDate() { return startDate; }
-    public LocalDate getEndDate() { return endDate; }
-    public Map<String, TimeInterval> getWeeklyIntervals() { return weeklyIntervals; }
-    public String getCity() { return city; }
-    public String getStreet() { return street; }
-    public String getDistrict() { return district; }
-    public String getRegion() { return region; }
-    public String getCountry() { return country; }
+    // Getters per tutti i campi
 
+    /**
+     * Restituisce il tipo di schedule.
+     *
+     * @return {@code String} che rappresenta il tipo di schedule (DAILY o WEEKLY).
+     */
+    public String getScheduleType() {
+        return scheduleType;
+    }
+
+    /**
+     * Restituisce la modalità di servizio.
+     *
+     * @return {@code String} che rappresenta la modalità di servizio (REMOTE, ONSITE, HOMEDELIVERY).
+     */
+    public String getServiceMode() {
+        return serviceMode;
+    }
+
+    /**
+     * Restituisce il nome della professione.
+     *
+     * @return {@code String} con il nome della professione.
+     */
+    public String getProfession() {
+        return profession;
+    }
+
+    /**
+     * Restituisce il valore minimo della tariffa oraria.
+     *
+     * @return {@code double} che rappresenta il valore minimo della tariffa oraria.
+     */
+    public double getHourlyRateMin() {
+        return hourlyRateMin;
+    }
+
+    /**
+     * Restituisce il valore massimo della tariffa oraria.
+     *
+     * @return {@code double} che rappresenta il valore massimo della tariffa oraria.
+     */
+    public double getHourlyRateMax() {
+        return hourlyRateMax;
+    }
+
+    /**
+     * Restituisce la data per la ricerca Daily.
+     *
+     * @return {@code LocalDate} della ricerca Daily.
+     */
+    public LocalDate getDay() {
+        return day;
+    }
+
+    /**
+     * Restituisce l'orario di inizio per la ricerca Daily.
+     *
+     * @return {@code LocalTime} che rappresenta l'orario di inizio.
+     */
+    public LocalTime getDailyStartHour() {
+        return dailyStartHour;
+    }
+
+    /**
+     * Restituisce l'orario di fine per la ricerca Daily.
+     *
+     * @return {@code LocalTime} che rappresenta l'orario di fine.
+     */
+    public LocalTime getDailyEndHour() {
+        return dailyEndHour;
+    }
+
+    /**
+     * Restituisce la data di inizio per la ricerca Weekly.
+     *
+     * @return {@code LocalDate} che rappresenta la data di inizio.
+     */
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Restituisce la data di fine per la ricerca Weekly.
+     *
+     * @return {@code LocalDate} che rappresenta la data di fine.
+     */
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Restituisce la mappa degli intervalli settimanali.
+     *
+     * @return Una mappa {@code Map<String, TimeInterval>} contenente i giorni della settimana e relativi intervalli.
+     */
+    public Map<String, TimeInterval> getWeeklyIntervals() {
+        return weeklyIntervals;
+    }
+
+    /**
+     * Restituisce la città per la ricerca basata sulla location.
+     *
+     * @return {@code String} che rappresenta la città.
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * Restituisce la via per la ricerca basata sulla location.
+     *
+     * @return {@code String} che rappresenta la via.
+     */
+    public String getStreet() {
+        return street;
+    }
+
+    /**
+     * Restituisce il distretto per la ricerca basata sulla location.
+     *
+     * @return {@code String} che rappresenta il distretto.
+     */
+    public String getDistrict() {
+        return district;
+    }
+
+    /**
+     * Restituisce la regione per la ricerca basata sulla location.
+     *
+     * @return {@code String} che rappresenta la regione.
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * Restituisce il paese per la ricerca basata sulla location.
+     *
+     * @return {@code String} che rappresenta il paese.
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * La classe Builder per costruire istanze di {@link Criteria}.
+     * <p>
+     * Il Builder richiede alcuni campi obbligatori e permette di impostare in modo facoltativo
+     * campi specifici per la ricerca Daily, Weekly e per la localizzazione.
+     * </p>
+     */
     public static class Builder {
         // Campi comuni obbligatori
-        private final String scheduleType; // "daily" o "weekly"
-        private final String serviceMode;    // "REMOTE", "ONSITE", "HOMEDELIVERY"
+        private final String scheduleType; // "DAILY" o "WEEKLY"
+        private final String serviceMode;  // "REMOTE", "ONSITE", "HOMEDELIVERY"
         private final String profession;
         private final double hourlyRateMin;
         private final double hourlyRateMax;
@@ -94,8 +243,13 @@ public class Criteria {
         private String country = "";
 
         /**
-         * Il costruttore del Builder richiede i campi comuni obbligatori:
-         * scheduleType, serviceMode, profession, hourlyRateMin e hourlyRateMax.
+         * Il costruttore del Builder richiede i campi comuni obbligatori.
+         *
+         * @param scheduleType  Il tipo di schedule ("DAILY" o "WEEKLY").
+         * @param serviceMode   La modalità di servizio ("REMOTE", "ONSITE", "HOMEDELIVERY").
+         * @param profession    Il nome della professione.
+         * @param hourlyRateMin La tariffa oraria minima.
+         * @param hourlyRateMax La tariffa oraria massima.
          */
         public Builder(String scheduleType, String serviceMode, String profession, double hourlyRateMin, double hourlyRateMax) {
             this.scheduleType = scheduleType;
@@ -107,6 +261,11 @@ public class Criteria {
 
         /**
          * Imposta i campi specifici per una ricerca Daily.
+         *
+         * @param day             La data per la ricerca.
+         * @param dailyStartHour  L'orario di inizio.
+         * @param dailyEndHour    L'orario di fine.
+         * @return Il Builder aggiornato.
          */
         public Builder daily(LocalDate day, LocalTime dailyStartHour, LocalTime dailyEndHour) {
             this.day = day;
@@ -118,9 +277,10 @@ public class Criteria {
         /**
          * Imposta i campi specifici per una ricerca Weekly.
          *
-         * @param startDate Data di inizio.
-         * @param endDate Data di fine.
-         * @param weeklyIntervals Mappa dei giorni (es. "MONDAY") e relativi intervalli.
+         * @param startDate       La data di inizio della ricerca.
+         * @param endDate         La data di fine della ricerca.
+         * @param weeklyIntervals Una mappa contenente i giorni della settimana (es. "MONDAY") e gli intervalli orari.
+         * @return Il Builder aggiornato.
          */
         public Builder weekly(LocalDate startDate, LocalDate endDate, Map<String, TimeInterval> weeklyIntervals) {
             this.startDate = startDate;
@@ -130,7 +290,14 @@ public class Criteria {
         }
 
         /**
-         * Imposta i campi relativi alla location (per ricerche Onsite o HomeDelivery).
+         * Imposta i campi relativi alla location per ricerche Onsite o HomeDelivery.
+         *
+         * @param city     La città.
+         * @param street   La via.
+         * @param district Il distretto.
+         * @param region   La regione.
+         * @param country  Il paese.
+         * @return Il Builder aggiornato.
          */
         public Builder location(String city, String street, String district, String region, String country) {
             this.city = city;
@@ -141,6 +308,11 @@ public class Criteria {
             return this;
         }
 
+        /**
+         * Costruisce un'istanza immutabile di {@link Criteria} utilizzando i valori impostati.
+         *
+         * @return Un nuovo oggetto {@code Criteria}.
+         */
         public Criteria build() {
             return new Criteria(this);
         }

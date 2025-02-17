@@ -7,8 +7,36 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Interfaccia per il rilevamento di collisioni di orari.
+ * <p>
+ * Fornisce un metodo statico per verificare se esiste una collisione tra un intervallo orario
+ * specificato e gli orari giornalieri già presenti per un determinato utente.
+ * </p>
+ */
 public interface Collision {
-    static boolean detect(Registereduser user, LocalDate day, TimeInterval interval) {
+
+    /**
+     * Verifica se esiste una collisione tra l'intervallo orario fornito e gli orari giornalieri
+     * già registrati per l'utente nel giorno specificato.
+     * <p>
+     * Il metodo esegue una query per ottenere tutti gli oggetti {@link Daily} associati all'utente
+     * e al giorno indicato, quindi controlla se l'intervallo fornito si sovrappone a uno qualsiasi
+     * degli orari giornalieri. Una collisione viene rilevata se:
+     * <ul>
+     *   <li>L'orario di inizio del daily è prima dell'inizio dell'intervallo e l'orario di fine del daily è dopo l'inizio dell'intervallo.</li>
+     *   <li>L'orario di inizio del daily è dopo l'inizio dell'intervallo ma prima della fine dell'intervallo.</li>
+     *   <li>L'orario di inizio del daily è esattamente uguale all'inizio dell'intervallo.</li>
+     *   <li>L'orario di fine del daily è esattamente uguale alla fine dell'intervallo.</li>
+     * </ul>
+     * </p>
+     *
+     * @param user     L'utente per cui controllare la collisione.
+     * @param day      Il giorno per il quale verificare gli orari giornalieri.
+     * @param interval L'intervallo orario da controllare.
+     * @return {@code true} se viene rilevata una collisione, {@code false} altrimenti.
+     */
+    static boolean detect(User user, LocalDate day, TimeInterval interval) {
         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
         try {
             List<Daily> dailies = entityManager
@@ -19,48 +47,16 @@ public interface Collision {
             for (Daily daily : dailies) {
                 LocalTime dailyStart = daily.getStartHour();
                 LocalTime dailyEnd = daily.getEndHour();
-                if (
-                        (dailyStart.isBefore(interval.getStart()) && dailyEnd.isAfter(interval.getStart()))
-                        || (dailyStart.isAfter(interval.getStart())) && dailyStart.isBefore(interval.getEnd())
-                        || (dailyStart.equals(interval.getStart()))
-                        || (dailyEnd.equals(interval.getEnd()))
-                ) return true;
+                if ((dailyStart.isBefore(interval.getStart()) && dailyEnd.isAfter(interval.getStart()))
+                        || (dailyStart.isAfter(interval.getStart()) && dailyStart.isBefore(interval.getEnd()))
+                        || dailyStart.equals(interval.getStart())
+                        || dailyEnd.equals(interval.getEnd())) {
+                    return true;
+                }
             }
             return false;
         } finally {
             entityManager.close();
-        }
-    }
-
-    static boolean detect(Registereduser user, Long scheduleId){
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        try{
-            Schedule schedule = em.find(Schedule.class, scheduleId);
-            if(schedule != null){
-                if(schedule.getType().equals("DAILY")){
-                    Daily daily = em.find(Daily.class, scheduleId);
-                    return Collision.detect(user, daily.getDay(), new TimeInterval(daily.getStartHour(), daily.getEndHour()));
-                } else if(schedule.getType().equals("WEEKLY")){
-                    Weekly weekly = em.find(Weekly.class, scheduleId);
-                    List<Weekday> weekdays = em.createQuery(
-                            "select wd from Weekday wd where wd.weekly = :weekly",
-                            Weekday.class)
-                            .setParameter("weekly", weekly)
-                            .getResultList();
-                    for(Weekday wd : weekdays){
-                        for (LocalDate date = weekly.getStartDate(); !date.isAfter(weekly.getEndDate()); date = date.plusDays(1)) {
-                            String dayOfWeek = date.getDayOfWeek().toString();
-                            if (wd.getId().getDayOfWeek().equals(dayOfWeek)) {
-                                if(Collision.detect(user, date, new TimeInterval(wd.getStartHour(), wd.getEndHour()))) return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-            }
-            return true;
-        } finally {
-            em.close();
         }
     }
 }

@@ -11,13 +11,14 @@ import java.time.LocalTime;
 @Table(name = "application")
 public class Application {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userId", nullable = false)
-    private Registereduser user;
+    private User user;
 
     @Column(name = "submissionDate", nullable = false)
     private LocalDate submissionDate;
@@ -36,6 +37,15 @@ public class Application {
     @Column(name = "type", nullable = false)
     private String type;
 
+    @OneToOne(mappedBy = "application")
+    private Jobapplication jobapplication;
+
+    @OneToOne(mappedBy = "application")
+    private Rejectedapplication rejectedapplication;
+
+    @OneToOne(mappedBy = "application")
+    private Upgradeapplication upgradeapplication;
+
     public Long getId() {
         return id;
     }
@@ -44,11 +54,11 @@ public class Application {
         this.id = id;
     }
 
-    public Registereduser getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Registereduser user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -90,6 +100,30 @@ public class Application {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Jobapplication getJobapplication() {
+        return jobapplication;
+    }
+
+    public void setJobapplication(Jobapplication jobapplication) {
+        this.jobapplication = jobapplication;
+    }
+
+    public Rejectedapplication getRejectedapplication() {
+        return rejectedapplication;
+    }
+
+    public void setRejectedapplication(Rejectedapplication rejectedapplication) {
+        this.rejectedapplication = rejectedapplication;
+    }
+
+    public Upgradeapplication getUpgradeapplication() {
+        return upgradeapplication;
+    }
+
+    public void setUpgradeapplication(Upgradeapplication upgradeapplication) {
+        this.upgradeapplication = upgradeapplication;
     }
 
 }

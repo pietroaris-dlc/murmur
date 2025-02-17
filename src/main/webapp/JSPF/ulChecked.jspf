@@ -1,66 +1,135 @@
 <%@ page import="is.murmur.Model.Beans.Checkedcomponent" %>
-<%@ page import="java.util.List" %>
 <%@ page import="is.murmur.Model.Beans.Application" %>
 <%@ page import="is.murmur.Model.Beans.Upgradecomponent" %>
 <%@ page import="is.murmur.Model.Beans.Jobcomponent" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%
-    List<Checkedcomponent> checkedComponents = (List<Checkedcomponent>) session.getAttribute("checkedComponents");
-    List<Upgradecomponent> upgradeComponents = (List<Upgradecomponent>) session.getAttribute("upgradeComponents");
-    List<Jobcomponent> jobComponents = (List<Jobcomponent>) session.getAttribute("jobComponents");
-%>
+    List<Checkedcomponent> checkedComponentsChecked = new ArrayList<>();
+    List<Upgradecomponent> upgradeComponentsChecked = new ArrayList<>();
+    List<Jobcomponent> jobComponentsChecked = new ArrayList<>();
 
+    if(session.getAttribute("checkedComponents") != null)
+        checkedComponentsChecked = (List<Checkedcomponent>) session.getAttribute("checkedComponents");
+    if(session.getAttribute("upgradecomponents") != null)
+        upgradeComponentsChecked = (List<Upgradecomponent>) session.getAttribute("upgradeComponents");
+    if(session.getAttribute("jobcomponents") != null)
+        jobComponentsChecked = (List<Jobcomponent>) session.getAttribute("jobComponents");
+%>
 <ul id="applicationsList">
-    <% for(Checkedcomponent cc : checkedComponents){ Application app = cc.getApplication(); %>
+    <%
+        if(!checkedComponentsChecked.isEmpty()){
+            for(Checkedcomponent cc : checkedComponentsChecked){
+                Application app = cc.getApplication();
+    %>
     <li class="checkedLi">
-        <form class="checkedForm" method="post" action="<%= request.getContextPath() %>/definePage">
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getSubmissionDate()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getSubmissionHour()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getUser().getId()%>" readonly hidden></label>
-            <label><input type="text" class="userMail" name="userMail" placeholder="<%=app.getUser().getEmail()%>" readonly></label>
-            <label><input type="text" class="userFirstName" name="userFirsName" placeholder="<%=app.getUser().getFirstName()%>" readonly></label>
-            <label><input type="text" class="userLastName" name="userLastName" placeholder="<%=app.getUser().getLastName()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getUser().getBirthDate().toString()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getUser().getBirthCity()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getUser().getBirthDistrict()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getUser().getBirthCountry()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getUser().getTaxCode()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=app.getDocsUrl()%>" readonly></label>
+        <form class="checkedForm" method="post" action="<%=request.getContextPath()%>/defineApplication">
+            <label>
+                <input type="text" class="applicationType" name="applicationType" value="<%=app.getType()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userSubmissionDate" name="userSubmissionDate" value="<%=app.getSubmissionDate()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userSubmissionHour" name="userSubmissionHour" value="<%=app.getSubmissionHour()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=app.getUser().getId()%>" readonly hidden>
+            </label>
+            <label>
+                <input type="text" class="userMail" name="userMail" value="<%=app.getUser().getEmail()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userFirstName" name="userFirsName" value="<%=app.getUser().getFirstName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userLastName" name="userLastName" value="<%=app.getUser().getLastName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=app.getUser().getBirthDate().toString()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=app.getUser().getBirthCity()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=app.getUser().getBirthDistrict()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=app.getUser().getBirthCountry()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=app.getUser().getTaxCode()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=app.getDocsUrl()%>" readonly>
+            </label>
             <% if(app.getType().equals("UPGRADE")){
                 Upgradecomponent upgradecomponent = new Upgradecomponent();
-                for(Upgradecomponent uc : upgradeComponents){
+                for(Upgradecomponent uc : upgradeComponentsChecked){
                     if(uc.getId().equals(app.getId())){
                         upgradecomponent = uc;
                         break;
                     }
                 }
             %>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=upgradecomponent.getProfessionName()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=upgradecomponent.getHourlyRate()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=upgradecomponent.getSeniority()%>" readonly></label>
-            <label><input type="text" class="ucCity" name="ucCity" placeholder="<%=upgradecomponent.getCity()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=upgradecomponent.getStreet()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=upgradecomponent.getStreetNumber()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=upgradecomponent.getRegion()%>" readonly></label>
-            <label><input type="text" class="uc" name="userId" placeholder="<%=upgradecomponent.getDistrict()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=upgradecomponent.getCountry()%>" readonly></label>
-            <%}else if(app.getType().equals("JOB")){
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=upgradecomponent.getProfessionName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=upgradecomponent.getHourlyRate()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=upgradecomponent.getSeniority()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="ucCity" name="ucCity" value="<%=upgradecomponent.getCity()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=upgradecomponent.getStreet()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=upgradecomponent.getStreetNumber()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=upgradecomponent.getRegion()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="uc" name="userId" value="<%=upgradecomponent.getDistrict()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=upgradecomponent.getCountry()%>" readonly>
+            </label>
+            <% } else if(app.getType().equals("JOB")){
                 Jobcomponent jobcomponent = new Jobcomponent();
-                for(Jobcomponent jc : jobComponents){
+                for(Jobcomponent jc : jobComponentsChecked){
                     if(jc.getId().equals(app.getId())){
                         jobcomponent = jc;
                         break;
                     }
                 }
             %>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=jobcomponent.getProfessionName()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=jobcomponent.getHourlyRate()%>" readonly></label>
-            <label><input type="text" class="userId" name="userId" placeholder="<%=jobcomponent.getSeniority()%>" readonly></label>
-            <%}%>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=jobcomponent.getProfessionName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=jobcomponent.getHourlyRate()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId" value="<%=jobcomponent.getSeniority()%>" readonly>
+            </label>
+            <% } %>
             <a href="<%=app.getDocsUrl()%>" target="_blank">Consulta la documentazione.</a>
             <input type="submit" name="approvalSubmit" value="Approve">
-            <input type="submit" name="rejectSubmit" value="Reject">
+            <input type="submit" name="rejectSubmit" value="Reject" onclick="askForReason()">
         </form>
     </li>
-    <%}%>
+    <%
+        }
+    } else {
+    %>
+    <li>No Applications Found.</li>
+    <%
+        }
+    %>
 </ul>
 <script type="text/javascript" src="JS/ulChecked.js"></script>

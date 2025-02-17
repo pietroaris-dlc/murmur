@@ -3,24 +3,20 @@ package is.murmur.Model.Beans;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import java.time.LocalDate;
+
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "daily")
-public class Daily {
-    @Id
-    @Column(name = "id", nullable = false)
-    private Long id;
+@Table(name = "weekdaycontract")
+public class Weekdaycontract {
+    @EmbeddedId
+    private WeekdaycontractId id;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId("weeklyId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "id", nullable = false)
-    private Schedule schedule;
-
-    @Column(name = "day", nullable = false)
-    private LocalDate day;
+    @JoinColumn(name = "weeklyId", nullable = false)
+    private Weeklycontract weekly;
 
     @Column(name = "startHour", nullable = false)
     private LocalTime startHour;
@@ -28,28 +24,20 @@ public class Daily {
     @Column(name = "endHour", nullable = false)
     private LocalTime endHour;
 
-    public Long getId() {
+    public WeekdaycontractId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(WeekdaycontractId id) {
         this.id = id;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
+    public Weeklycontract getWeekly() {
+        return weekly;
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
-    }
-
-    public LocalDate getDay() {
-        return day;
-    }
-
-    public void setDay(LocalDate day) {
-        this.day = day;
+    public void setWeekly(Weeklycontract weekly) {
+        this.weekly = weekly;
     }
 
     public LocalTime getStartHour() {
@@ -67,4 +55,5 @@ public class Daily {
     public void setEndHour(LocalTime endHour) {
         this.endHour = endHour;
     }
+
 }

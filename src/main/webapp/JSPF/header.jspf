@@ -1,4 +1,3 @@
-<%@ page import="is.murmur.Model.Beans.*" %>
 <%
     String pageName = "Home";
     if(session.getAttribute("pageName") != null)
@@ -10,7 +9,7 @@
 
 <header id="header">
     <img src="IMG/MurMurLogo.png" alt="MurMurLogo">
-    <form id="pageForm" method="post" action="<%= request.getContextPath() %>/loadPage">
+    <form id="pageForm" method="post" action="<%=request.getContextPath()%>/loadPage">
         <label for="pageNameSelect"></label>
         <select id="pageNameSelect" name="pageName" required>
             <option value="" disabled selected><%=pageName%></option>

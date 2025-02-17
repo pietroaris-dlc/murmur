@@ -1,0 +1,90 @@
+<%@ page import="java.util.List" %>
+<%@ page import="is.murmur.Model.Beans.Application" %>
+<%@ page import="is.murmur.Model.Beans.Jobcomponent" %>
+<%@ page import="java.util.ArrayList" %>
+<%
+    List<Jobcomponent> jobComponents = new ArrayList<Jobcomponent>();
+    if(session.getAttribute("jobcomponents") != null)
+        jobComponents = (List<Jobcomponent>) session.getAttribute("jobComponents");
+%>
+<ul id="applicationsList">
+    <% if(!jobComponents.isEmpty()) {
+        for(Jobcomponent jc : jobComponents){
+            Application app = jc.getApplication();
+    %>
+    <li class="checkedLi">
+        <form class="checkedForm" method="post" action="<%=request.getContextPath()%>/checkApplication">
+            <label>
+                <input type="text" class="applicationType" name="applicationType"
+                       value="<%=app.getType()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getSubmissionDate()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getSubmissionHour()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getId()%>" readonly hidden>
+            </label>
+            <label>
+                <input type="text" class="userMail" name="userMail"
+                       value="<%=app.getUser().getEmail()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userFirstName" name="userFirsName"
+                       value="<%=app.getUser().getFirstName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userLastName" name="userLastName"
+                       value="<%=app.getUser().getLastName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthDate().toString()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthCity()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthDistrict()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthCountry()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getTaxCode()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getDocsUrl()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=jc.getProfessionName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=jc.getHourlyRate()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=jc.getSeniority()%>" readonly>
+            </label>
+            <a href="<%=app.getDocsUrl()%>" target="_blank" onclick="">Consulta la documentazione.</a>
+            <input type="submit" value="Check">
+        </form>
+    </li>
+    <% }
+    } else { %>
+    <li>No Applications Found.</li>
+    <% } %>
+</ul>
+<script type="text/javascript" src="../JS/ulJob.js"></script>

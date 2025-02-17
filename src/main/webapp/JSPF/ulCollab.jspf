@@ -1,0 +1,76 @@
+<%@ page import="java.util.List" %>
+<%@ page import="is.murmur.Model.Beans.Application" %>
+<%@ page import="java.util.ArrayList" %>
+<%
+    List<Application> applications = new ArrayList<>();
+    if(session.getAttribute("collabApplications") != null) {
+        applications = (List<Application>) session.getAttribute("collabApplications");
+    }
+%>
+<ul id="applicationsList">
+    <% if(!applications.isEmpty()) {
+        for(Application app : applications){ %>
+    <li class="checkedLi">
+        <form class="checkedForm" method="post" action="<%=request.getContextPath()%>/checkApplication">
+            <label>
+                <input type="text" class="applicationType" name="applicationType"
+                       value="<%=app.getType()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userSubmissionDate" name="userSubmissionDate"
+                       value="<%=app.getSubmissionDate()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userSubmissionHour" name="userSubmissionHour"
+                       value="<%=app.getSubmissionHour()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getId()%>" readonly hidden>
+            </label>
+            <label>
+                <input type="text" class="userMail" name="userMail"
+                       value="<%=app.getUser().getEmail()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userFirstName" name="userFirsName"
+                       value="<%=app.getUser().getFirstName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userLastName" name="userLastName"
+                       value="<%=app.getUser().getLastName()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthDate().toString()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthCity()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthDistrict()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getBirthCountry()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getUser().getTaxCode()%>" readonly>
+            </label>
+            <label>
+                <input type="text" class="userId" name="userId"
+                       value="<%=app.getDocsUrl()%>" readonly>
+            </label>
+            <a href="<%=app.getDocsUrl()%>" target="_blank">Consulta la documentazione.</a>
+            <input type="submit" value="Check">
+        </form>
+    </li>
+    <%   } // fine ciclo for
+    } else { %>
+    <li>No Applications Found.</li>
+    <% } %>
+</ul>
+<script type="text/javascript" src="JS/ulCollab.js"></script>

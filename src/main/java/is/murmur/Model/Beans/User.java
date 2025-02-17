@@ -4,11 +4,14 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "registereduser")
-public class Registereduser {
+@Table(name = "user")
+public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -51,6 +54,18 @@ public class Registereduser {
 
     @Column(name = "locked", nullable = false)
     private Boolean locked = false;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Application> applications = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "worker")
+    private Set<Career> careers = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Clientalias> clientaliases = new LinkedHashSet<>();
+
+    @OneToOne(mappedBy = "user")
+    private Worker worker;
 
     public Long getId() {
         return id;
@@ -162,6 +177,38 @@ public class Registereduser {
 
     public void setLocked(Boolean locked) {
         this.locked = locked;
+    }
+
+    public Set<Application> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(Set<Application> applications) {
+        this.applications = applications;
+    }
+
+    public Set<Career> getCareers() {
+        return careers;
+    }
+
+    public void setCareers(Set<Career> careers) {
+        this.careers = careers;
+    }
+
+    public Set<Clientalias> getClientaliases() {
+        return clientaliases;
+    }
+
+    public void setClientaliases(Set<Clientalias> clientaliases) {
+        this.clientaliases = clientaliases;
+    }
+
+    public Worker getWorker() {
+        return worker;
+    }
+
+    public void setWorker(Worker worker) {
+        this.worker = worker;
     }
 
 }

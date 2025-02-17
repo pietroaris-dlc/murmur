@@ -1,0 +1,39 @@
+<%@ page import="is.murmur.Model.Beans.Contract" %>
+<%@ page import="is.murmur.Model.Beans.Notremotecomponent" %><%
+    List<Contract> drafts = new ArrayList<>();
+    List<Notremotecomponent> notremotecomponents = new ArrayList<Notremotecomponent>();
+    if(session.getAttribute("drafts") != null)
+        drafts = (List<Contract>) session.getAttribute("drafts");
+    if(session.getAttribute("notremotecomponents") != null)
+        drafts = (List<Contract>) session.getAttribute("notRemoteComponents");
+%>
+<ul id="applicationsList">
+    <%
+        Notremotecomponent notremotecomponent = null;
+        for(Contract d : drafts){
+            for(Notremotecomponent nrc : notremotecomponents){
+                if(nrc.getId().equals(d.getId())){
+                    notremotecomponent = nrc;
+                    break;
+                }
+            }
+    %>
+    <form id="draft" method="post" action="\defineDraft">
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getProfession()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getTotalFee()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getHourlyRate()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.get%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+        <label><input type="text" class="applicationType" name="applicationType" value="<%=d.getWorkerAlias().getId()%>" readonly></label>
+    </form>
+    <%}%>
+</ul>
+<script type="text/javascript" src="JS/ulDrafts.js"></script>

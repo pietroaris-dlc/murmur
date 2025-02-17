@@ -5,31 +5,58 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "alias")
+@Table(name = "aliases")
 public class Alias {
-    @EmbeddedId
-    private AliasId id;
+    @Id
+    @Column(name = "contractId", nullable = false)
+    private Long id;
 
-    @MapsId("userId")
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "contractId", nullable = false)
+    private Contract contract;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "userId", nullable = false)
-    private Registereduser user;
+    @JoinColumn(name = "clientAlias", nullable = false)
+    private Clientalias clientAlias;
 
-    public AliasId getId() {
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "workerAlias", nullable = false)
+    private Workeralias workerAlias;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(AliasId id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Registereduser getUser() {
-        return user;
+    public Contract getContract() {
+        return contract;
     }
 
-    public void setUser(Registereduser user) {
-        this.user = user;
+    public void setContract(Contract contract) {
+        this.contract = contract;
+    }
+
+    public Clientalias getClientAlias() {
+        return clientAlias;
+    }
+
+    public void setClientAlias(Clientalias clientAlias) {
+        this.clientAlias = clientAlias;
+    }
+
+    public Workeralias getWorkerAlias() {
+        return workerAlias;
+    }
+
+    public void setWorkerAlias(Workeralias workerAlias) {
+        this.workerAlias = workerAlias;
     }
 
 }

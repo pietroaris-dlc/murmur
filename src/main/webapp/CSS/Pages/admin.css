@@ -1,3 +1,4 @@
+/* ========= Impostazioni Globali ========= */
 html, body {
     margin: 0;
     padding: 0;
@@ -11,9 +12,11 @@ html, body {
     align-items: center;
     justify-content: flex-start;
     color: #eaeaea;
+    /* Disabilita lo scroll globale (verticale gestito localmente) */
     overflow: hidden;
 }
 
+/* ========= Header (IMPOSTAZIONI ORIGINALI) ========= */
 #header {
     display: flex;
     align-items: center;
@@ -30,15 +33,6 @@ html, body {
 #header img {
     max-width: 150px;
     height: auto;
-}
-
-#pageForm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    max-width: 300px;
-    width: 100%;
 }
 
 #pageNameSelect {
@@ -62,66 +56,142 @@ html, body {
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
 }
 
-option {
-    background: #222;
-    color: #eaeaea;
-}
-
-#aboutUsTitle {
-    font-size: 1.5rem;
-    text-align: center;
-    color: #ffffff;
-    margin-top: 0;
-    padding-top: 0;
-}
-
-#infoDiv {
+/* ========= Contenitore delle Liste (ApplicationsDiv) ========= */
+/* Dispone le varie liste orizzontalmente e abilita lo scrolling orizzontale */
+#applicationsDiv {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    flex-direction: row;
+    gap: 1rem;
+    width: 90%;
+    max-width: 1200px;
+    margin: 1rem auto;
+    overflow-x: auto;
+    padding-bottom: 1rem;  /* Spazio extra per la scrollbar */
+    scroll-behavior: smooth;
+}
 
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 800px;
-    flex-grow: 1;
-    background: rgba(0, 0, 0, 0.6);
+/* Scrollbar per il contenitore delle liste */
+#applicationsDiv::-webkit-scrollbar {
+    height: 8px;
+}
+
+#applicationsDiv::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+#applicationsDiv::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    border-radius: 10px;
+}
+
+#applicationsDiv::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FF5680, #FF79A0);
+}
+
+/* ========= Liste Interne (ul) ========= */
+/* Ogni lista dispone i propri elementi in orizzontale */
+#applicationsDiv ul {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    list-style: none;
+    padding: 0.5rem;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 10px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
-    padding: 1.5rem;
-    margin-top: 0.3rem;
+    min-width: 300px;  /* Larghezza minima per ogni lista */
+    overflow-x: auto;
 }
 
-#aboutUsDiv {
-    text-align: justify;
-    width: 100%;
-    max-height: 360px;
-    overflow-y: auto;
-    padding: 1.2rem;
-    box-sizing: border-box;
-    scrollbar-width: thin;
-    scrollbar-color: #555 #222;
+/* Scrollbar per le singole liste */
+#applicationsDiv ul::-webkit-scrollbar {
+    height: 6px;
 }
 
-#contactsDiv {
-    text-align: center;
-    width: 100%;
-    padding-bottom: 0.5rem;
+#applicationsDiv ul::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
 }
 
-#contactsList {
-    list-style: none;
-    padding: 0;
+#applicationsDiv ul::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    border-radius: 10px;
+}
+
+#applicationsDiv ul::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FF5680, #FF79A0);
+}
+
+/* ========= Elementi della Lista (li) ========= */
+/* Ogni "card" dell'applicazione */
+#applicationsDiv ul li {
+    flex: 0 0 auto;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* ========= Styling dei Form Interni (checkedForm) ========= */
+.checkedForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.checkedForm label {
+    font-size: 0.9rem;
+}
+
+.checkedForm input[type="text"] {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border: none;
+    border-radius: 5px;
+    padding: 0.4rem;
+    font-size: 0.9rem;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.checkedForm input[type="submit"] {
+    background: rgba(0, 0, 0, 0.5);
+    color: #eaeaea;
+    border: none;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
     font-size: 1rem;
-    margin: 0;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-#contactsList li {
-    margin: 0.3rem 0;
-    color: #e0e0e0;
+.checkedForm input[type="submit"]:hover {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    color: #ffffff;
+    box-shadow: 0 0 15px #FF79A0, 0 0 30px #FF5680;
+    transform: scale(1.05);
 }
 
+.checkedForm a {
+    color: #eaeaea;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.checkedForm a:hover {
+    color: #FF79A0;
+}
+
+/* ========= Footer (IMPOSTAZIONI ORIGINALI, ma con footer fisso in basso) ========= */
 #footer {
     display: flex;
     justify-content: center;
@@ -131,7 +201,7 @@ option {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     width: 100%;
-    position: relative;
+    position: fixed;  /* Fissa il footer in basso */
     bottom: 0;
     left: 0;
     z-index: 10;
@@ -167,59 +237,46 @@ option {
     transform: scale(1.05);
 }
 
-@media (max-width: 768px) {
-    #header, #footer {
-        gap: 0.5rem;
-    }
-    #infoDiv {
-        flex-grow: 1;
+/* ========= Custom Scrollbar Styling Globale ========= */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FF79A0, #FF5680);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FF5680, #FF79A0);
+}
+
+/* ========= Media Query per la Responsività ========= */
+@media (max-width: 1024px) {
+    #applicationsDiv {
         width: 95%;
     }
+    .checkedForm label {
+        font-size: 0.85rem;
+    }
 }
 
-@media (max-width: 480px) {
-    #aboutUsTitle, #contactsTitle {
-        font-size: 1.2rem;
+@media (max-width: 768px) {
+    #header {
+        flex-direction: column;
     }
-    #aboutUsParagraph, #contactsList li {
-        font-size: 0.9rem;
+    /* Su dispositivi più piccoli, le liste possono disporre verticalmente */
+    #applicationsDiv {
+        flex-direction: column;
+        overflow-x: visible;
     }
-    #infoDiv {
+    #applicationsDiv ul {
         width: 100%;
-        padding: 0.5rem;
+        overflow-x: auto;
     }
-}
-
-
-
-
-#infoDiv {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 800px;
-    flex-grow: 1;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 10px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    padding: 1.5rem;
-    margin-top: 0.3rem;
-
-
-}
-
-
-
-#rightAllign {
-    display: flex;
-    flex-direction: row;  /* side-by-side layout */
-
-    gap: 20px; /* Optional: gap between the divs */
-    height: 100%;
-
-
 }

@@ -10,7 +10,7 @@ function loadScheduleCriteria() {
     const scheduleType = document.getElementById('searchScheduleType').value;
     const scheduleDiv = document.getElementById('scheduleCriteria');
 
-    scheduleDiv.innerHTML = ''; // Pulizia iniziale
+    scheduleDiv.innerHTML = '';
 
     if (scheduleType === "daily") {
         // Struttura a form-row per day, startHour, endHour

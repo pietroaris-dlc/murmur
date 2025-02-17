@@ -1,4 +1,7 @@
 <%@ page import="java.util.List" %>
+<%@ page import="is.murmur.Model.Beans.Activityarea" %>
+<%@ page import="is.murmur.Model.Beans.Location" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -9,7 +12,9 @@
 </head>
 
 <%
-    List<Activityarea> activityarea = (List<Activityarea>) session.getAttribute("activityArea");
+    List<Activityarea> activityarea = new ArrayList<>();
+    if(session.getAttribute("activityArea") != null)
+        activityarea = (List<Activityarea>) session.getAttribute("activityArea");
 %>
 
 <body>
@@ -17,8 +22,14 @@
 
 <div id="activityAreaView">
     <ul id="activityAreaList">
+        <%if(!activityarea.isEmpty()){%>
         <%for(Activityarea aa : activityarea){ Location l = aa.getLocation();%>
         <li id="aLocation"><%=l.getStreet()%> <%=l.getStreetNumber()%>,<%=l.getCity()%>(<%=l.getRegion()%>) - <%=l.getCountry()%></li>
+        <%
+        }
+            } else {
+        %>
+        <li>No Location Found</li>
         <%}%>
     </ul>
 </div>
