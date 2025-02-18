@@ -308,6 +308,22 @@ public class ContractsManagement {
      * @return Il contratto offerta se l'operazione va a buon fine, {@code null} in caso di collisione.
      */
     public static Contract sendOffer(Contract draft, String specialRequests) {
+
+        if(draft.getTotalFee().toString() == null){
+            throw new IllegalArgumentException("Il Campo Total Fee è vuoto");
+        }
+
+        if(draft.getHourlyRate().toString() == null){
+            throw new IllegalArgumentException("Il Campo Total Fee è vuoto");
+        }
+
+
+
+        if (specialRequests.length() < 250) {
+            throw new IllegalArgumentException("specialRequests too long");
+        }
+
+
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction transaction = em.getTransaction();
 
