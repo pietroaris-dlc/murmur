@@ -561,4 +561,16 @@ public class ClientSide {
             return false;
         }
     }
+    public static List<Schedule> getPlanner(User user) {
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            return em.createQuery("SELECT p.schedule FROM Planner p WHERE p.id.userId = :userId", Schedule.class)
+                    .setParameter("userId", user.getId())
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+
 }
