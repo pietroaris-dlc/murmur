@@ -21,8 +21,6 @@ import java.util.List;
  * filtrando in base a criteri quali la professione, il range di tariffa oraria,
  * l'orario specificato e la localizzazione.
  * </p>
- *
- 
  */
 public class DailyOnsiteSearchStrategy implements SearchStrategy {
 
@@ -44,7 +42,6 @@ public class DailyOnsiteSearchStrategy implements SearchStrategy {
      */
     @Override
     public String search(Criteria criteria) {
-        // Ottiene l'EntityManager per interagire con il database
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         String json = "";
         try {
@@ -60,6 +57,165 @@ public class DailyOnsiteSearchStrategy implements SearchStrategy {
             String district = criteria.getDistrict();
             String region = criteria.getRegion();
             String country = criteria.getCountry();
+
+            // Validazione della professione
+            if (profession == null || profession.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "profession is required");
+                return errorJson.toString(2);
+            } else {
+                for (char c : profession.toCharArray()) {
+                    if (Character.isDigit(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "profession contains digits");
+                        return errorJson.toString(2);
+                    }
+                    if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "profession contains special characters");
+                        return errorJson.toString(2);
+                    }
+                }
+            }
+
+            // Validazione delle tariffe orarie
+            if (hourlyRateMax < hourlyRateMin) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "the hourlyRateMax must be greater than or equal to the hourlyRateMin");
+                return errorJson.toString(2);
+            }
+
+            // Validazione del giorno
+            if (day == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Day cannot be null");
+                return errorJson.toString(2);
+            }
+
+            // Validazione degli orari giornalieri
+            if (startHour == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "StartHour cannot be null");
+                return errorJson.toString(2);
+            }
+            if (endHour == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "EndHour cannot be null");
+                return errorJson.toString(2);
+            }
+            if (!endHour.isAfter(startHour)) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "the endHour must be after the StartHour");
+                return errorJson.toString(2);
+            }
+
+            // Validazione dei parametri di localizzazione
+            // City
+            if (city == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "City cannot be null");
+                return errorJson.toString(2);
+            } else {
+                for (char c : city.toCharArray()) {
+                    if (Character.isDigit(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "City contains digits");
+                        return errorJson.toString(2);
+                    }
+                    if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "City contains special characters");
+                        return errorJson.toString(2);
+                    }
+                }
+            }
+
+            // Street
+            if (street == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Street cannot be null");
+                return errorJson.toString(2);
+            } else if (street.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Street cannot be empty");
+                return errorJson.toString(2);
+            } else if (street.length() > 128) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Street contains more than 128 characters");
+                return errorJson.toString(2);
+            }
+
+            // District
+            if (district == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "District cannot be null");
+                return errorJson.toString(2);
+            } else if (district.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "District cannot be empty");
+                return errorJson.toString(2);
+            } else {
+                for (char c : district.toCharArray()) {
+                    if (Character.isDigit(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "District contains digits");
+                        return errorJson.toString(2);
+                    }
+                    if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "District contains special characters");
+                        return errorJson.toString(2);
+                    }
+                }
+            }
+
+            // Region
+            if (region == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Region cannot be null");
+                return errorJson.toString(2);
+            } else if (region.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Region cannot be empty");
+                return errorJson.toString(2);
+            } else {
+                for (char c : region.toCharArray()) {
+                    if (Character.isDigit(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "Region contains digits");
+                        return errorJson.toString(2);
+                    }
+                    if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "Region contains special characters");
+                        return errorJson.toString(2);
+                    }
+                }
+            }
+
+            // Country
+            if (country == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Country cannot be null");
+                return errorJson.toString(2);
+            } else if (country.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Country cannot be empty");
+                return errorJson.toString(2);
+            } else {
+                for (char c : country.toCharArray()) {
+                    if (Character.isDigit(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "Country contains digits");
+                        return errorJson.toString(2);
+                    }
+                    if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "Country contains special characters");
+                        return errorJson.toString(2);
+                    }
+                }
+            }
 
             // Crea la query per selezionare gli utenti, le loro carriere e il numero civico
             Query query = em.createQuery(
@@ -77,33 +233,30 @@ public class DailyOnsiteSearchStrategy implements SearchStrategy {
                                     "and aa.location.district = :district " +
                                     "and aa.location.region = :region " +
                                     "and aa.location.country = :country")
-                    .setParameter("profession", criteria.getProfession())
-                    .setParameter("hourlyRateMin", criteria.getHourlyRateMin())
-                    .setParameter("hourlyRateMax", criteria.getHourlyRateMax())
-                    .setParameter("city", criteria.getCity())
-                    .setParameter("street", criteria.getStreet())
-                    .setParameter("district", criteria.getDistrict())
-                    .setParameter("region", criteria.getRegion())
-                    .setParameter("country", criteria.getCountry());
+                    .setParameter("profession", profession)
+                    .setParameter("hourlyRateMin", hourlyRateMin)
+                    .setParameter("hourlyRateMax", hourlyRateMax)
+                    .setParameter("city", city)
+                    .setParameter("street", street)
+                    .setParameter("district", district)
+                    .setParameter("region", region)
+                    .setParameter("country", country);
 
-            // Esegue la query e ottiene i risultati
             @SuppressWarnings("unchecked")
             List<Object[]> queryResults = query.getResultList();
             List<Result> results = new ArrayList<>();
 
-            // Itera sui risultati della query
+            // Itera sui risultati della query: salta il worker se c'è collisione nell'orario specificato
             for (Object[] row : queryResults) {
                 User worker = (User) row[0];
-                // Se viene rilevata una collisione nell'orario specificato, salta questo worker
-                if (Collision.detect(worker, criteria.getDay(), new TimeInterval(criteria.getDailyStartHour(), criteria.getDailyEndHour())))
+                if (Collision.detect(worker, day, new TimeInterval(startHour, endHour)))
                     continue;
                 Career career = (Career) row[1];
                 Short streetNumber = (Short) row[2];
-                // Aggiunge il risultato alla lista
                 results.add(new Result(worker, career, streetNumber));
             }
 
-            // Ordina i risultati in base alla priorità del lavoratore in ordine decrescente
+            // Ordina i risultati in base alla priorità del lavoratore (in ordine decrescente)
             results.sort(new Comparator<Result>() {
                 @Override
                 public int compare(Result o1, Result o2) {
@@ -113,8 +266,6 @@ public class DailyOnsiteSearchStrategy implements SearchStrategy {
 
             // Crea l'oggetto JSON per l'output
             JSONObject output = new JSONObject();
-
-            // Crea e popola l'oggetto JSON con i criteri di ricerca
             JSONObject criteriaJson = new JSONObject();
             criteriaJson.put("scheduleType", criteria.getScheduleType());
             criteriaJson.put("serviceMode", criteria.getServiceMode());
@@ -129,11 +280,8 @@ public class DailyOnsiteSearchStrategy implements SearchStrategy {
             criteriaJson.put("district", district);
             criteriaJson.put("region", region);
             criteriaJson.put("country", country);
-
-            // Aggiunge i criteri di ricerca all'output
             output.put("searchCriteria", criteriaJson);
 
-            // Crea l'array JSON per contenere i risultati
             JSONArray resultsArray = new JSONArray();
             for (Result result : results) {
                 JSONObject resultJson = new JSONObject();
@@ -142,20 +290,21 @@ public class DailyOnsiteSearchStrategy implements SearchStrategy {
                 resultJson.put("streetNumber", result.getStreetNumber());
                 resultsArray.put(resultJson);
             }
-            // Aggiunge l'array dei risultati all'output
-            output.put("results", resultsArray);
 
-            // Converte l'oggetto JSON in stringa con indentazione (2 spazi)
+            if(resultsArray.isEmpty()){
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "No Results Found");
+                return errorJson.toString(2);
+            }
+
+            output.put("results", resultsArray);
             json = output.toString(2);
         } catch(Exception e) {
-            // Stampa lo stack trace in caso di eccezione
             e.printStackTrace();
-            // Crea un oggetto JSON per rappresentare l'errore
             JSONObject errorJson = new JSONObject();
             errorJson.put("error", "Server error occurred: " + e.getMessage());
             json = errorJson.toString();
         } finally {
-            // Chiude l'EntityManager per liberare le risorse
             em.close();
         }
         return json;
