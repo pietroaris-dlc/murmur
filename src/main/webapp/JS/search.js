@@ -207,13 +207,10 @@ document.getElementById("searchForm").addEventListener("submit", function(e) {
         .then(data => {
             const resultsList = document.getElementById("resultsList");
             resultsList.innerHTML = "";
-            console.log("Risposta dal server:", data.error);
+            console.log("Risposta dal server:", data.results);
             console.log("Risposta dal server:", JSON.stringify(data));
 
-            if (data.error) {
-                // Se c'è un messaggio di errore, lo mostriamo
-                resultsList.innerHTML = `<li>Error: ${data.error}</li>`;
-            } else if (data.results && data.results.length > 0) {
+            if (data.results && data.results.length > 0) {
                 data.results.forEach(result => {
                     const form = document.createElement("form");
                     form.className = "resultForm";

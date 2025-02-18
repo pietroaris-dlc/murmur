@@ -244,33 +244,6 @@ public class AccountManagement {
     }
 
     /**
-     * Cancella un'applicazione.
-     * <p>
-     * Il metodo rimuove un'applicazione dal database.
-     * </p>
-     *
-     * @param application L'applicazione da cancellare.
-     * @return {@code true} se l'applicazione viene cancellata con successo, {@code false} altrimenti.
-     */
-    public static boolean cancelApplication(Application application) {
-        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        try (em) {
-            EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
-
-            // Se l'applicazione non è gestita dall'EntityManager, la fonde (merge)
-            if (!em.contains(application)) {
-                application = em.merge(application);
-            }
-            // Rimuove l'applicazione
-            em.remove(application);
-
-            transaction.commit();
-            return true;
-        }
-    }
-
-    /**
      * Invia una richiesta di upgrade.
      * <p>
      * Il metodo crea una nuova applicazione di tipo "UPGRADE" e un oggetto {@link Upgradeapplication}

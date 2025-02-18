@@ -1,5 +1,6 @@
 <%
-    boolean loggedInFooter = (boolean) session.getAttribute("loggedIn");
+    Boolean loggedInObjFooter = (Boolean) session.getAttribute("loggedIn");
+    boolean loggedInFooter = (loggedInObjFooter != null) ? loggedInObjFooter.booleanValue() : false;
 %>
 
 <footer id="footer">
