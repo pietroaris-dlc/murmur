@@ -231,7 +231,7 @@ public class AdminSide {
      * @param email L'email dell'utente da recuperare.
      * @return L'oggetto {@link User} corrispondente all'email, oppure lancia un'eccezione se non viene trovato.
      */
-    public static User getUser(String email) {
+    public static User findUser(String email) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         return em.createQuery(
                         "select u from User u where u.email = :email", User.class)

@@ -204,11 +204,13 @@ public class WorkerSide implements Collision {
                                     "  and l.street = :street " +
                                     "  and l.streetNumber = :streetNumber " +
                                     "  and l.district = :district " +
+                                    "  and l.region = :region" +
                                     "  and l.country = :country",
                             Location.class)
                     .setParameter("city", city)
                     .setParameter("street", street)
                     .setParameter("streetNumber", streetNumber)
+                    .setParameter("region", region)
                     .setParameter("district", district)
                     .setParameter("country", country)
                     .getResultList();
@@ -222,6 +224,7 @@ public class WorkerSide implements Collision {
                 locationToUse.setStreet(street);
                 locationToUse.setStreetNumber(streetNumber);
                 locationToUse.setDistrict(district);
+                locationToUse.setRegion(region);
                 locationToUse.setCountry(country);
                 em.persist(locationToUse);
             }
