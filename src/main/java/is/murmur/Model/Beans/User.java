@@ -55,11 +55,8 @@ public class User {
     @Column(name = "locked", nullable = false)
     private Boolean locked = false;
 
-    @OneToMany(mappedBy = "user")
+    @ManyToMany(mappedBy = "user")
     private Set<Application> applications = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "worker")
-    private Set<Career> careers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     private Set<Clientalias> clientaliases = new LinkedHashSet<>();
@@ -185,14 +182,6 @@ public class User {
 
     public void setApplications(Set<Application> applications) {
         this.applications = applications;
-    }
-
-    public Set<Career> getCareers() {
-        return careers;
-    }
-
-    public void setCareers(Set<Career> careers) {
-        this.careers = careers;
     }
 
     public Set<Clientalias> getClientaliases() {

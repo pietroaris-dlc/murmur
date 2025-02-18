@@ -1,10 +1,22 @@
 <%
+    // Controllo e impostazione del pageName
     String pageName = "Home";
-    if(session.getAttribute("pageName") != null)
-        pageName = session.getAttribute("pageName").toString();
-    int userType = (int) session.getAttribute("userType");
-    boolean isAdmin= (boolean) session.getAttribute("isAdmin");
-    boolean loggedInHeader = (boolean) session.getAttribute("loggedIn");
+    Object pageNameObj = session.getAttribute("pageName");
+    if (pageNameObj != null) {
+        pageName = pageNameObj.toString();
+    }
+
+    // Controllo e impostazione del userType (default: 0)
+    Integer userTypeObj = (Integer) session.getAttribute("userType");
+    int userType = (userTypeObj != null) ? userTypeObj.intValue() : 0;
+
+    // Controllo e impostazione di isAdmin (default: false)
+    Boolean isAdminObj = (Boolean) session.getAttribute("isAdmin");
+    boolean isAdmin = (isAdminObj != null) ? isAdminObj.booleanValue() : false;
+
+    // Controllo e impostazione di loggedIn (default: false)
+    Boolean loggedInObj = (Boolean) session.getAttribute("loggedIn");
+    boolean loggedInHeader = (loggedInObj != null) ? loggedInObj.booleanValue() : false;
 %>
 
 <header id="header">

@@ -6,6 +6,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "application")
@@ -36,6 +38,12 @@ public class Application {
     @Lob
     @Column(name = "type", nullable = false)
     private String type;
+
+    @ManyToMany
+    @JoinTable(name = "checkedapplication",
+            joinColumns = @JoinColumn(name = "applicationId"),
+            inverseJoinColumns = @JoinColumn(name = "adminId"))
+    private Set<User> users = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "application")
     private Jobapplication jobapplication;
@@ -100,6 +108,14 @@ public class Application {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     public Jobapplication getJobapplication() {

@@ -33,7 +33,7 @@ public class Criteria {
     // Mappa dei giorni della settimana (es. "MONDAY") con relativi intervalli di tempo
     private final Map<String, TimeInterval> weeklyIntervals;
 
-    // Campi per la location (opzionali, per ricerche Onsite/HomeDelivery)
+    // Campi per la notRemote (opzionali, per ricerche Onsite/HomeDelivery)
     private final String city;
     private final String street;
     private final String district;
@@ -166,7 +166,7 @@ public class Criteria {
     }
 
     /**
-     * Restituisce la città per la ricerca basata sulla location.
+     * Restituisce la città per la ricerca basata sulla notRemote.
      *
      * @return {@code String} che rappresenta la città.
      */
@@ -175,7 +175,7 @@ public class Criteria {
     }
 
     /**
-     * Restituisce la via per la ricerca basata sulla location.
+     * Restituisce la via per la ricerca basata sulla notRemote.
      *
      * @return {@code String} che rappresenta la via.
      */
@@ -184,7 +184,7 @@ public class Criteria {
     }
 
     /**
-     * Restituisce il distretto per la ricerca basata sulla location.
+     * Restituisce il distretto per la ricerca basata sulla notRemote.
      *
      * @return {@code String} che rappresenta il distretto.
      */
@@ -193,7 +193,7 @@ public class Criteria {
     }
 
     /**
-     * Restituisce la regione per la ricerca basata sulla location.
+     * Restituisce la regione per la ricerca basata sulla notRemote.
      *
      * @return {@code String} che rappresenta la regione.
      */
@@ -202,7 +202,7 @@ public class Criteria {
     }
 
     /**
-     * Restituisce il paese per la ricerca basata sulla location.
+     * Restituisce il paese per la ricerca basata sulla notRemote.
      *
      * @return {@code String} che rappresenta il paese.
      */
@@ -235,7 +235,7 @@ public class Criteria {
         private LocalDate endDate = null;
         private Map<String, TimeInterval> weeklyIntervals = Collections.emptyMap();
 
-        // Campi opzionali per la location
+        // Campi opzionali per la notRemote
         private String city = "";
         private String street = "";
         private String district = "";
@@ -290,7 +290,7 @@ public class Criteria {
         }
 
         /**
-         * Imposta i campi relativi alla location per ricerche Onsite o HomeDelivery.
+         * Imposta i campi relativi alla notRemote per ricerche Onsite o HomeDelivery.
          *
          * @param city     La città.
          * @param street   La via.
@@ -299,7 +299,7 @@ public class Criteria {
          * @param country  Il paese.
          * @return Il Builder aggiornato.
          */
-        public Builder location(String city, String street, String district, String region, String country) {
+        public Builder notRemote(String city, String street, String district, String region, String country) {
             this.city = city;
             this.street = street;
             this.district = district;

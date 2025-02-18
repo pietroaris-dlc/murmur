@@ -146,7 +146,7 @@ public class ContractsManagement {
 
                 PlannerId newWorkerPlannerId = new PlannerId();
                 newWorkerPlannerId.setScheduleId(newSchedule.getId());
-                newWorkerPlannerId.setUserId(offer.getAlias().getWorkerAlias().getUser().getId());
+                newWorkerPlannerId.setUserId(offer.getAlias().getWorkerAlias().getUser().getUser().getId());
                 em.persist(newWorkerPlannerId);
                 em.flush();
 

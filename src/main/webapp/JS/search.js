@@ -31,6 +31,14 @@ function loadScheduleCriteria() {
     } else if (scheduleType === "weekly") {
         // Manteniamo la tabella per l'inserimento dei giorni
         scheduleDiv.innerHTML = `
+            <div class="form-row">
+                <label for="StartDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" required />
+            </div>
+            <div class="form-row">
+                <label for="EndDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" required />
+            </div>
             <table style="margin: 0 auto;">
                 <thead>
                   <tr>
@@ -164,25 +172,48 @@ function loadServiceModeCriteria() {
 document.getElementById("searchForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
+    console.log("Form submitted");
+
+    // Se il tipo di schedule è "weekly", raccogli i giorni selezionati
+    const scheduleType = document.getElementById('searchScheduleType').value;
+    if (scheduleType === "weekly") {
+        const daysNames = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+        let selectedDays = [];
+        daysNames.forEach(day => {
+            const checkbox = document.getElementById(day);
+            if (checkbox && checkbox.checked) {
+                // Inseriamo il nome in maiuscolo per essere compatibile col server (es. "MONDAY")
+                selectedDays.push(day.toUpperCase());
+            }
+        });
+
+        // Crea (o aggiorna) un input hidden con il nome "dayOfWeekList"
+        let hiddenInput = document.querySelector("input[name='dayOfWeekList']");
+        if (!hiddenInput) {
+            hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "dayOfWeekList";
+            this.appendChild(hiddenInput);
+        }
+        hiddenInput.value = selectedDays.join(",");
+    }
+
     const formData = new FormData(this);
 
     fetch("searchServlet", {
         method: "POST",
         body: new URLSearchParams(formData)
     })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`Server error: ${response.status} - ${text}`);
-                });
-            }
-            return response.json();
-        })
         .then(data => {
             const resultsList = document.getElementById("resultsList");
             resultsList.innerHTML = "";
+            console.log("Risposta dal server:", data.error);
+            console.log("Risposta dal server:", JSON.stringify(data));
 
-            if (data.results && data.results.length > 0) {
+            if (data.error) {
+                // Se c'è un messaggio di errore, lo mostriamo
+                resultsList.innerHTML = `<li>Error: ${data.error}</li>`;
+            } else if (data.results && data.results.length > 0) {
                 data.results.forEach(result => {
                     const form = document.createElement("form");
                     form.className = "resultForm";
@@ -206,7 +237,7 @@ document.getElementById("searchForm").addEventListener("submit", function(e) {
                     resultsList.appendChild(li);
                 });
             } else {
-                resultsList.innerHTML = "<li>No results found</li>";
+                resultsList.innerHTML = "<li>No Results Error</li>";
             }
         })
         .catch(error => {

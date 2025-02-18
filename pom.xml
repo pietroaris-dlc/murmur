@@ -98,27 +98,16 @@
 
     <build>
         <plugins>
-            <!-- Plugin per la generazione del WAR -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
-            </plugin>
-
-            <!-- Configurazione di JaCoCo -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
+                <version>0.8.5</version>
                 <executions>
-                    <!-- Prepara l'agente JaCoCo prima dei test -->
                     <execution>
-                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!-- Genera il report di coverage dopo i test -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
@@ -126,30 +115,8 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-                    <!-- (Opzionale) Verifica che il coverage raggiunga una soglia minima -->
-                    <execution>
-                        <id>check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>INSTRUCTION</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>

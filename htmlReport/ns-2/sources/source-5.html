@@ -1,0 +1,138 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > WeeklyHomeDeliverySearchStrategy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">is.murmur.Model.Services.SearchStrategy</a>
+</div>
+
+<h1>Coverage Summary for Class: WeeklyHomeDeliverySearchStrategy (is.murmur.Model.Services.SearchStrategy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WeeklyHomeDeliverySearchStrategy</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package is.murmur.Model.Services.SearchStrategy;
+&nbsp;
+&nbsp;import is.murmur.Model.Helpers.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implementazione della strategia di ricerca per il servizio di consegna a domicilio settimanale.
+&nbsp; * &lt;p&gt;
+&nbsp; * Questa classe implementa l&#39;interfaccia {@link SearchStrategy} e definisce la logica
+&nbsp; * per eseguire una ricerca di lavoratori per il servizio di consegna a domicilio settimanale.
+&nbsp; * La strategia delega l&#39;operazione di ricerca alla strategia &quot;WEEKLY&quot; &quot;ONSITE&quot; ottenuta tramite
+&nbsp; * il {@link SearchStrategyFactory}, sfruttando la logica già esistente per la modalità onsite.
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; */
+<b class="fc">&nbsp;public class WeeklyHomeDeliverySearchStrategy implements SearchStrategy {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Esegue la ricerca dei lavoratori per il servizio di consegna a domicilio settimanale.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo delega la ricerca alla strategia ottenuta da {@link SearchStrategyFactory}
+&nbsp;     * passando i parametri &quot;WEEKLY&quot; e &quot;ONSITE&quot;, poiché il servizio di consegna a domicilio settimanale
+&nbsp;     * utilizza la stessa logica di ricerca della modalità onsite.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param criteria I criteri di ricerca che includono le informazioni necessarie per filtrare i lavoratori.
+&nbsp;     * @return Una stringa in formato JSON contenente i criteri di ricerca e i risultati, oppure
+&nbsp;     *         un messaggio di errore in caso di eccezioni.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String search(Criteria criteria) {
+&nbsp;        // Delegazione della ricerca alla strategia &quot;WEEKLY&quot; &quot;ONSITE&quot; tramite il factory.
+<b class="fc">&nbsp;        return SearchStrategyFactory.getStrategy(&quot;WEEKLY&quot;, &quot;ONSITE&quot;).search(criteria);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-17 14:06</div>
+</div>
+</body>
+</html>

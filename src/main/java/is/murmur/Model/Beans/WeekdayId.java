@@ -13,8 +13,7 @@ public class WeekdayId implements java.io.Serializable {
     @Column(name = "weeklyId", nullable = false)
     private Long weeklyId;
 
-    @Lob
-    @Column(name = "dayOfWeek", nullable = false)
+    @Column(name = "dayOfWeek", nullable = false, length = 10)
     private String dayOfWeek;
 
     public Long getWeeklyId() {

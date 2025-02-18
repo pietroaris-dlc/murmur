@@ -1,0 +1,680 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ClientSide</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">is.murmur.Model.Services</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientSide (is.murmur.Model.Services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientSide</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/68)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0.4%
+  </span>
+  <span class="absValue">
+    (1/262)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package is.murmur.Model.Services;
+&nbsp;
+&nbsp;import is.murmur.Model.Beans.*;
+&nbsp;import is.murmur.Model.Helpers.*;
+&nbsp;import is.murmur.Model.Services.SearchStrategy.SearchStrategyFactory;
+&nbsp;import jakarta.persistence.EntityManager;
+&nbsp;import jakarta.persistence.EntityTransaction;
+&nbsp;import org.hibernate.Transaction;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.time.Duration;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * Classe che implementa le operazioni lato client.
+&nbsp; * &lt;p&gt;
+&nbsp; * Questa classe fornisce metodi statici per operazioni lato client come la ricerca,
+&nbsp; * la gestione di bozze (draft) di contratti, l&#39;invio di offerte, la revisione dei contratti,
+&nbsp; * il calcolo delle metriche dei lavoratori e la pianificazione degli orari (daily e weekly).
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; 
+&nbsp; */
+<b class="nc">&nbsp;public class ClientSide {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Esegue una ricerca utilizzando la strategia appropriata in base ai criteri.
+&nbsp;     *
+&nbsp;     * @param criteria I criteri di ricerca.
+&nbsp;     * @return Una stringa in formato JSON contenente i risultati della ricerca.
+&nbsp;     */
+&nbsp;    public static String search(Criteria criteria) {
+&nbsp;        // Ottiene la strategia corretta dal factory in base al tipo di schedule e modalità di servizio.
+<b class="fc">&nbsp;        return SearchStrategyFactory.getStrategy(criteria.getScheduleType(), criteria.getServiceMode()).search(criteria);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Salva una bozza (draft) di contratto.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Questo metodo persiste il contratto di bozza e le relative entità associate come
+&nbsp;     * Daily/Weekly contracts, alias e, se necessario, contratti non remoti.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user   L&#39;utente client che salva la bozza.
+&nbsp;     * @param buffer Il DraftBuffer contenente il draft e le relative informazioni.
+&nbsp;     * @return Il contratto di bozza salvato.
+&nbsp;     */
+&nbsp;    public static Contract saveDraft(User user, DraftBuffer buffer) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;        transaction.begin();</b>
+&nbsp;
+&nbsp;        // Estrae il draft e le entità associate dal buffer
+<b class="nc">&nbsp;        Contract draft = buffer.getDraft();</b>
+<b class="nc">&nbsp;        User worker = buffer.getWorker();</b>
+<b class="nc">&nbsp;        Dailycontract dailyContract = null;</b>
+<b class="nc">&nbsp;        Weeklycontract weeklyContract = null;</b>
+<b class="nc">&nbsp;        List&lt;Weekdaycontract&gt; weekdayContract = null;</b>
+<b class="nc">&nbsp;        Notremotecontract notRemoteContract = null;</b>
+&nbsp;
+&nbsp;        // Persiste il draft
+<b class="nc">&nbsp;        em.persist(draft);</b>
+<b class="nc">&nbsp;        em.flush();</b>
+&nbsp;
+&nbsp;        // In base al tipo di schedule, recupera il DailyContract o il WeeklyContract
+<b class="nc">&nbsp;        if (draft.getScheduleType().equals(&quot;DAILY&quot;)) {</b>
+<b class="nc">&nbsp;            dailyContract = buffer.getDailyContract();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            weeklyContract = buffer.getWeeklyContract();</b>
+<b class="nc">&nbsp;            weekdayContract = buffer.getWeekdaysContract();</b>
+&nbsp;        }
+&nbsp;        // Se il servizio non è REMOTE, recupera il Notremotecontract
+<b class="nc">&nbsp;        if (!draft.getServiceMode().equals(&quot;REMOTE&quot;)) {</b>
+<b class="nc">&nbsp;            notRemoteContract = buffer.getNotremotecontract();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Crea e persiste gli alias per client e worker
+<b class="nc">&nbsp;        Alias aliases = new Alias();</b>
+<b class="nc">&nbsp;        Clientalias clientalias = new Clientalias();</b>
+<b class="nc">&nbsp;        clientalias.setUser(user);</b>
+<b class="nc">&nbsp;        em.persist(clientalias);</b>
+<b class="nc">&nbsp;        em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;        Workeralias workeralias = new Workeralias();</b>
+<b class="nc">&nbsp;        workeralias.setUser(worker.getWorker());</b>
+<b class="nc">&nbsp;        em.persist(workeralias);</b>
+<b class="nc">&nbsp;        em.flush();</b>
+&nbsp;
+&nbsp;        // Imposta gli alias sul contratto
+<b class="nc">&nbsp;        aliases.setClientAlias(clientalias);</b>
+<b class="nc">&nbsp;        aliases.setWorkerAlias(workeralias);</b>
+<b class="nc">&nbsp;        aliases.setContract(draft);</b>
+<b class="nc">&nbsp;        aliases.setId(draft.getId());</b>
+<b class="nc">&nbsp;        em.persist(aliases);</b>
+<b class="nc">&nbsp;        em.flush();</b>
+&nbsp;
+&nbsp;        // Collega i contratti specifici al draft
+<b class="nc">&nbsp;        if (dailyContract != null) {</b>
+<b class="nc">&nbsp;            dailyContract.setContract(draft);</b>
+<b class="nc">&nbsp;        } else if (weeklyContract != null) {</b>
+<b class="nc">&nbsp;            weeklyContract.setContract(draft);</b>
+<b class="nc">&nbsp;            em.persist(weeklyContract);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;
+&nbsp;            // Persiste ogni Weekdaycontract associato al Weeklycontract
+<b class="nc">&nbsp;            for (Weekdaycontract wdc : weekdayContract) {</b>
+<b class="nc">&nbsp;                em.persist(wdc);</b>
+<b class="nc">&nbsp;                em.flush();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if (notRemoteContract != null) {</b>
+<b class="nc">&nbsp;            notRemoteContract.setContract(draft);</b>
+<b class="nc">&nbsp;            em.persist(notRemoteContract);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Associa l&#39;ID del draft al dailyContract e lo persiste
+<b class="nc">&nbsp;        dailyContract.setId(draft.getId());</b>
+<b class="nc">&nbsp;        em.persist(dailyContract);</b>
+<b class="nc">&nbsp;        em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;        transaction.commit();</b>
+<b class="nc">&nbsp;        return draft;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Genera una bozza (DraftBuffer) a partire dai criteri e dal risultato ottenuto.
+&nbsp;     *
+&nbsp;     * @param criteria I criteri di ricerca.
+&nbsp;     * @param result   Il risultato selezionato.
+&nbsp;     * @return Il DraftBuffer contenente le informazioni della bozza.
+&nbsp;     */
+&nbsp;    public static DraftBuffer draftResult(Criteria criteria, Result result) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;            // Scrive la bozza utilizzando il metodo di ContractsManagement
+<b class="nc">&nbsp;            return ContractsManagement.writeDraft(criteria, result);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Crea e invia un&#39;offerta basata su un DraftBuffer e delle richieste speciali.
+&nbsp;     *
+&nbsp;     * @param user            L&#39;utente che invia l&#39;offerta.
+&nbsp;     * @param criteria        I criteri di ricerca usati per generare il draft.
+&nbsp;     * @param result          Il risultato selezionato dalla ricerca.
+&nbsp;     * @param specialRequests Richieste speciali per l&#39;offerta.
+&nbsp;     * @return Il contratto di offerta creato.
+&nbsp;     */
+&nbsp;    public static Contract offerResult(User user, Criteria criteria, Result result, String specialRequests) {
+&nbsp;        // Genera il draft e quindi invia l&#39;offerta
+<b class="nc">&nbsp;        return offerDraft(user, draftResult(criteria, result), specialRequests);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Invia un&#39;offerta basata su una bozza (DraftBuffer).
+&nbsp;     *
+&nbsp;     * @param user            L&#39;utente che invia l&#39;offerta.
+&nbsp;     * @param buffer          Il DraftBuffer contenente il draft.
+&nbsp;     * @param specialRequests Richieste speciali per l&#39;offerta.
+&nbsp;     * @return Il contratto di offerta inviato.
+&nbsp;     */
+&nbsp;    public static Contract offerDraft(User user, DraftBuffer buffer, String specialRequests) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+&nbsp;            // Salva il draft e invia l&#39;offerta tramite il metodo di ContractsManagement
+<b class="nc">&nbsp;            return ContractsManagement.sendOffer(saveDraft(user, buffer), specialRequests);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Effettua una recensione su un contratto scaduto.
+&nbsp;     *
+&nbsp;     * @param expired     Il contratto scaduto.
+&nbsp;     * @param description La descrizione della recensione.
+&nbsp;     * @param rating      Il punteggio della recensione (da 0 a 10).
+&nbsp;     * @return L&#39;oggetto {@link Review} creato.
+&nbsp;     */
+&nbsp;    public static Review doReview(Contract expired, String description, int rating) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;            // Crea una nuova recensione e la associa al contratto scaduto
+<b class="nc">&nbsp;            Review review = new Review();</b>
+<b class="nc">&nbsp;            review.setDescription(description);</b>
+<b class="nc">&nbsp;            review.setContract(expired);</b>
+<b class="nc">&nbsp;            review.setRating((byte) rating);</b>
+<b class="nc">&nbsp;            review.setId(expired.getId());</b>
+<b class="nc">&nbsp;            em.persist(review);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;            // Aggiorna le metriche del lavoratore basandosi sul contratto
+<b class="nc">&nbsp;            murmur(expired.getAlias().getWorkerAlias().getUser().getUser());</b>
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return review;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            em.close();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calcola e aggiorna le metriche del lavoratore.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Questo metodo calcola il tempo di lavoro dell&#39;ultimo mese, la valutazione media
+&nbsp;     * e la priorità del lavoratore, aggiornandone anche il profitto totale.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param worker Il lavoratore da aggiornare.
+&nbsp;     */
+&nbsp;    private static void murmur(User worker) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+<b class="nc">&nbsp;            double lastMonthWorkTime = 0;</b>
+<b class="nc">&nbsp;            double averageRating = 0;</b>
+&nbsp;
+&nbsp;            // Calcola la data di un mese fa
+<b class="nc">&nbsp;            LocalDate lastMonth = LocalDate.now().minusMonths(1);</b>
+&nbsp;
+&nbsp;            // Recupera i contratti scaduti dell&#39;ultimo mese per il lavoratore
+<b class="nc">&nbsp;            List&lt;Contract&gt; lastMonthContracts = em.createQuery(</b>
+&nbsp;                            &quot;select c from Contract c&quot; +
+&nbsp;                                    &quot; join Dailycontract dc on dc.contract.id = c.id&quot; +
+&nbsp;                                    &quot; join Weeklycontract wc on wc.contract.id = c.id&quot; +
+&nbsp;                                    &quot; where c.alias.workerAlias.user.user = :user&quot; +
+&nbsp;                                    &quot; and wc.endDate &gt; :lastMonth and dc.day &gt; :lastMonth&quot; +
+&nbsp;                                    &quot; and c.status = :expired&quot;,
+&nbsp;                            Contract.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;user&quot;, worker)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;lastMonth&quot;, lastMonth)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;expired&quot;, &quot;EXPIRED&quot;)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+&nbsp;
+&nbsp;            // Per ogni contratto, accumula il tempo di lavoro e le valutazioni
+<b class="nc">&nbsp;            for (Contract contract : lastMonthContracts) {</b>
+<b class="nc">&nbsp;                if (contract.getScheduleType().equals(&quot;DAILY&quot;)) {</b>
+&nbsp;                    // Calcola la durata del contratto giornaliero in secondi
+<b class="nc">&nbsp;                    long duration = Duration.between(contract.getDailycontract().getStartHour(), contract.getDailycontract().getEndHour()).toSeconds();</b>
+<b class="nc">&nbsp;                    lastMonthWorkTime += duration;</b>
+&nbsp;                } else {
+&nbsp;                    // Per i contratti settimanali, recupera i contratti per ogni giorno
+<b class="nc">&nbsp;                    List&lt;Weekdaycontract&gt; weekdays = em.createQuery(</b>
+&nbsp;                                    &quot;select wdc from Weekdaycontract wdc&quot; +
+&nbsp;                                            &quot; join Weeklycontract wc&quot; +
+&nbsp;                                            &quot; where wdc.weekly.contract = :contract&quot;,
+&nbsp;                                    Weekdaycontract.class)
+<b class="nc">&nbsp;                            .setParameter(&quot;contract&quot;, contract)</b>
+<b class="nc">&nbsp;                            .getResultList();</b>
+<b class="nc">&nbsp;                    for (Weekdaycontract wdc : weekdays) {</b>
+<b class="nc">&nbsp;                        long duration = Duration.between(wdc.getStartHour(), wdc.getEndHour()).toSeconds();</b>
+<b class="nc">&nbsp;                        lastMonthWorkTime += duration;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                // Recupera le recensioni associate al contratto
+<b class="nc">&nbsp;                List&lt;Review&gt; reviews = em.createQuery(</b>
+&nbsp;                                &quot;select r from Review r join Contract c on r.contract.id = c.id&quot;,
+&nbsp;                                Review.class)
+<b class="nc">&nbsp;                        .getResultList();</b>
+<b class="nc">&nbsp;                for (Review review : reviews) {</b>
+<b class="nc">&nbsp;                    averageRating += review.getRating();</b>
+&nbsp;                }
+<b class="nc">&nbsp;                averageRating /= reviews.size();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Aggiorna le informazioni del lavoratore
+<b class="nc">&nbsp;            Worker workerInfos = worker.getWorker();</b>
+<b class="nc">&nbsp;            workerInfos.setAverageRating(averageRating);</b>
+<b class="nc">&nbsp;            workerInfos.setLastMonthWorkTime(lastMonthWorkTime);</b>
+&nbsp;
+&nbsp;            // Calcola la priorità del lavoratore
+<b class="nc">&nbsp;            workerInfos.setPriority(Math.pow(workerInfos.getAverageRating(), 0.5) / (Math.pow(workerInfos.getLastMonthWorkTime(), 1.2) + 1));</b>
+<b class="nc">&nbsp;            em.persist(workerInfos);</b>
+&nbsp;
+&nbsp;            // Calcola il profitto totale dei contratti scaduti
+<b class="nc">&nbsp;            List&lt;Contract&gt; contracts = em.createQuery(</b>
+&nbsp;                            &quot;select c from Contract c where c.alias.workerAlias.user.user = :user and c.status = :expired&quot;,
+&nbsp;                            Contract.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;user&quot;, worker)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;expired&quot;, &quot;EXPIRED&quot;)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+&nbsp;
+<b class="nc">&nbsp;            BigDecimal totalProfit = BigDecimal.ZERO;</b>
+<b class="nc">&nbsp;            for (Contract contract : contracts) {</b>
+<b class="nc">&nbsp;                totalProfit = totalProfit.add(contract.getTotalFee());</b>
+&nbsp;            }
+<b class="nc">&nbsp;            workerInfos.setTotalProfit(totalProfit);</b>
+<b class="nc">&nbsp;            em.merge(workerInfos);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Aggiunge uno schedule giornaliero per un utente.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Verifica che non vi siano collisioni con altri schedule, quindi crea e persiste
+&nbsp;     * un nuovo Schedule, Daily, PlannerId e Planner.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user         L&#39;utente per cui aggiungere lo schedule.
+&nbsp;     * @param day          Il giorno in cui impostare lo schedule.
+&nbsp;     * @param timeInterval L&#39;intervallo orario per lo schedule.
+&nbsp;     * @return {@code true} se lo schedule viene aggiunto con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean addDailySchedule(User user, LocalDate day, TimeInterval timeInterval) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Verifica se esiste una collisione per lo schedule
+<b class="nc">&nbsp;            if (Collision.detect(user, day, timeInterval)) return false;</b>
+&nbsp;
+&nbsp;            // Crea un nuovo Schedule di tipo DAILY e lo persiste
+<b class="nc">&nbsp;            Schedule newSchedule = new Schedule();</b>
+<b class="nc">&nbsp;            newSchedule.setType(&quot;DAILY&quot;);</b>
+<b class="nc">&nbsp;            em.persist(newSchedule);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;
+&nbsp;            // Crea un&#39;entità Daily associata al Schedule
+<b class="nc">&nbsp;            Daily daily = new Daily();</b>
+<b class="nc">&nbsp;            daily.setId(newSchedule.getId());</b>
+<b class="nc">&nbsp;            daily.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;            daily.setDay(day);</b>
+<b class="nc">&nbsp;            daily.setStartHour(timeInterval.getStart());</b>
+<b class="nc">&nbsp;            daily.setEndHour(timeInterval.getEnd());</b>
+<b class="nc">&nbsp;            em.persist(daily);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;
+&nbsp;            // Crea e persiste il PlannerId per associare l&#39;utente allo Schedule
+<b class="nc">&nbsp;            PlannerId plannerId = new PlannerId();</b>
+<b class="nc">&nbsp;            plannerId.setScheduleId(newSchedule.getId());</b>
+<b class="nc">&nbsp;            plannerId.setUserId(user.getId());</b>
+<b class="nc">&nbsp;            em.persist(plannerId);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;
+&nbsp;            // Crea il Planner e lo persiste
+<b class="nc">&nbsp;            Planner planner = new Planner();</b>
+<b class="nc">&nbsp;            planner.setUser(user);</b>
+<b class="nc">&nbsp;            planner.setId(plannerId);</b>
+<b class="nc">&nbsp;            planner.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;            em.persist(planner);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Versione sovraccaricata di addDailySchedule che utilizza un EntityManager già esistente.
+&nbsp;     *
+&nbsp;     * @param em           L&#39;EntityManager da utilizzare.
+&nbsp;     * @param user         L&#39;utente per cui aggiungere lo schedule.
+&nbsp;     * @param day          Il giorno in cui impostare lo schedule.
+&nbsp;     * @param timeInterval L&#39;intervallo orario per lo schedule.
+&nbsp;     * @return {@code true} se lo schedule viene aggiunto con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean addDailySchedule(EntityManager em, User user, LocalDate day, TimeInterval timeInterval) {
+&nbsp;        try {
+<b class="nc">&nbsp;            em.getTransaction().begin();</b>
+&nbsp;
+&nbsp;            // Verifica la collisione con altri schedule
+<b class="nc">&nbsp;            if (Collision.detect(user, day, timeInterval)) return false;</b>
+&nbsp;
+&nbsp;            // Crea un nuovo Schedule di tipo DAILY
+<b class="nc">&nbsp;            Schedule newSchedule = new Schedule();</b>
+<b class="nc">&nbsp;            newSchedule.setType(&quot;DAILY&quot;);</b>
+<b class="nc">&nbsp;            em.persist(newSchedule);</b>
+&nbsp;
+&nbsp;            // Crea l&#39;entità Daily e la persiste
+<b class="nc">&nbsp;            Daily daily = new Daily();</b>
+<b class="nc">&nbsp;            daily.setId(newSchedule.getId());</b>
+<b class="nc">&nbsp;            daily.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;            daily.setDay(day);</b>
+<b class="nc">&nbsp;            daily.setStartHour(timeInterval.getStart());</b>
+<b class="nc">&nbsp;            daily.setEndHour(timeInterval.getEnd());</b>
+<b class="nc">&nbsp;            em.persist(daily);</b>
+&nbsp;
+&nbsp;            // Crea e persiste il PlannerId
+<b class="nc">&nbsp;            PlannerId plannerId = new PlannerId();</b>
+<b class="nc">&nbsp;            plannerId.setScheduleId(newSchedule.getId());</b>
+<b class="nc">&nbsp;            plannerId.setUserId(user.getId());</b>
+<b class="nc">&nbsp;            em.persist(plannerId);</b>
+&nbsp;
+&nbsp;            // Crea il Planner e lo persiste
+<b class="nc">&nbsp;            Planner planner = new Planner();</b>
+<b class="nc">&nbsp;            planner.setUser(user);</b>
+<b class="nc">&nbsp;            planner.setId(plannerId);</b>
+<b class="nc">&nbsp;            planner.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;            em.persist(planner);</b>
+&nbsp;
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Aggiunge uno schedule settimanale per un utente.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Per ogni giorno compreso tra la data di inizio e fine, verifica se il giorno corrente
+&nbsp;     * corrisponde ad uno dei giorni specificati nell&#39;intervallo settimanale e, in tal caso,
+&nbsp;     * crea uno schedule giornaliero e successivamente un schedule settimanale con relativi dati.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user     L&#39;utente per cui aggiungere lo schedule.
+&nbsp;     * @param startDate La data di inizio dello schedule settimanale.
+&nbsp;     * @param endDate   La data di fine dello schedule settimanale.
+&nbsp;     * @param weekdays  Una mappa contenente i giorni della settimana e i relativi intervalli orari.
+&nbsp;     * @return {@code true} se lo schedule viene aggiunto con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean addWeeklySchedule(User user, LocalDate startDate, LocalDate endDate, Map&lt;String, TimeInterval&gt; weekdays) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Itera per ogni giorno fra startDate e endDate
+<b class="nc">&nbsp;            for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {</b>
+&nbsp;                // Per ogni entry nella mappa dei giorni, controlla se il giorno corrisponde
+<b class="nc">&nbsp;                for (Map.Entry&lt;String, TimeInterval&gt; entry : weekdays.entrySet()) {</b>
+<b class="nc">&nbsp;                    if (entry.getKey().equals(date.getDayOfWeek().toString())) {</b>
+&nbsp;
+&nbsp;                        // Aggiunge uno schedule giornaliero per il giorno corrispondente
+<b class="nc">&nbsp;                        if (!addDailySchedule(em, user, date, entry.getValue())) {</b>
+<b class="nc">&nbsp;                            transaction.rollback();</b>
+<b class="nc">&nbsp;                            return false;</b>
+&nbsp;                        }
+&nbsp;
+&nbsp;                        // Crea un nuovo Schedule di tipo WEEKLY
+<b class="nc">&nbsp;                        Schedule newSchedule = new Schedule();</b>
+<b class="nc">&nbsp;                        newSchedule.setType(&quot;WEEKLY&quot;);</b>
+<b class="nc">&nbsp;                        em.persist(newSchedule);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste l&#39;entità Weekly
+<b class="nc">&nbsp;                        Weekly newWeekly = new Weekly();</b>
+<b class="nc">&nbsp;                        newWeekly.setId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                        newWeekly.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                        newWeekly.setStartDate(startDate);</b>
+<b class="nc">&nbsp;                        newWeekly.setEndDate(endDate);</b>
+<b class="nc">&nbsp;                        em.persist(newWeekly);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste il PlannerId
+<b class="nc">&nbsp;                        PlannerId newPlannerId = new PlannerId();</b>
+<b class="nc">&nbsp;                        newPlannerId.setScheduleId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                        newPlannerId.setUserId(user.getId());</b>
+<b class="nc">&nbsp;                        em.persist(newPlannerId);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste il Planner
+<b class="nc">&nbsp;                        Planner newPlanner = new Planner();</b>
+<b class="nc">&nbsp;                        newPlanner.setId(newPlannerId);</b>
+<b class="nc">&nbsp;                        newPlanner.setUser(user);</b>
+<b class="nc">&nbsp;                        newPlanner.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                        em.persist(newPlanner);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste l&#39;entità Weekday
+<b class="nc">&nbsp;                        WeekdayId weekdayId = new WeekdayId();</b>
+<b class="nc">&nbsp;                        weekdayId.setWeeklyId(newWeekly.getId());</b>
+<b class="nc">&nbsp;                        weekdayId.setDayOfWeek(entry.getKey());</b>
+<b class="nc">&nbsp;                        em.persist(weekdayId);</b>
+&nbsp;
+<b class="nc">&nbsp;                        Weekday weekday = new Weekday();</b>
+<b class="nc">&nbsp;                        weekday.setId(weekdayId);</b>
+<b class="nc">&nbsp;                        weekday.setWeekly(newWeekly);</b>
+<b class="nc">&nbsp;                        weekday.setStartHour(entry.getValue().getStart());</b>
+<b class="nc">&nbsp;                        weekday.setEndHour(entry.getValue().getEnd());</b>
+<b class="nc">&nbsp;                        em.persist(weekday);</b>
+&nbsp;
+<b class="nc">&nbsp;                        return true;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return false;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Versione sovraccaricata di addWeeklySchedule che utilizza un EntityManager già esistente.
+&nbsp;     *
+&nbsp;     * @param em        L&#39;EntityManager da utilizzare.
+&nbsp;     * @param user      L&#39;utente per cui aggiungere lo schedule.
+&nbsp;     * @param startDate La data di inizio dello schedule settimanale.
+&nbsp;     * @param endDate   La data di fine dello schedule settimanale.
+&nbsp;     * @param weekdays  Una mappa contenente i giorni della settimana e i relativi intervalli orari.
+&nbsp;     * @return {@code true} se lo schedule viene aggiunto con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean addWeeklySchedule(EntityManager em, User user, LocalDate startDate, LocalDate endDate, Map&lt;String, TimeInterval&gt; weekdays) {
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Itera per ogni giorno fra startDate e endDate
+<b class="nc">&nbsp;            for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {</b>
+&nbsp;                // Per ogni entry nella mappa, controlla se il giorno corrisponde
+<b class="nc">&nbsp;                for (Map.Entry&lt;String, TimeInterval&gt; entry : weekdays.entrySet()) {</b>
+<b class="nc">&nbsp;                    if (entry.getKey().equals(date.getDayOfWeek().toString())) {</b>
+&nbsp;
+&nbsp;                        // Aggiunge uno schedule giornaliero per il giorno corrente
+<b class="nc">&nbsp;                        if (!addDailySchedule(em, user, date, entry.getValue())) {</b>
+<b class="nc">&nbsp;                            transaction.rollback();</b>
+<b class="nc">&nbsp;                            return false;</b>
+&nbsp;                        }
+&nbsp;
+&nbsp;                        // Crea un nuovo Schedule di tipo WEEKLY
+<b class="nc">&nbsp;                        Schedule newSchedule = new Schedule();</b>
+<b class="nc">&nbsp;                        newSchedule.setType(&quot;WEEKLY&quot;);</b>
+<b class="nc">&nbsp;                        em.persist(newSchedule);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste l&#39;entità Weekly
+<b class="nc">&nbsp;                        Weekly newWeekly = new Weekly();</b>
+<b class="nc">&nbsp;                        newWeekly.setId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                        newWeekly.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                        newWeekly.setStartDate(startDate);</b>
+<b class="nc">&nbsp;                        newWeekly.setEndDate(endDate);</b>
+<b class="nc">&nbsp;                        em.persist(newWeekly);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste il PlannerId
+<b class="nc">&nbsp;                        PlannerId newPlannerId = new PlannerId();</b>
+<b class="nc">&nbsp;                        newPlannerId.setScheduleId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                        newPlannerId.setUserId(user.getId());</b>
+<b class="nc">&nbsp;                        em.persist(newPlannerId);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste il Planner
+<b class="nc">&nbsp;                        Planner newPlanner = new Planner();</b>
+<b class="nc">&nbsp;                        newPlanner.setId(newPlannerId);</b>
+<b class="nc">&nbsp;                        newPlanner.setUser(user);</b>
+<b class="nc">&nbsp;                        newPlanner.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                        em.persist(newPlanner);</b>
+&nbsp;
+&nbsp;                        // Crea e persiste l&#39;entità Weekday
+<b class="nc">&nbsp;                        WeekdayId weekdayId = new WeekdayId();</b>
+<b class="nc">&nbsp;                        weekdayId.setWeeklyId(newWeekly.getId());</b>
+<b class="nc">&nbsp;                        weekdayId.setDayOfWeek(entry.getKey());</b>
+<b class="nc">&nbsp;                        em.persist(weekdayId);</b>
+&nbsp;
+<b class="nc">&nbsp;                        Weekday weekday = new Weekday();</b>
+<b class="nc">&nbsp;                        weekday.setId(weekdayId);</b>
+<b class="nc">&nbsp;                        weekday.setWeekly(newWeekly);</b>
+<b class="nc">&nbsp;                        weekday.setStartHour(entry.getValue().getStart());</b>
+<b class="nc">&nbsp;                        weekday.setEndHour(entry.getValue().getEnd());</b>
+<b class="nc">&nbsp;                        em.persist(weekday);</b>
+&nbsp;
+<b class="nc">&nbsp;                        return true;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return false;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            transaction.rollback();</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-17 14:06</div>
+</div>
+</body>
+</html>

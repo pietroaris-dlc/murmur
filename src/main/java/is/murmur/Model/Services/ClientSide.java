@@ -5,7 +5,6 @@ import is.murmur.Model.Helpers.*;
 import is.murmur.Model.Services.SearchStrategy.SearchStrategyFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import org.hibernate.Transaction;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -117,7 +116,9 @@ public class ClientSide {
         }
 
         // Associa l'ID del draft al dailyContract e lo persiste
-        dailyContract.setId(draft.getId());
+        if (dailyContract != null) {
+            dailyContract.setId(draft.getId());
+        }
         em.persist(dailyContract);
         em.flush();
 
@@ -182,8 +183,8 @@ public class ClientSide {
      */
     public static Review doReview(Contract expired, String description, int rating) {
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        try {
+        try (em) {
+            EntityTransaction transaction = em.getTransaction();
             transaction.begin();
             // Crea una nuova recensione e la associa al contratto scaduto
             Review review = new Review();
@@ -197,8 +198,6 @@ public class ClientSide {
             murmur(expired.getAlias().getWorkerAlias().getUser().getUser());
             transaction.commit();
             return review;
-        } finally {
-            em.close();
         }
     }
 

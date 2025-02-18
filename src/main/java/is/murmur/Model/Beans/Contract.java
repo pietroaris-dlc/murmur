@@ -1,6 +1,7 @@
 package is.murmur.Model.Beans;
 
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -35,7 +36,6 @@ public class Contract {
     @OneToOne(mappedBy = "contract")
     private Alias alias;
 
-    // Modifica qui: usa "contract" anziché "id"
     @OneToOne(mappedBy = "contract")
     private Dailycontract dailycontract;
 
@@ -50,8 +50,6 @@ public class Contract {
 
     @OneToOne(mappedBy = "contract")
     private Weeklycontract weeklycontract;
-
-    // Getters e Setters
 
     public Long getId() {
         return id;
@@ -156,4 +154,5 @@ public class Contract {
     public void setWeeklycontract(Weeklycontract weeklycontract) {
         this.weeklycontract = weeklycontract;
     }
+
 }
