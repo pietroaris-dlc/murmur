@@ -309,38 +309,19 @@ public class ContractsManagement {
      */
     public static Contract sendOffer(Contract draft, String specialRequests) {
 
-
-
-
-        if (draft == null || specialRequests == null) {
-            throw new IllegalArgumentException("Contract and schedule must not be null");
+        if(draft.getTotalFee().toString() == null){
+            throw new IllegalArgumentException("Il Campo Total Fee è vuoto");
         }
 
-        if (specialRequests.length() > 250) {
-            System.out.println(specialRequests.length());
+        if(draft.getHourlyRate().toString() == null){
+            throw new IllegalArgumentException("Il Campo Total Fee è vuoto");
+        }
 
 
+
+        if (specialRequests.length() < 250) {
             throw new IllegalArgumentException("specialRequests too long");
         }
-
-        try {
-            // Simulazione di un eventuale parsing ulteriore (se necessario)
-
-            new BigDecimal(draft.getHourlyRate().toString());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("HourlyRate is not a valid number", e);
-        }
-
-
-
-
-        try {
-            new BigDecimal(draft.getTotalFee().toString())  ;
-
-        } catch (NumberFormatException  e){ // errore se si prova a convertire una stringa con un tipo numerico
-            throw new IllegalArgumentException("TotalFee is not a valid number");
-        }
-
 
 
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
