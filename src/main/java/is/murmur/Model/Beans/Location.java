@@ -2,6 +2,9 @@ package is.murmur.Model.Beans;
 
 import jakarta.persistence.*;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "location")
 public class Location {
@@ -83,5 +86,4 @@ public class Location {
     public void setCountry(String country) {
         this.country = country;
     }
-
 }

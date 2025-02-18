@@ -1,0 +1,567 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > AccountManagement</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">is.murmur.Model.Services</a>
+</div>
+
+<h1>Coverage Summary for Class: AccountManagement (is.murmur.Model.Services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccountManagement</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/70)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/169)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package is.murmur.Model.Services;
+&nbsp;
+&nbsp;import is.murmur.Model.Beans.*;
+&nbsp;import is.murmur.Model.Helpers.DraftBuffer;
+&nbsp;import is.murmur.Model.Helpers.JPAUtil;
+&nbsp;import jakarta.persistence.EntityManager;
+&nbsp;import jakarta.persistence.EntityTransaction;
+&nbsp;import org.mindrot.jbcrypt.BCrypt;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.LocalTime;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Classe di gestione degli account.
+&nbsp; * &lt;p&gt;
+&nbsp; * Questa classe fornisce metodi statici per operazioni di gestione degli account,
+&nbsp; * quali la registrazione (sign in), l&#39;accesso (log in), il logout, la cancellazione dell&#39;account,
+&nbsp; * la gestione delle applicazioni (upgrade, collaborazione, cancellazione) e l&#39;aggiornamento dell&#39;account.
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; */
+<b class="nc">&nbsp;public class AccountManagement {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registra un nuovo utente (sign in).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo controlla se l&#39;email fornita esiste già e, se non esiste, crea un nuovo utente
+&nbsp;     * impostando i dati forniti e hashando la password tramite BCrypt.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param signinInputs Array di stringhe contenente i seguenti dati:
+&nbsp;     *                     [0] - email,
+&nbsp;     *                     [1] - password,
+&nbsp;     *                     [2] - nome,
+&nbsp;     *                     [3] - cognome,
+&nbsp;     *                     [4] - data di nascita (formato ISO),
+&nbsp;     *                     [5] - città di nascita,
+&nbsp;     *                     [6] - distretto di nascita,
+&nbsp;     *                     [7] - paese di nascita,
+&nbsp;     *                     [8] - codice fiscale.
+&nbsp;     * @return {@code true} se la registrazione è avvenuta con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean signIn(String[] signinInputs) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+&nbsp;        // Utilizzo di try-with-resources per garantire la chiusura dell&#39;EntityManager
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Verifica se l&#39;utente con la stessa email esiste già
+<b class="nc">&nbsp;            List&lt;User&gt; users = em.createQuery(</b>
+&nbsp;                            &quot;select u from User u where u.email = :email&quot;,
+&nbsp;                            User.class
+&nbsp;                    )
+<b class="nc">&nbsp;                    .setParameter(&quot;email&quot;, signinInputs[0])</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+<b class="nc">&nbsp;            if (!users.isEmpty()) {</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Crea un nuovo oggetto User e imposta i dati ricevuti
+<b class="nc">&nbsp;            User u = new User();</b>
+<b class="nc">&nbsp;            u.setEmail(signinInputs[0]);</b>
+<b class="nc">&nbsp;            u.setPassword(BCrypt.hashpw(signinInputs[1], BCrypt.gensalt()));</b>
+<b class="nc">&nbsp;            u.setFirstName(signinInputs[2]);</b>
+<b class="nc">&nbsp;            u.setLastName(signinInputs[3]);</b>
+<b class="nc">&nbsp;            u.setBirthDate(LocalDate.parse(signinInputs[4]));</b>
+<b class="nc">&nbsp;            u.setBirthCity(signinInputs[5]);</b>
+<b class="nc">&nbsp;            u.setBirthDistrict(signinInputs[6]);</b>
+<b class="nc">&nbsp;            u.setBirthCountry(signinInputs[7]);</b>
+<b class="nc">&nbsp;            u.setTaxCode(signinInputs[8]);</b>
+<b class="nc">&nbsp;            u.setType(&quot;CLIENT&quot;);</b>
+<b class="nc">&nbsp;            u.setAdmin(false);</b>
+<b class="nc">&nbsp;            u.setLocked(false);</b>
+&nbsp;
+&nbsp;            // Persiste il nuovo utente nel database
+<b class="nc">&nbsp;            em.persist(u);</b>
+<b class="nc">&nbsp;            transaction.commit();</b>
+&nbsp;
+&nbsp;            // Verifica se l&#39;utente è stato creato (l&#39;id non è nullo)
+<b class="nc">&nbsp;            return u.getId() != null;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Effettua il login di un utente.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo recupera l&#39;utente tramite l&#39;email, verifica la password usando BCrypt e,
+&nbsp;     * in caso di successo, salva eventuali bozze (drafts) sul lato client.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param loginInputs Array di stringhe contenente i dati di login:
+&nbsp;     *                    [0] - email,
+&nbsp;     *                    [1] - password.
+&nbsp;     * @param drafts      Lista di {@link DraftBuffer} da salvare per l&#39;utente.
+&nbsp;     * @return L&#39;oggetto {@link User} se il login avviene con successo, {@code null} altrimenti.
+&nbsp;     */
+&nbsp;    public static User logIn(String[] loginInputs, List&lt;DraftBuffer&gt; drafts) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Recupera l&#39;utente in base all&#39;email
+<b class="nc">&nbsp;            User toLogin = em.createQuery(</b>
+&nbsp;                    &quot;select u from User u where u.email = :email&quot;,
+&nbsp;                    User.class
+<b class="nc">&nbsp;            ).setParameter(&quot;email&quot;, loginInputs[0]).getSingleResult();</b>
+&nbsp;
+&nbsp;            // Se l&#39;utente non esiste oppure la password non corrisponde, ritorna null
+<b class="nc">&nbsp;            if (toLogin == null || !BCrypt.checkpw(loginInputs[1], toLogin.getPassword())) {</b>
+<b class="nc">&nbsp;                return null;</b>
+&nbsp;            } else {
+&nbsp;                // Salva le bozze (drafts) lato client
+<b class="nc">&nbsp;                for (DraftBuffer draftBuffer : drafts) {</b>
+<b class="nc">&nbsp;                    ClientSide.saveDraft(toLogin, draftBuffer);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                transaction.commit();</b>
+&nbsp;                // Se l&#39;utente non è sbloccato, ritorna null; altrimenti, ritorna l&#39;utente
+<b class="nc">&nbsp;                if (!toLogin.getLocked()) {</b>
+<b class="nc">&nbsp;                    return null;</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    return toLogin;</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Esegue il logout di un utente.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo salva le bozze (drafts) lato client e avvia la transazione di logout.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param toLogout L&#39;utente da disconnettere.
+&nbsp;     * @param drafts   Lista di {@link DraftBuffer} da salvare.
+&nbsp;     * @return {@code true} se il logout avviene con successo.
+&nbsp;     */
+&nbsp;    public static boolean logout(User toLogout, List&lt;DraftBuffer&gt; drafts) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;            // Salva ogni bozza per l&#39;utente
+<b class="nc">&nbsp;            for (DraftBuffer draft : drafts) {</b>
+<b class="nc">&nbsp;                ClientSide.saveDraft(toLogout, draft);</b>
+&nbsp;            }
+&nbsp;            // Nota: non viene eseguito commit della transazione; si presume che il salvataggio
+&nbsp;            // delle bozze sia sufficiente per completare il logout.
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Richiede la cancellazione dell&#39;account di un utente.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo verifica che non esistano contratti attivi (DRAFT, OFFER, ACTIVE) relativi all&#39;utente.
+&nbsp;     * Se non esistono, rimuove anche le applicazioni associate e permette la cancellazione.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user L&#39;utente per il quale si richiede la cancellazione dell&#39;account.
+&nbsp;     * @return {@code true} se la cancellazione è possibile, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean accountDeletion(User user) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Recupera i contratti attivi, in offerta o in draft associati all&#39;utente
+<b class="nc">&nbsp;            List&lt;Contract&gt; contracts = em.createQuery(</b>
+&nbsp;                            &quot;select c from Contract c &quot; +
+&nbsp;                                    &quot;where c.status in (&#39;DRAFT&#39;, &#39;OFFER&#39;, &#39;ACTIVE&#39;) &quot; +
+&nbsp;                                    &quot;  and (c.alias.clientAlias.user = :user or c.alias.workerAlias.user.user = :user)&quot;,
+&nbsp;                            Contract.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;user&quot;, user)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+&nbsp;
+&nbsp;            // Se esistono contratti attivi, l&#39;account non può essere cancellato
+<b class="nc">&nbsp;            if (!contracts.isEmpty()) {</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Recupera e rimuove tutte le applicazioni associate all&#39;utente
+<b class="nc">&nbsp;            List&lt;Application&gt; applications = em.createQuery(</b>
+&nbsp;                            &quot;select a from Application a where a.user.id = :user&quot;,
+&nbsp;                            Application.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;user&quot;, user)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+<b class="nc">&nbsp;            for (Application app : applications) {</b>
+<b class="nc">&nbsp;                em.remove(app);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Cancella un&#39;applicazione.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo rimuove un&#39;applicazione dal database.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param application L&#39;applicazione da cancellare.
+&nbsp;     * @return {@code true} se l&#39;applicazione viene cancellata con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean cancelApplication(Application application) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Se l&#39;applicazione non è gestita dall&#39;EntityManager, la fonde (merge)
+<b class="nc">&nbsp;            if (!em.contains(application)) {</b>
+<b class="nc">&nbsp;                application = em.merge(application);</b>
+&nbsp;            }
+&nbsp;            // Rimuove l&#39;applicazione
+<b class="nc">&nbsp;            em.remove(application);</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Invia una richiesta di upgrade.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo crea una nuova applicazione di tipo &quot;UPGRADE&quot; e un oggetto {@link Upgradeapplication}
+&nbsp;     * con i dati forniti, e li persiste nel database.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param upgradeInputs Array di stringhe contenente i seguenti dati:
+&nbsp;     *                      [0] - URL dei documenti,
+&nbsp;     *                      [1] - nome della professione,
+&nbsp;     *                      [2] - tariffa oraria,
+&nbsp;     *                      [3] - anzianità (seniority),
+&nbsp;     *                      [4] - città,
+&nbsp;     *                      [5] - via,
+&nbsp;     *                      [6] - numero civico,
+&nbsp;     *                      [7] - distretto,
+&nbsp;     *                      [8] - paese.
+&nbsp;     * @param user          L&#39;utente che richiede l&#39;upgrade.
+&nbsp;     * @return {@code true} se la richiesta di upgrade è inviata con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean upgradeApplication(String[] upgradeInputs, User user) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Crea una nuova applicazione per l&#39;upgrade
+<b class="nc">&nbsp;            Application application = new Application();</b>
+<b class="nc">&nbsp;            application.setUser(user);</b>
+<b class="nc">&nbsp;            application.setSubmissionDate(LocalDate.now());</b>
+<b class="nc">&nbsp;            application.setSubmissionHour(LocalTime.now());</b>
+<b class="nc">&nbsp;            application.setDocsUrl(upgradeInputs[0]);</b>
+<b class="nc">&nbsp;            application.setStatus(&quot;STATUS&quot;);</b>
+<b class="nc">&nbsp;            application.setType(&quot;UPGRADE&quot;);</b>
+<b class="nc">&nbsp;            em.persist(application);</b>
+&nbsp;
+&nbsp;            // Crea un oggetto Upgradeapplication con i dettagli dell&#39;upgrade
+<b class="nc">&nbsp;            Upgradeapplication upgradeApplication = new Upgradeapplication();</b>
+<b class="nc">&nbsp;            upgradeApplication.setId(application.getId());</b>
+<b class="nc">&nbsp;            upgradeApplication.setApplication(application);</b>
+<b class="nc">&nbsp;            upgradeApplication.setProfessionName(upgradeInputs[1]);</b>
+<b class="nc">&nbsp;            upgradeApplication.setHourlyRate(new BigDecimal(upgradeInputs[2]));</b>
+<b class="nc">&nbsp;            upgradeApplication.setSeniority(Integer.valueOf(upgradeInputs[3]));</b>
+<b class="nc">&nbsp;            upgradeApplication.setCity(upgradeInputs[4]);</b>
+<b class="nc">&nbsp;            upgradeApplication.setStreet(upgradeInputs[5]);</b>
+<b class="nc">&nbsp;            upgradeApplication.setStreetNumber(Short.valueOf(upgradeInputs[6]));</b>
+<b class="nc">&nbsp;            upgradeApplication.setDistrict(upgradeInputs[7]);</b>
+<b class="nc">&nbsp;            upgradeApplication.setCountry(upgradeInputs[8]);</b>
+<b class="nc">&nbsp;            em.persist(upgradeApplication);</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Invia una richiesta di collaborazione (collab).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo crea una nuova applicazione di tipo &quot;COLLAB&quot; con stato &quot;PENDING&quot; e la persiste.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user    L&#39;utente che richiede la collaborazione.
+&nbsp;     * @param docsUrl L&#39;URL dei documenti relativi alla richiesta.
+&nbsp;     * @return {@code true} se la richiesta viene inviata con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean collabApplication(User user, String docsUrl) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Crea una nuova applicazione per la collaborazione
+<b class="nc">&nbsp;            Application application = new Application();</b>
+<b class="nc">&nbsp;            application.setUser(user);</b>
+<b class="nc">&nbsp;            application.setSubmissionDate(LocalDate.now());</b>
+<b class="nc">&nbsp;            application.setSubmissionHour(LocalTime.now());</b>
+<b class="nc">&nbsp;            application.setDocsUrl(docsUrl);</b>
+<b class="nc">&nbsp;            application.setStatus(&quot;PENDING&quot;);</b>
+<b class="nc">&nbsp;            application.setType(&quot;COLLAB&quot;);</b>
+<b class="nc">&nbsp;            em.persist(application);</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Aggiorna l&#39;account di un utente in seguito a una richiesta di upgrade.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo aggiorna il tipo dell&#39;utente a &quot;WORKER&quot;, approva l&#39;applicazione di upgrade e
+&nbsp;     * esegue l&#39;upgrade tramite il metodo privato {@code doUpgrade}.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user               L&#39;utente da aggiornare.
+&nbsp;     * @param upgradeApplication L&#39;oggetto {@link Upgradeapplication} contenente i dettagli dell&#39;upgrade.
+&nbsp;     * @return {@code true} se l&#39;upgrade viene eseguito con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean upgradeAccount(User user, Upgradeapplication upgradeApplication) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Imposta il tipo dell&#39;utente a WORKER
+<b class="nc">&nbsp;            user.setType(&quot;WORKER&quot;);</b>
+<b class="nc">&nbsp;            em.merge(user);</b>
+&nbsp;
+&nbsp;            // Approva l&#39;applicazione di upgrade
+<b class="nc">&nbsp;            Application app = upgradeApplication.getApplication();</b>
+<b class="nc">&nbsp;            app.setStatus(&quot;APPROVED&quot;);</b>
+<b class="nc">&nbsp;            em.merge(app);</b>
+&nbsp;
+&nbsp;            // Esegue l&#39;upgrade dell&#39;account; in caso di errore, rollback e ritorna false
+<b class="nc">&nbsp;            if (!doUpgrade(em, user, upgradeApplication)) {</b>
+<b class="nc">&nbsp;                transaction.rollback();</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Avvia la collaborazione per un utente.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo imposta l&#39;utente come amministratore e approva l&#39;applicazione di collaborazione.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user              L&#39;utente per il quale avviare la collaborazione.
+&nbsp;     * @param collabApplication L&#39;applicazione di collaborazione.
+&nbsp;     * @return {@code true} se l&#39;operazione viene completata con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean startCollab(User user, Application collabApplication) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Imposta l&#39;utente come amministratore
+<b class="nc">&nbsp;            user.setAdmin(true);</b>
+<b class="nc">&nbsp;            em.merge(user);</b>
+&nbsp;
+&nbsp;            // Approva l&#39;applicazione di collaborazione
+<b class="nc">&nbsp;            collabApplication.setStatus(&quot;APPROVED&quot;);</b>
+<b class="nc">&nbsp;            em.merge(collabApplication);</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Visualizza le informazioni personali di un utente.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo restituisce un array di stringhe contenente le informazioni personali dell&#39;utente.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user L&#39;utente di cui visualizzare le informazioni.
+&nbsp;     * @return Un array di stringhe contenente:
+&nbsp;     *         [0] - email,
+&nbsp;     *         [1] - nome,
+&nbsp;     *         [2] - cognome,
+&nbsp;     *         [3] - data di nascita,
+&nbsp;     *         [4] - città di nascita,
+&nbsp;     *         [5] - distretto di nascita,
+&nbsp;     *         [6] - paese di nascita,
+&nbsp;     *         [7] - codice fiscale,
+&nbsp;     *         [8] - spesa totale,
+&nbsp;     *         [9] - tipo utente,
+&nbsp;     *         [10] - se è amministratore.
+&nbsp;     */
+&nbsp;    public static String[] personalInfosView(User user) {
+<b class="nc">&nbsp;        return new String[]{</b>
+<b class="nc">&nbsp;                user.getEmail(),</b>
+<b class="nc">&nbsp;                user.getFirstName(),</b>
+<b class="nc">&nbsp;                user.getLastName(),</b>
+<b class="nc">&nbsp;                String.valueOf(user.getBirthDate()),</b>
+<b class="nc">&nbsp;                user.getBirthCity(),</b>
+<b class="nc">&nbsp;                user.getBirthDistrict(),</b>
+<b class="nc">&nbsp;                user.getBirthCountry(),</b>
+<b class="nc">&nbsp;                user.getTaxCode(),</b>
+<b class="nc">&nbsp;                String.valueOf(user.getTotalExpenditure()),</b>
+<b class="nc">&nbsp;                user.getType(),</b>
+<b class="nc">&nbsp;                String.valueOf(user.getAdmin())</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Esegue l&#39;upgrade dell&#39;account.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Metodo privato che esegue le operazioni necessarie per l&#39;upgrade dell&#39;account,
+&nbsp;     * aggiungendo l&#39;utente all&#39;area di attività e alla carriera tramite i metodi di {@link WorkerSide}.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param em                 L&#39;EntityManager da utilizzare per le operazioni di persistenza.
+&nbsp;     * @param user               L&#39;utente da aggiornare.
+&nbsp;     * @param upgradeApplication L&#39;oggetto {@link Upgradeapplication} contenente i dettagli dell&#39;upgrade.
+&nbsp;     * @return {@code true} se tutte le operazioni sono completate con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    private static boolean doUpgrade(EntityManager em, User user, Upgradeapplication upgradeApplication) {
+&nbsp;        // Aggiunge l&#39;utente all&#39;area di attività; se fallisce, ritorna false
+<b class="nc">&nbsp;        if (!WorkerSide.addToActivityArea(</b>
+&nbsp;                em,
+&nbsp;                user,
+<b class="nc">&nbsp;                upgradeApplication.getCity(),</b>
+<b class="nc">&nbsp;                upgradeApplication.getStreet(),</b>
+<b class="nc">&nbsp;                upgradeApplication.getStreetNumber(),</b>
+<b class="nc">&nbsp;                upgradeApplication.getDistrict(),</b>
+<b class="nc">&nbsp;                upgradeApplication.getRegion(),</b>
+<b class="nc">&nbsp;                upgradeApplication.getCountry()</b>
+&nbsp;        )) {
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;        // Aggiunge l&#39;utente alla carriera; ritorna true se l&#39;operazione ha successo
+<b class="nc">&nbsp;        return WorkerSide.addCareer(</b>
+&nbsp;                em,
+&nbsp;                user,
+<b class="nc">&nbsp;                upgradeApplication.getProfessionName(),</b>
+<b class="nc">&nbsp;                upgradeApplication.getHourlyRate(),</b>
+<b class="nc">&nbsp;                upgradeApplication.getSeniority()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-17 14:06</div>
+</div>
+</body>
+</html>

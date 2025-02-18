@@ -43,7 +43,7 @@ public class SearchServlet extends HttpServlet {
                         profession, hourlyRateMin, hourlyRateMax)
                         .daily(day, startHour, endHour);
 
-                // Aggiunta dei parametri di location se richiesti
+                // Aggiunta dei parametri di notRemote se richiesti
                 if (serviceMode.equalsIgnoreCase("onSite") ||
                         serviceMode.equalsIgnoreCase("homeDelivery")) {
                     String city = request.getParameter("city");
@@ -51,7 +51,7 @@ public class SearchServlet extends HttpServlet {
                     String district = request.getParameter("district");
                     String region = request.getParameter("region");
                     String country = request.getParameter("country");
-                    builder.location(city, street, district, region, country);
+                    builder.notRemote(city, street, district, region, country);
                 }
                 criteria = builder.build();
             } else { // Weekly
@@ -79,7 +79,7 @@ public class SearchServlet extends HttpServlet {
                         profession, hourlyRateMin, hourlyRateMax)
                         .weekly(startDate, endDate, weeklyIntervals);
 
-                // Aggiunta dei parametri di location se richiesti
+                // Aggiunta dei parametri di notRemote se richiesti
                 if (serviceMode.equalsIgnoreCase("onSite") ||
                         serviceMode.equalsIgnoreCase("homeDelivery")) {
                     String city = request.getParameter("city");
@@ -87,13 +87,14 @@ public class SearchServlet extends HttpServlet {
                     String district = request.getParameter("district");
                     String region = request.getParameter("region");
                     String country = request.getParameter("country");
-                    builder.location(city, street, district, region, country);
+                    builder.notRemote(city, street, district, region, country);
                 }
                 criteria = builder.build();
             }
 
             // Invoca il servizio ClientSide con i criteri costruiti
             String resultJson = ClientSide.search(criteria);
+
 
             // Imposta il content type e restituisce il JSON al client
             response.setContentType("application/json");

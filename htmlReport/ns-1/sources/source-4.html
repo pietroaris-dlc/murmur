@@ -1,0 +1,484 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ContractsManagement</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">is.murmur.Model.Services</a>
+</div>
+
+<h1>Coverage Summary for Class: ContractsManagement (is.murmur.Model.Services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ContractsManagement</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/64)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/187)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package is.murmur.Model.Services;
+&nbsp;
+&nbsp;import is.murmur.Model.Beans.*;
+&nbsp;import is.murmur.Model.Helpers.*;
+&nbsp;import jakarta.persistence.EntityManager;
+&nbsp;import jakarta.persistence.EntityTransaction;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.math.RoundingMode;
+&nbsp;import java.time.Duration;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * La classe {@code ContractsManagement} gestisce le operazioni relative ai contratti,
+&nbsp; * come il recupero, la definizione di offerte, la scrittura di bozze e l&#39;invio di offerte.
+&nbsp; * &lt;p&gt;
+&nbsp; * Include metodi per:
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;Recuperare contratti in base a utente e stato.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Definire (approvare o rifiutare) un&#39;offerta.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Eliminare una bozza.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Costruire una bozza (DraftBuffer) in base ai criteri e ad un risultato di ricerca.&lt;/li&gt;
+&nbsp; *   &lt;li&gt;Inviare un&#39;offerta basata su una bozza.&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; 
+&nbsp; */
+<b class="nc">&nbsp;public class ContractsManagement {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Recupera una lista di contratti in base all&#39;utente e allo stato specificato.
+&nbsp;     *
+&nbsp;     * @param user   L&#39;utente per cui recuperare i contratti.
+&nbsp;     * @param status Lo stato del contratto (es. &quot;DRAFT&quot;, &quot;OFFER&quot;, &quot;EXPIRED&quot;).
+&nbsp;     * @return Una lista di {@link Contract} che corrispondono ai criteri di ricerca.
+&nbsp;     */
+&nbsp;    public static List&lt;Contract&gt; getContracts(User user, String status) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+&nbsp;        try {
+&nbsp;            // Esegue una query per recuperare i contratti associati all&#39;utente come client o worker
+<b class="nc">&nbsp;            return em.createQuery(</b>
+&nbsp;                            &quot;select c from Contract c&quot; +
+&nbsp;                                    &quot; join Alias a on a.contract = c&quot; +
+&nbsp;                                    &quot; where c.status = :status&quot; +
+&nbsp;                                    &quot; and (a.workerAlias.user = :user or a.clientAlias.user = :user)&quot;,
+&nbsp;                            Contract.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;status&quot;, status)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;user&quot;, user)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+<b class="nc">&nbsp;        } catch(Exception e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            em.close();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Definisce un&#39;offerta a partire da un contratto in stato &quot;OFFER&quot;.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Se il parametro {@code approval} è {@code true}, viene creato un nuovo schedule
+&nbsp;     * (daily o weekly) associato al contratto, vengono creati i Planner per client e worker,
+&nbsp;     * e lo stato del contratto viene aggiornato. Se {@code approval} è {@code false},
+&nbsp;     * il contratto viene rimosso.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param offer    Il contratto in stato &quot;OFFER&quot; da definire.
+&nbsp;     * @param approval {@code true} per approvare l&#39;offerta, {@code false} per rifiutarla.
+&nbsp;     * @return {@code true} se l&#39;operazione ha successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean defineOffer(Contract offer, boolean approval) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;            // Verifica che il contratto sia in stato OFFER
+<b class="nc">&nbsp;            if (!offer.getStatus().equals(&quot;OFFER&quot;)) {</b>
+<b class="nc">&nbsp;                throw new Exception(&quot;Il contratto non è in stato OFFER&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (approval) {</b>
+&nbsp;                // Crea un nuovo Schedule per il contratto
+<b class="nc">&nbsp;                Schedule newSchedule = new Schedule();</b>
+<b class="nc">&nbsp;                newSchedule.setType(offer.getScheduleType());</b>
+<b class="nc">&nbsp;                em.persist(newSchedule);</b>
+<b class="nc">&nbsp;                em.flush();</b>
+&nbsp;
+&nbsp;                // Gestisce il caso DAILY
+<b class="nc">&nbsp;                if (offer.getScheduleType().equals(&quot;DAILY&quot;)) {</b>
+<b class="nc">&nbsp;                    Daily newDaily = new Daily();</b>
+<b class="nc">&nbsp;                    newDaily.setId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                    newDaily.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                    newDaily.setDay(offer.getDailycontract().getDay());</b>
+<b class="nc">&nbsp;                    newDaily.setStartHour(offer.getDailycontract().getStartHour());</b>
+<b class="nc">&nbsp;                    newDaily.setEndHour(offer.getDailycontract().getEndHour());</b>
+<b class="nc">&nbsp;                    em.persist(newDaily);</b>
+<b class="nc">&nbsp;                    em.flush();</b>
+<b class="nc">&nbsp;                } else if (offer.getScheduleType().equals(&quot;WEEKLY&quot;)) {</b>
+&nbsp;                    // Gestisce il caso WEEKLY
+<b class="nc">&nbsp;                    Weekly newWeekly = new Weekly();</b>
+<b class="nc">&nbsp;                    newWeekly.setId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                    newWeekly.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                    newWeekly.setStartDate(offer.getWeeklycontract().getStartDate());</b>
+<b class="nc">&nbsp;                    newWeekly.setEndDate(offer.getWeeklycontract().getEndDate());</b>
+<b class="nc">&nbsp;                    em.persist(newWeekly);</b>
+<b class="nc">&nbsp;                    em.flush();</b>
+&nbsp;
+&nbsp;                    // Recupera i contratti weekday associati al weekly contract
+<b class="nc">&nbsp;                    List&lt;Weekdaycontract&gt; weekdays = em.createQuery(</b>
+&nbsp;                                    &quot;select wdc from Weekdaycontract wdc join Weeklycontract wc where wdc.id.weeklyId = wc.id&quot;,
+&nbsp;                                    Weekdaycontract.class)
+<b class="nc">&nbsp;                            .getResultList();</b>
+&nbsp;                    // Per ogni giorno della settimana, crea un nuovo Weekday
+<b class="nc">&nbsp;                    for (LocalDate date = offer.getWeeklycontract().getStartDate();</b>
+<b class="nc">&nbsp;                         date.isBefore(offer.getWeeklycontract().getEndDate());</b>
+<b class="nc">&nbsp;                         date = date.plusDays(1)) {</b>
+<b class="nc">&nbsp;                        for (Weekdaycontract wdc : weekdays) {</b>
+<b class="nc">&nbsp;                            if (wdc.getId().getDayOfWeek().equals(String.valueOf(date.getDayOfWeek()))) {</b>
+<b class="nc">&nbsp;                                Weekday newWeekday = new Weekday();</b>
+<b class="nc">&nbsp;                                newWeekday.setWeekly(newWeekly);</b>
+<b class="nc">&nbsp;                                newWeekday.setStartHour(wdc.getStartHour());</b>
+<b class="nc">&nbsp;                                newWeekday.setEndHour(wdc.getEndHour());</b>
+<b class="nc">&nbsp;                                em.persist(newWeekday);</b>
+<b class="nc">&nbsp;                                em.flush();</b>
+&nbsp;                            }
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+&nbsp;                // Crea e persiste i Planner per client e worker
+<b class="nc">&nbsp;                PlannerId newClientPlannerId = new PlannerId();</b>
+<b class="nc">&nbsp;                newClientPlannerId.setScheduleId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                newClientPlannerId.setUserId(offer.getAlias().getClientAlias().getUser().getId());</b>
+<b class="nc">&nbsp;                em.persist(newClientPlannerId);</b>
+<b class="nc">&nbsp;                em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;                Planner newClientPlanner = new Planner();</b>
+<b class="nc">&nbsp;                newClientPlanner.setId(newClientPlannerId);</b>
+<b class="nc">&nbsp;                newClientPlanner.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                newClientPlanner.setUser(offer.getAlias().getClientAlias().getUser());</b>
+<b class="nc">&nbsp;                em.persist(newClientPlanner);</b>
+<b class="nc">&nbsp;                em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;                PlannerId newWorkerPlannerId = new PlannerId();</b>
+<b class="nc">&nbsp;                newWorkerPlannerId.setScheduleId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                newWorkerPlannerId.setUserId(offer.getAlias().getWorkerAlias().getUser().getId());</b>
+<b class="nc">&nbsp;                em.persist(newWorkerPlannerId);</b>
+<b class="nc">&nbsp;                em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;                Planner newWorkerPlanner = new Planner();</b>
+<b class="nc">&nbsp;                newWorkerPlanner.setId(newWorkerPlannerId);</b>
+&nbsp;                // Nota: qui viene utilizzato getUser().getUser() per recuperare il worker &quot;interno&quot;
+<b class="nc">&nbsp;                newWorkerPlanner.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                newWorkerPlanner.setUser(offer.getAlias().getWorkerAlias().getUser().getUser());</b>
+<b class="nc">&nbsp;                em.persist(newWorkerPlanner);</b>
+<b class="nc">&nbsp;                em.flush();</b>
+&nbsp;
+&nbsp;                // Aggiorna lo stato del contratto
+<b class="nc">&nbsp;                offer.setStatus(&quot;OFFER&quot;);</b>
+<b class="nc">&nbsp;                em.merge(offer);</b>
+&nbsp;
+<b class="nc">&nbsp;                transaction.commit();</b>
+<b class="nc">&nbsp;                return true;</b>
+&nbsp;            } else {
+&nbsp;                // Se non viene approvato, rimuove il contratto
+<b class="nc">&nbsp;                em.remove(offer);</b>
+<b class="nc">&nbsp;                transaction.commit();</b>
+<b class="nc">&nbsp;                return true;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        } finally {
+<b class="nc">&nbsp;            em.close();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Elimina una bozza (draft) di contratto.
+&nbsp;     *
+&nbsp;     * @param draft Il contratto in stato &quot;DRAFT&quot; da eliminare.
+&nbsp;     * @return {@code true} se la bozza viene eliminata correttamente, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean deleteDraft(Contract draft) {
+<b class="nc">&nbsp;        try (EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager(); em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;            // Verifica che il contratto sia effettivamente in stato DRAFT
+<b class="nc">&nbsp;            if (!&quot;DRAFT&quot;.equals(draft.getStatus())) return false;</b>
+<b class="nc">&nbsp;            em.remove(draft);</b>
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Crea una bozza (DraftBuffer) a partire dai criteri di ricerca e da un risultato selezionato.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Viene costruito un nuovo contratto in stato &quot;DRAFT&quot; e popolato con i dati relativi a Daily o Weekly
+&nbsp;     * contract, calcolando anche la tariffa totale basata sulla durata e la tariffa oraria.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param criteria I criteri di ricerca utilizzati.
+&nbsp;     * @param result   Il risultato della ricerca selezionato.
+&nbsp;     * @return Un {@link DraftBuffer} contenente il contratto di bozza e le relative informazioni.
+&nbsp;     */
+&nbsp;    public static DraftBuffer writeDraft(Criteria criteria, Result result) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+&nbsp;            // Crea un nuovo contratto in stato DRAFT e imposta le proprietà iniziali
+<b class="nc">&nbsp;            Contract newDraft = new Contract();</b>
+<b class="nc">&nbsp;            newDraft.setStatus(&quot;DRAFT&quot;);</b>
+<b class="nc">&nbsp;            newDraft.setProfession(criteria.getProfession());</b>
+<b class="nc">&nbsp;            newDraft.setHourlyRate(result.getCareer().getHourlyRate());</b>
+<b class="nc">&nbsp;            newDraft.setScheduleType(criteria.getScheduleType());</b>
+&nbsp;
+<b class="nc">&nbsp;            BigDecimal totalFee = BigDecimal.ZERO;</b>
+&nbsp;
+&nbsp;            // Utilizza il Builder per costruire il DraftBuffer
+<b class="nc">&nbsp;            DraftBuffer.Builder builder = new DraftBuffer.Builder(result.getWorker(), newDraft);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (newDraft.getScheduleType().equals(&quot;DAILY&quot;)) {</b>
+&nbsp;                // Crea il Dailycontract e lo associa al draft
+<b class="nc">&nbsp;                Dailycontract newDailyContract = new Dailycontract();</b>
+<b class="nc">&nbsp;                newDailyContract.setDay(criteria.getDay());</b>
+<b class="nc">&nbsp;                newDailyContract.setStartHour(criteria.getDailyStartHour());</b>
+<b class="nc">&nbsp;                newDailyContract.setEndHour(criteria.getDailyEndHour());</b>
+<b class="nc">&nbsp;                newDailyContract.setContract(newDraft);</b>
+&nbsp;
+<b class="nc">&nbsp;                newDraft.setDailycontract(newDailyContract);</b>
+<b class="nc">&nbsp;                builder = builder.dailyContract(newDailyContract);</b>
+&nbsp;
+&nbsp;                // Calcola la durata in secondi e converte in ore
+<b class="nc">&nbsp;                long duration = Duration.between(newDailyContract.getStartHour(), newDailyContract.getEndHour()).toSeconds();</b>
+<b class="nc">&nbsp;                BigDecimal hours = BigDecimal.valueOf(duration)</b>
+<b class="nc">&nbsp;                        .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_UP);</b>
+&nbsp;
+<b class="nc">&nbsp;                newDraft.setTotalFee(newDraft.getHourlyRate().multiply(hours));</b>
+&nbsp;            } else {
+&nbsp;                // Crea il Weeklycontract e i relativi Weekdaycontract
+<b class="nc">&nbsp;                Weeklycontract newWeekly = new Weeklycontract();</b>
+<b class="nc">&nbsp;                newWeekly.setStartDate(criteria.getStartDate());</b>
+<b class="nc">&nbsp;                newWeekly.setEndDate(criteria.getEndDate());</b>
+<b class="nc">&nbsp;                newWeekly.setContract(newDraft);</b>
+&nbsp;
+<b class="nc">&nbsp;                Map&lt;String, TimeInterval&gt; weekdaysCriteria = criteria.getWeeklyIntervals();</b>
+<b class="nc">&nbsp;                List&lt;Weekdaycontract&gt; weekdaysBuffer = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;                // Per ogni intervallo settimanale, crea un Weekdaycontract e accumula il totale delle ore
+<b class="nc">&nbsp;                for (Map.Entry&lt;String, TimeInterval&gt; entry : weekdaysCriteria.entrySet()) {</b>
+<b class="nc">&nbsp;                    WeekdaycontractId newWeekdayContractId = new WeekdaycontractId();</b>
+<b class="nc">&nbsp;                    newWeekdayContractId.setDayOfWeek(entry.getKey());</b>
+<b class="nc">&nbsp;                    newWeekdayContractId.setWeeklyId(newWeekly.getId());</b>
+&nbsp;
+<b class="nc">&nbsp;                    Weekdaycontract weekdayContract = new Weekdaycontract();</b>
+<b class="nc">&nbsp;                    weekdayContract.setStartHour(entry.getValue().getStart());</b>
+<b class="nc">&nbsp;                    weekdayContract.setEndHour(entry.getValue().getEnd());</b>
+<b class="nc">&nbsp;                    weekdayContract.setId(newWeekdayContractId);</b>
+<b class="nc">&nbsp;                    weekdayContract.setWeekly(newWeekly);</b>
+&nbsp;
+<b class="nc">&nbsp;                    weekdaysBuffer.add(weekdayContract);</b>
+&nbsp;
+<b class="nc">&nbsp;                    long duration = Duration.between(weekdayContract.getStartHour(), weekdayContract.getEndHour()).toSeconds();</b>
+<b class="nc">&nbsp;                    BigDecimal hours = BigDecimal.valueOf(duration)</b>
+<b class="nc">&nbsp;                            .divide(BigDecimal.valueOf(3600), 2, RoundingMode.HALF_UP);</b>
+<b class="nc">&nbsp;                    totalFee = totalFee.add(newDraft.getHourlyRate().multiply(hours));</b>
+&nbsp;                }
+<b class="nc">&nbsp;                builder = builder.weeklyContract(newWeekly, weekdaysBuffer);</b>
+<b class="nc">&nbsp;                newDraft.setTotalFee(newDraft.getHourlyRate().multiply(totalFee));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            newDraft.setServiceMode(criteria.getServiceMode());</b>
+<b class="nc">&nbsp;            if (newDraft.getServiceMode().equals(&quot;REMOTE&quot;)) {</b>
+<b class="nc">&nbsp;                return builder.build();</b>
+&nbsp;            } else {
+&nbsp;                // Se il servizio non è REMOTE, crea e associa un Notremotecontract
+<b class="nc">&nbsp;                Notremotecontract notRemoteContract = new Notremotecontract();</b>
+<b class="nc">&nbsp;                notRemoteContract.setContract(newDraft);</b>
+<b class="nc">&nbsp;                notRemoteContract.setCity(criteria.getCity());</b>
+<b class="nc">&nbsp;                notRemoteContract.setStreet(criteria.getStreet());</b>
+<b class="nc">&nbsp;                notRemoteContract.setStreetNumber(result.getStreetNumber());</b>
+<b class="nc">&nbsp;                notRemoteContract.setDistrict(criteria.getDistrict());</b>
+<b class="nc">&nbsp;                notRemoteContract.setRegion(criteria.getRegion());</b>
+<b class="nc">&nbsp;                notRemoteContract.setCountry(criteria.getCountry());</b>
+&nbsp;
+<b class="nc">&nbsp;                builder = builder.notRemoteContract(notRemoteContract);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return builder.build();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Invia un&#39;offerta a partire da un draft e delle richieste speciali.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Effettua controlli di collisione sui contratti (sia per schedule DAILY che WEEKLY).
+&nbsp;     * Se viene rilevata una collisione, il draft viene rimosso e viene restituito {@code null}.
+&nbsp;     * Altrimenti, lo stato del draft viene aggiornato a &quot;OFFER&quot;, viene creato un oggetto {@link Offer}
+&nbsp;     * e l&#39;offerta viene inviata.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param draft           Il draft del contratto da inviare come offerta.
+&nbsp;     * @param specialRequests Richieste speciali relative all&#39;offerta.
+&nbsp;     * @return Il contratto offerta se l&#39;operazione va a buon fine, {@code null} in caso di collisione.
+&nbsp;     */
+&nbsp;    public static Contract sendOffer(Contract draft, String specialRequests) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+&nbsp;
+<b class="nc">&nbsp;        try (em) {</b>
+&nbsp;            // Verifica le collisioni per schedule DAILY
+<b class="nc">&nbsp;            if (draft.getScheduleType().equals(&quot;DAILY&quot;)) {</b>
+<b class="nc">&nbsp;                Dailycontract dailycontract = draft.getDailycontract();</b>
+<b class="nc">&nbsp;                if (</b>
+<b class="nc">&nbsp;                        Collision.detect(draft.getAlias().getClientAlias().getUser(), dailycontract.getDay(), new TimeInterval(dailycontract.getStartHour(), dailycontract.getEndHour()))</b>
+<b class="nc">&nbsp;                                || Collision.detect(draft.getAlias().getWorkerAlias().getUser().getUser(), dailycontract.getDay(), new TimeInterval(dailycontract.getStartHour(), dailycontract.getEndHour()))</b>
+&nbsp;                ) {
+&nbsp;                    // Se c&#39;è una collisione, rimuove il draft e restituisce null
+<b class="nc">&nbsp;                    em.remove(draft);</b>
+<b class="nc">&nbsp;                    transaction.commit();</b>
+<b class="nc">&nbsp;                    return null;</b>
+&nbsp;                }
+&nbsp;            } else {
+&nbsp;                // Verifica le collisioni per schedule WEEKLY
+<b class="nc">&nbsp;                Weeklycontract weeklycontract = draft.getWeeklycontract();</b>
+<b class="nc">&nbsp;                List&lt;Weekdaycontract&gt; weekdaysContract = em.createQuery(</b>
+&nbsp;                                &quot;select wdc from Weekdaycontract wdc join Weeklycontract wc where wdc.weekly.contract = :draft&quot;,
+&nbsp;                                Weekdaycontract.class)
+<b class="nc">&nbsp;                        .setParameter(&quot;draft&quot;, draft)</b>
+<b class="nc">&nbsp;                        .getResultList();</b>
+<b class="nc">&nbsp;                for (Weekdaycontract wdc : weekdaysContract) {</b>
+&nbsp;                    // Per ogni giorno nel range del weekly contract, controlla la collisione
+<b class="nc">&nbsp;                    for (LocalDate date = wdc.getWeekly().getStartDate(); date.isBefore(wdc.getWeekly().getEndDate()); date = date.plusDays(1)) {</b>
+<b class="nc">&nbsp;                        if (date.getDayOfWeek().equals(wdc.getId().getDayOfWeek())) {</b>
+<b class="nc">&nbsp;                            if (</b>
+<b class="nc">&nbsp;                                    Collision.detect(draft.getAlias().getClientAlias().getUser(), date, new TimeInterval(wdc.getStartHour(), wdc.getEndHour()))</b>
+<b class="nc">&nbsp;                                            || Collision.detect(draft.getAlias().getWorkerAlias().getUser().getUser(), date, new TimeInterval(wdc.getStartHour(), wdc.getEndHour()))</b>
+&nbsp;                            ) {
+&nbsp;                                // Se c&#39;è una collisione, rimuove il draft e restituisce null
+<b class="nc">&nbsp;                                em.remove(draft);</b>
+<b class="nc">&nbsp;                                transaction.commit();</b>
+<b class="nc">&nbsp;                                return null;</b>
+&nbsp;                            }
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;            // Aggiorna lo stato del draft a &quot;OFFER&quot;
+<b class="nc">&nbsp;            draft.setStatus(&quot;OFFER&quot;);</b>
+<b class="nc">&nbsp;            em.merge(draft);</b>
+<b class="nc">&nbsp;            em.flush();</b>
+&nbsp;
+&nbsp;            // Crea un nuovo oggetto Offer associato al draft e alle special requests
+<b class="nc">&nbsp;            Offer newOffer = new Offer();</b>
+<b class="nc">&nbsp;            newOffer.setId(draft.getId());</b>
+<b class="nc">&nbsp;            newOffer.setContract(draft);</b>
+<b class="nc">&nbsp;            newOffer.setSpecialRequests(specialRequests);</b>
+<b class="nc">&nbsp;            em.persist(newOffer);</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return newOffer.getContract();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-17 14:06</div>
+</div>
+</body>
+</html>

@@ -118,7 +118,7 @@ public class WorkerSide implements Collision {
 
             // Crea e persiste la carriera associata al lavoratore
             Career career = new Career();
-            career.setWorker(worker);
+            career.setWorker(worker.getWorker());
             career.setProfession(professionToUse);
             career.setHourlyRate(hourlyRate);
             career.setSeniority(seniority);
@@ -173,17 +173,17 @@ public class WorkerSide implements Collision {
      * Aggiunge un'area di attività per un lavoratore.
      * <p>
      * Il metodo cerca un oggetto {@link Location} esistente con i parametri specificati; se non viene trovato,
-     * ne crea uno nuovo. Successivamente, crea un nuovo {@link Activityarea} associato al lavoratore e alla location.
+     * ne crea uno nuovo. Successivamente, crea un nuovo {@link Activityarea} associato al lavoratore e alla notRemote.
      * </p>
      *
      * @param em           L'EntityManager da utilizzare.
      * @param user         Il lavoratore.
-     * @param city         La città della location.
-     * @param street       La via della location.
-     * @param streetNumber Il numero civico della location.
-     * @param district     Il distretto della location.
-     * @param region       La regione della location.
-     * @param country      Il paese della location.
+     * @param city         La città della notRemote.
+     * @param street       La via della notRemote.
+     * @param streetNumber Il numero civico della notRemote.
+     * @param district     Il distretto della notRemote.
+     * @param region       La regione della notRemote.
+     * @param country      Il paese della notRemote.
      * @return {@code true} se l'operazione ha successo, {@code false} in caso di eccezione.
      */
     public static boolean addToActivityArea(
@@ -197,7 +197,7 @@ public class WorkerSide implements Collision {
             String country
     ) {
         try {
-            // Cerca una location esistente con i parametri specificati
+            // Cerca una notRemote esistente con i parametri specificati
             List<Location> locations = em.createQuery(
                             "select l from Location l " +
                                     "where l.city = :city " +
@@ -226,9 +226,9 @@ public class WorkerSide implements Collision {
                 em.persist(locationToUse);
             }
 
-            // Crea e persiste l'Activityarea associata al lavoratore e alla location
+            // Crea e persiste l'Activityarea associata al lavoratore e alla notRemote
             Activityarea activityArea = new Activityarea();
-            activityArea.setWorker(user);
+            activityArea.setWorker(user.getWorker());
             activityArea.setLocation(locationToUse);
             em.persist(activityArea);
 
@@ -243,7 +243,7 @@ public class WorkerSide implements Collision {
      * Rimuove un'area di attività per un lavoratore.
      *
      * @param user     Il lavoratore.
-     * @param location La location da cui rimuovere l'area di attività.
+     * @param location La notRemote da cui rimuovere l'area di attività.
      * @return {@code true} se l'operazione ha successo, {@code false} altrimenti.
      */
     public static boolean deleteFromActivityArea(User user, Location location) {
@@ -252,7 +252,7 @@ public class WorkerSide implements Collision {
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
-            // Recupera l'Activityarea corrispondente al lavoratore e alla location
+            // Recupera l'Activityarea corrispondente al lavoratore e alla notRemote
             Activityarea activityarea = em.createQuery(
                             "select a from Activityarea a where a.worker = :worker and a.location = :location",
                             Activityarea.class)

@@ -1,0 +1,482 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > WorkerSide</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">is.murmur.Model.Services</a>
+</div>
+
+<h1>Coverage Summary for Class: WorkerSide (is.murmur.Model.Services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WorkerSide</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/58)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/154)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package is.murmur.Model.Services;
+&nbsp;
+&nbsp;import is.murmur.Model.Beans.*;
+&nbsp;import is.murmur.Model.Helpers.Collision;
+&nbsp;import is.murmur.Model.Helpers.JPAUtil;
+&nbsp;import is.murmur.Model.Helpers.TimeInterval;
+&nbsp;import jakarta.persistence.EntityManager;
+&nbsp;import jakarta.persistence.EntityTransaction;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.LocalTime;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;/**
+&nbsp; * La classe {@code WorkerSide} gestisce le operazioni relative ai lavoratori,
+&nbsp; * quali la gestione della carriera, delle applicazioni per lavoro, delle aree di attività
+&nbsp; * e la definizione dei contratti.
+&nbsp; * &lt;p&gt;
+&nbsp; * Implementa l&#39;interfaccia {@link Collision} per permettere il controllo di collisione degli orari.
+&nbsp; * &lt;/p&gt;
+&nbsp; *
+&nbsp; 
+&nbsp; */
+<b class="nc">&nbsp;public class WorkerSide implements Collision {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Recupera la lista delle carriere associate a un lavoratore.
+&nbsp;     *
+&nbsp;     * @param worker L&#39;utente lavoratore di cui recuperare le carriere.
+&nbsp;     * @return Una lista di {@link Career} associata al lavoratore.
+&nbsp;     */
+&nbsp;    public static List&lt;Career&gt; getCareers(User worker) {
+<b class="nc">&nbsp;        try (EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager()) {</b>
+<b class="nc">&nbsp;            return em.createQuery(</b>
+&nbsp;                            &quot;select c from Career c where c.worker.id = :workerId&quot;, Career.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;workerId&quot;, worker.getId())</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Invia una candidatura per un lavoro.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Crea e persiste un oggetto {@link Application} di tipo &quot;JOB&quot; e un oggetto {@link Jobapplication}
+&nbsp;     * contenente le informazioni specifiche della candidatura.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param user     L&#39;utente che invia la candidatura.
+&nbsp;     * @param docsUrl  L&#39;URL dei documenti allegati alla candidatura.
+&nbsp;     * @param jobInputs Un array di stringhe contenente i dati specifici del lavoro (es. professione, tariffa, seniority).
+&nbsp;     * @return L&#39;oggetto {@link Application} creato.
+&nbsp;     */
+&nbsp;    public static Application jobApplication(User user, String docsUrl, String[] jobInputs) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Crea una nuova candidatura di tipo &quot;JOB&quot;
+<b class="nc">&nbsp;            Application application = new Application();</b>
+<b class="nc">&nbsp;            application.setUser(user);</b>
+<b class="nc">&nbsp;            application.setSubmissionDate(LocalDate.now());</b>
+<b class="nc">&nbsp;            application.setSubmissionHour(LocalTime.now());</b>
+<b class="nc">&nbsp;            application.setDocsUrl(docsUrl);</b>
+<b class="nc">&nbsp;            application.setStatus(&quot;PENDING&quot;);</b>
+<b class="nc">&nbsp;            application.setType(&quot;JOB&quot;);</b>
+<b class="nc">&nbsp;            em.persist(application);</b>
+&nbsp;
+&nbsp;            // Crea il componente specifico della candidatura per il lavoro
+<b class="nc">&nbsp;            Jobapplication jobApplication = new Jobapplication();</b>
+<b class="nc">&nbsp;            jobApplication.setId(application.getId());</b>
+<b class="nc">&nbsp;            jobApplication.setApplication(application);</b>
+<b class="nc">&nbsp;            jobApplication.setProfessionName(jobInputs[1]);</b>
+<b class="nc">&nbsp;            jobApplication.setHourlyRate(new BigDecimal(jobInputs[2]));</b>
+<b class="nc">&nbsp;            jobApplication.setSeniority(Integer.valueOf(jobInputs[3]));</b>
+<b class="nc">&nbsp;            em.persist(jobApplication);</b>
+&nbsp;
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return application;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Aggiunge una carriera per un lavoratore.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo cerca una {@link Profession} esistente con il nome specificato; se non viene trovata,
+&nbsp;     * ne crea una nuova. Successivamente, crea un nuovo oggetto {@link Career} associato al lavoratore
+&nbsp;     * e lo persiste.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param em         L&#39;EntityManager da utilizzare.
+&nbsp;     * @param worker     Il lavoratore a cui associare la carriera.
+&nbsp;     * @param profession Il nome della professione.
+&nbsp;     * @param hourlyRate La tariffa oraria.
+&nbsp;     * @param seniority  Il livello di anzianità.
+&nbsp;     * @return {@code true} se l&#39;operazione ha successo, {@code false} in caso di eccezione.
+&nbsp;     */
+&nbsp;    public static boolean addCareer(EntityManager em, User worker, String profession, BigDecimal hourlyRate, Integer seniority) {
+&nbsp;        try {
+&nbsp;            // Cerca una professione esistente con il nome specificato
+<b class="nc">&nbsp;            List&lt;Profession&gt; professions = em.createQuery(</b>
+&nbsp;                            &quot;select p from Profession p where p.name = :profession&quot;,
+&nbsp;                            Profession.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;profession&quot;, profession)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+&nbsp;            Profession professionToUse;
+<b class="nc">&nbsp;            if (!professions.isEmpty()) {</b>
+<b class="nc">&nbsp;                professionToUse = professions.get(0);</b>
+&nbsp;            } else {
+&nbsp;                // Se non esiste, crea e persiste una nuova Profession
+<b class="nc">&nbsp;                professionToUse = new Profession();</b>
+<b class="nc">&nbsp;                professionToUse.setName(profession);</b>
+<b class="nc">&nbsp;                em.persist(professionToUse);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Crea e persiste la carriera associata al lavoratore
+<b class="nc">&nbsp;            Career career = new Career();</b>
+<b class="nc">&nbsp;            career.setWorker(worker);</b>
+<b class="nc">&nbsp;            career.setProfession(professionToUse);</b>
+<b class="nc">&nbsp;            career.setHourlyRate(hourlyRate);</b>
+<b class="nc">&nbsp;            career.setSeniority(seniority);</b>
+<b class="nc">&nbsp;            em.persist(career);</b>
+&nbsp;
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Elimina una carriera.
+&nbsp;     *
+&nbsp;     * @param career La carriera da eliminare.
+&nbsp;     * @return {@code true} se la carriera viene eliminata con successo, {@code false} in caso contrario.
+&nbsp;     */
+&nbsp;    public static boolean deleteCareer(Career career) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;            // Trova la carriera nel contesto di persistenza
+<b class="nc">&nbsp;            Career managedCareer = em.find(Career.class, career.getId());</b>
+<b class="nc">&nbsp;            if (managedCareer == null) {</b>
+<b class="nc">&nbsp;                transaction.rollback();</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            em.remove(managedCareer);</b>
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Recupera le aree di attività associate a un lavoratore.
+&nbsp;     *
+&nbsp;     * @param user Il lavoratore di cui recuperare le aree di attività.
+&nbsp;     * @return Una lista di {@link Activityarea} associate al lavoratore.
+&nbsp;     */
+&nbsp;    public static List&lt;Activityarea&gt; getActivityArea(User user) {
+<b class="nc">&nbsp;        try (EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager()) {</b>
+<b class="nc">&nbsp;            return em.createQuery(</b>
+&nbsp;                            &quot;SELECT a FROM Activityarea a WHERE a.worker = :worker&quot;, Activityarea.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;worker&quot;, user)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Aggiunge un&#39;area di attività per un lavoratore.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Il metodo cerca un oggetto {@link Location} esistente con i parametri specificati; se non viene trovato,
+&nbsp;     * ne crea uno nuovo. Successivamente, crea un nuovo {@link Activityarea} associato al lavoratore e alla location.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param em           L&#39;EntityManager da utilizzare.
+&nbsp;     * @param user         Il lavoratore.
+&nbsp;     * @param city         La città della location.
+&nbsp;     * @param street       La via della location.
+&nbsp;     * @param streetNumber Il numero civico della location.
+&nbsp;     * @param district     Il distretto della location.
+&nbsp;     * @param region       La regione della location.
+&nbsp;     * @param country      Il paese della location.
+&nbsp;     * @return {@code true} se l&#39;operazione ha successo, {@code false} in caso di eccezione.
+&nbsp;     */
+&nbsp;    public static boolean addToActivityArea(
+&nbsp;            EntityManager em,
+&nbsp;            User user,
+&nbsp;            String city,
+&nbsp;            String street,
+&nbsp;            Short streetNumber,
+&nbsp;            String district,
+&nbsp;            String region,
+&nbsp;            String country
+&nbsp;    ) {
+&nbsp;        try {
+&nbsp;            // Cerca una location esistente con i parametri specificati
+<b class="nc">&nbsp;            List&lt;Location&gt; locations = em.createQuery(</b>
+&nbsp;                            &quot;select l from Location l &quot; +
+&nbsp;                                    &quot;where l.city = :city &quot; +
+&nbsp;                                    &quot;  and l.street = :street &quot; +
+&nbsp;                                    &quot;  and l.streetNumber = :streetNumber &quot; +
+&nbsp;                                    &quot;  and l.district = :district &quot; +
+&nbsp;                                    &quot;  and l.country = :country&quot;,
+&nbsp;                            Location.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;city&quot;, city)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;street&quot;, street)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;streetNumber&quot;, streetNumber)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;district&quot;, district)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;country&quot;, country)</b>
+<b class="nc">&nbsp;                    .getResultList();</b>
+&nbsp;            Location locationToUse;
+<b class="nc">&nbsp;            if (!locations.isEmpty()) {</b>
+<b class="nc">&nbsp;                locationToUse = locations.get(0);</b>
+&nbsp;            } else {
+&nbsp;                // Se non esiste, crea e persiste una nuova Location
+<b class="nc">&nbsp;                locationToUse = new Location();</b>
+<b class="nc">&nbsp;                locationToUse.setCity(city);</b>
+<b class="nc">&nbsp;                locationToUse.setStreet(street);</b>
+<b class="nc">&nbsp;                locationToUse.setStreetNumber(streetNumber);</b>
+<b class="nc">&nbsp;                locationToUse.setDistrict(district);</b>
+<b class="nc">&nbsp;                locationToUse.setCountry(country);</b>
+<b class="nc">&nbsp;                em.persist(locationToUse);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Crea e persiste l&#39;Activityarea associata al lavoratore e alla location
+<b class="nc">&nbsp;            Activityarea activityArea = new Activityarea();</b>
+<b class="nc">&nbsp;            activityArea.setWorker(user);</b>
+<b class="nc">&nbsp;            activityArea.setLocation(locationToUse);</b>
+<b class="nc">&nbsp;            em.persist(activityArea);</b>
+&nbsp;
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Rimuove un&#39;area di attività per un lavoratore.
+&nbsp;     *
+&nbsp;     * @param user     Il lavoratore.
+&nbsp;     * @param location La location da cui rimuovere l&#39;area di attività.
+&nbsp;     * @return {@code true} se l&#39;operazione ha successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean deleteFromActivityArea(User user, Location location) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+&nbsp;            // Recupera l&#39;Activityarea corrispondente al lavoratore e alla location
+<b class="nc">&nbsp;            Activityarea activityarea = em.createQuery(</b>
+&nbsp;                            &quot;select a from Activityarea a where a.worker = :worker and a.location = :location&quot;,
+&nbsp;                            Activityarea.class)
+<b class="nc">&nbsp;                    .setParameter(&quot;worker&quot;, user)</b>
+<b class="nc">&nbsp;                    .setParameter(&quot;location&quot;, location)</b>
+<b class="nc">&nbsp;                    .getSingleResult();</b>
+&nbsp;
+<b class="nc">&nbsp;            if (activityarea == null) {</b>
+<b class="nc">&nbsp;                transaction.rollback();</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            em.remove(activityarea);</b>
+<b class="nc">&nbsp;            transaction.commit();</b>
+<b class="nc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Definisce un contratto offerta.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * In base al parametro {@code approval}, se l&#39;offerta viene approvata, viene creato uno schedule
+&nbsp;     * (DAILY o WEEKLY) per il contratto e vengono creati i relativi Planner per client e worker; in caso di rifiuto,
+&nbsp;     * lo stato del contratto viene impostato a &quot;REJECTED&quot;.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param offer    Il contratto offerta.
+&nbsp;     * @param approval {@code true} per approvare il contratto, {@code false} per rifiutarlo.
+&nbsp;     * @return {@code true} se il contratto viene definito con successo, {@code false} altrimenti.
+&nbsp;     */
+&nbsp;    public static boolean defineContract(Contract offer, boolean approval) {
+<b class="nc">&nbsp;        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();</b>
+<b class="nc">&nbsp;        EntityTransaction transaction = em.getTransaction();</b>
+<b class="nc">&nbsp;        try (em) {</b>
+<b class="nc">&nbsp;            transaction.begin();</b>
+&nbsp;
+<b class="nc">&nbsp;            if (approval) {</b>
+<b class="nc">&nbsp;                if (offer.getScheduleType().equals(&quot;DAILY&quot;)) {</b>
+&nbsp;                    // Aggiunge lo schedule giornaliero per client e worker
+<b class="nc">&nbsp;                    if (</b>
+<b class="nc">&nbsp;                            !ClientSide.addDailySchedule(</b>
+<b class="nc">&nbsp;                                    em, offer.getAlias().getClientAlias().getUser(),</b>
+<b class="nc">&nbsp;                                    offer.getDailycontract().getDay(), new TimeInterval(offer.getDailycontract().getStartHour(), offer.getDailycontract().getEndHour())</b>
+&nbsp;                            )
+<b class="nc">&nbsp;                                    || !ClientSide.addDailySchedule(</b>
+<b class="nc">&nbsp;                                    em, offer.getAlias().getWorkerAlias().getUser().getUser(),</b>
+<b class="nc">&nbsp;                                    offer.getDailycontract().getDay(), new TimeInterval(offer.getDailycontract().getStartHour(), offer.getDailycontract().getEndHour())</b>
+&nbsp;                            )
+&nbsp;                    ) {
+&nbsp;                        // In caso di collisione, rifiuta il contratto
+<b class="nc">&nbsp;                        offer.setStatus(&quot;REJECTED&quot;);</b>
+<b class="nc">&nbsp;                        em.merge(offer);</b>
+<b class="nc">&nbsp;                        transaction.commit();</b>
+<b class="nc">&nbsp;                        return false;</b>
+&nbsp;                    } else {
+&nbsp;                        // Se non ci sono collisioni, approva il contratto
+<b class="nc">&nbsp;                        offer.setStatus(&quot;APPROVED&quot;);</b>
+<b class="nc">&nbsp;                        em.merge(offer);</b>
+<b class="nc">&nbsp;                        transaction.commit();</b>
+<b class="nc">&nbsp;                        return true;</b>
+&nbsp;                    }
+&nbsp;                } else {
+&nbsp;                    // Gestione del contratto settimanale
+<b class="nc">&nbsp;                    Schedule newSchedule = new Schedule();</b>
+<b class="nc">&nbsp;                    newSchedule.setType(&quot;WEEKLY&quot;);</b>
+<b class="nc">&nbsp;                    em.persist(newSchedule);</b>
+<b class="nc">&nbsp;                    em.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;                    Weekly newWeekly = new Weekly();</b>
+<b class="nc">&nbsp;                    newWeekly.setId(newSchedule.getId());</b>
+<b class="nc">&nbsp;                    newWeekly.setSchedule(newSchedule);</b>
+<b class="nc">&nbsp;                    newWeekly.setStartDate(offer.getWeeklycontract().getStartDate());</b>
+<b class="nc">&nbsp;                    newWeekly.setEndDate(offer.getWeeklycontract().getEndDate());</b>
+<b class="nc">&nbsp;                    em.persist(newWeekly);</b>
+<b class="nc">&nbsp;                    em.flush();</b>
+&nbsp;
+&nbsp;                    // Recupera i Weekdaycontract associati al nuovo Weekly
+<b class="nc">&nbsp;                    List&lt;Weekdaycontract&gt; weekdayContracts = em.createQuery(</b>
+&nbsp;                                    &quot;select wdc from Weekdaycontract wdc where wdc.weekly = :weekly&quot;,
+&nbsp;                                    Weekdaycontract.class)
+<b class="nc">&nbsp;                            .setParameter(&quot;weekly&quot;, newWeekly)</b>
+<b class="nc">&nbsp;                            .getResultList();</b>
+&nbsp;
+&nbsp;                    // Crea una mappa dei giorni della settimana e relativi intervalli
+<b class="nc">&nbsp;                    Map&lt;String, TimeInterval&gt; weekdays = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;                    for (Weekdaycontract wdc : weekdayContracts)</b>
+<b class="nc">&nbsp;                        weekdays.put(wdc.getId().getDayOfWeek(), new TimeInterval(wdc.getStartHour(), wdc.getEndHour()));</b>
+&nbsp;
+&nbsp;                    // Aggiunge lo schedule settimanale per client e worker
+<b class="nc">&nbsp;                    if (</b>
+<b class="nc">&nbsp;                            !ClientSide.addWeeklySchedule(offer.getAlias().getClientAlias().getUser(), newWeekly.getStartDate(), newWeekly.getEndDate(), weekdays)</b>
+<b class="nc">&nbsp;                                    || !ClientSide.addWeeklySchedule(offer.getAlias().getWorkerAlias().getUser().getUser(), newWeekly.getStartDate(), newWeekly.getEndDate(), weekdays)</b>
+&nbsp;                    ) {
+<b class="nc">&nbsp;                        transaction.rollback();</b>
+<b class="nc">&nbsp;                        return false;</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        offer.setStatus(&quot;APPROVED&quot;);</b>
+<b class="nc">&nbsp;                        em.merge(offer);</b>
+<b class="nc">&nbsp;                        transaction.commit();</b>
+<b class="nc">&nbsp;                        return true;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            } else {
+&nbsp;                // Se l&#39;approvazione non viene data, imposta lo stato a REJECTED
+<b class="nc">&nbsp;                offer.setStatus(&quot;REJECTED&quot;);</b>
+<b class="nc">&nbsp;                em.merge(offer);</b>
+<b class="nc">&nbsp;                transaction.commit();</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-17 14:06</div>
+</div>
+</body>
+</html>

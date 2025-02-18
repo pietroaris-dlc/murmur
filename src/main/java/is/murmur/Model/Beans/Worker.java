@@ -33,6 +33,9 @@ public class Worker {
     @Column(name = "totalProfit", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalProfit;
 
+    @OneToMany(mappedBy = "worker")
+    private Set<Career> careers = new LinkedHashSet<>();
+
     @OneToMany(mappedBy = "user")
     private Set<Workeralias> workeraliases = new LinkedHashSet<>();
 
@@ -82,6 +85,14 @@ public class Worker {
 
     public void setTotalProfit(BigDecimal totalProfit) {
         this.totalProfit = totalProfit;
+    }
+
+    public Set<Career> getCareers() {
+        return careers;
+    }
+
+    public void setCareers(Set<Career> careers) {
+        this.careers = careers;
     }
 
     public Set<Workeralias> getWorkeraliases() {
