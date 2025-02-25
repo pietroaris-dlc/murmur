@@ -1,5 +1,6 @@
 package is.murmur.Model.Services;
 
+import is.murmur.Services.AccountManagement;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

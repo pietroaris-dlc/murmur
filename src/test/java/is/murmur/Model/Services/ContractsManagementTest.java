@@ -1,6 +1,7 @@
 package is.murmur.Model.Services;
 
 import is.murmur.Model.Beans.Contract;
+import is.murmur.Services.ContractsManagement;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

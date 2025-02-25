@@ -2,7 +2,7 @@ package is.murmur.Controller.ClientSide;
 
 import is.murmur.Model.Helpers.Criteria;
 import is.murmur.Model.Helpers.TimeInterval;
-import is.murmur.Model.Services.ClientSide;
+import is.murmur.Services.ClientSide;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

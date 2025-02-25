@@ -1,8 +1,8 @@
-package is.murmur.Model.Services;
+package is.murmur.Services;
 
 import is.murmur.Model.Beans.*;
 import is.murmur.Model.Helpers.*;
-import is.murmur.Model.Services.SearchStrategy.SearchStrategyFactory;
+import is.murmur.Services.SearchStrategy.SearchStrategyFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 

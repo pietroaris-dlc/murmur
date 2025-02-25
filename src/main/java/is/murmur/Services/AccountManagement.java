@@ -1,4 +1,4 @@
-package is.murmur.Model.Services;
+package is.murmur.Services;
 
 import is.murmur.Model.Beans.*;
 import is.murmur.Model.Helpers.DraftBuffer;

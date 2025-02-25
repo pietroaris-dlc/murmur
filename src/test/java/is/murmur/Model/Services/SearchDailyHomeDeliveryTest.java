@@ -1,25 +1,12 @@
 package is.murmur.Model.Services;
 
-import is.murmur.Model.Beans.*;
 import is.murmur.Model.Helpers.*;
-import is.murmur.Model.Services.SearchStrategy.DailyOnsiteSearchStrategy;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
-import org.json.JSONArray;
+import is.murmur.Services.ClientSide;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 

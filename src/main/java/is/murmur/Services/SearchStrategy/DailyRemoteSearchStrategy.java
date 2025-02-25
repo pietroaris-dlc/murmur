@@ -1,4 +1,4 @@
-package is.murmur.Model.Services.SearchStrategy;
+package is.murmur.Services.SearchStrategy;
 
 import is.murmur.Model.Beans.*;
 import is.murmur.Model.Helpers.*;
