@@ -1,0 +1,7 @@
+is.murmur.Controller
+is.murmur.Controller.ClientSide
+is.murmur.Controller.Router
+is.murmur.Model.Beans
+is.murmur.Model.Helpers
+is.murmur.Model.Services
+is.murmur.Model.Services.SearchStrategy

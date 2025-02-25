@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"is.murmur.Controller"},{"l":"is.murmur.Controller.ClientSide"},{"l":"is.murmur.Controller.Router"},{"l":"is.murmur.Model.Beans"},{"l":"is.murmur.Model.Helpers"},{"l":"is.murmur.Model.Services"},{"l":"is.murmur.Model.Services.SearchStrategy"}];updateSearchResults();
