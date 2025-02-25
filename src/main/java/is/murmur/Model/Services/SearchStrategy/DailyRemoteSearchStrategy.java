@@ -20,8 +20,6 @@ import java.util.List;
  * per eseguire una ricerca di lavoratori (worker) che soddisfano i criteri giornalieri
  * definiti, come la professione, il range di tariffa oraria e l'intervallo orario.
  * </p>
- *
- 
  */
 public class DailyRemoteSearchStrategy implements SearchStrategy {
 
@@ -42,7 +40,6 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
      */
     @Override
     public String search(Criteria criteria) {
-        // Ottiene l'EntityManager per interagire con il database
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         String json = "";
         try {
@@ -54,6 +51,57 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
             LocalTime startHour = criteria.getDailyStartHour();
             LocalTime endHour = criteria.getDailyEndHour();
 
+            // Validazione della professione
+            if (profession == null || profession.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "profession is required");
+                return errorJson.toString(2);
+            } else {
+                for (char c : profession.toCharArray()) {
+                    if (Character.isDigit(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "profession contains digits");
+                        return errorJson.toString(2);
+                    }
+                    if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "profession contains special characters");
+                        return errorJson.toString(2);
+                    }
+                }
+            }
+
+            // Validazione delle tariffe orarie
+            if (hourlyRateMax < hourlyRateMin) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "the hourlyRateMax must be greater than or equal to the hourlyRateMin");
+                return errorJson.toString(2);
+            }
+
+            // Validazione del giorno
+            if (day == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "Day cannot be null");
+                return errorJson.toString(2);
+            }
+
+            // Validazione degli orari giornalieri
+            if (startHour == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "StartHour cannot be null");
+                return errorJson.toString(2);
+            }
+            if (endHour == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "EndHour cannot be null");
+                return errorJson.toString(2);
+            }
+            if (!endHour.isAfter(startHour)) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "the endHour must be after the StartHour");
+                return errorJson.toString(2);
+            }
+
             // Crea la query per selezionare gli utenti e le loro carriere
             Query query = em.createQuery(
                             "select u, c from User u " +
@@ -64,28 +112,33 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
                                     "where u.type = 'WORKER' " +
                                     "and c.profession.name = :profession " +
                                     "and c.hourlyRate > :hourlyRateMin " +
-                                    "and c.hourlyRate < :hourlyRateMax ")
-                    .setParameter("profession", criteria.getProfession())
-                    .setParameter("hourlyRateMin", criteria.getHourlyRateMin())
-                    .setParameter("hourlyRateMax", criteria.getHourlyRateMax());
+                                    "and c.hourlyRate < :hourlyRateMax")
+                    .setParameter("profession", profession)
+                    .setParameter("hourlyRateMin", hourlyRateMin)
+                    .setParameter("hourlyRateMax", hourlyRateMax);
 
             // Esegue la query e ottiene i risultati
             @SuppressWarnings("unchecked")
             List<Object[]> queryResults = query.getResultList();
             List<Result> results = new ArrayList<>();
 
-            // Itera sui risultati della query
+            // Itera sui risultati della query e controlla le collisioni nell'orario specificato
             for (Object[] row : queryResults) {
                 User worker = (User) row[0];
-                // Se viene rilevata una collisione nell'orario specificato, salta questo worker
-                if (Collision.detect(worker, criteria.getDay(), new TimeInterval(criteria.getDailyStartHour(), criteria.getDailyEndHour())))
+                if (Collision.detect(worker, day, new TimeInterval(startHour, endHour)))
                     continue;
                 Career career = (Career) row[1];
-                // Aggiunge il risultato alla lista
                 results.add(new Result(worker, career));
             }
 
-            // Ordina i risultati in base alla priorità del lavoratore in ordine decrescente
+            // Se non sono stati trovati risultati, restituisce un messaggio di errore
+            if (results.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "No Results Found");
+                return errorJson.toString(2);
+            }
+
+            // Ordina i risultati in base alla priorità del lavoratore (in ordine decrescente)
             results.sort(new Comparator<Result>() {
                 @Override
                 public int compare(Result o1, Result o2) {
@@ -95,8 +148,6 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
 
             // Crea l'oggetto JSON per l'output
             JSONObject output = new JSONObject();
-
-            // Crea e popola l'oggetto JSON con i criteri di ricerca
             JSONObject criteriaJson = new JSONObject();
             criteriaJson.put("scheduleType", criteria.getScheduleType());
             criteriaJson.put("serviceMode", criteria.getServiceMode());
@@ -106,11 +157,8 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
             criteriaJson.put("day", day.toString());
             criteriaJson.put("startHour", startHour.toString());
             criteriaJson.put("endHour", endHour.toString());
-
-            // Aggiunge i criteri di ricerca all'output
             output.put("searchCriteria", criteriaJson);
 
-            // Crea l'array JSON per contenere i risultati
             JSONArray resultsArray = new JSONArray();
             for (Result result : results) {
                 JSONObject resultJson = new JSONObject();
@@ -118,20 +166,22 @@ public class DailyRemoteSearchStrategy implements SearchStrategy {
                 resultJson.put("career", result.getCareer());
                 resultsArray.put(resultJson);
             }
-            // Aggiunge l'array dei risultati all'output
+
+            if(resultsArray.isEmpty()){
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "No Results Found");
+                return errorJson.toString(2);
+            }
+
             output.put("results", resultsArray);
 
-            // Converte l'oggetto JSON in stringa con indentazione (2 spazi)
             json = output.toString(2);
         } catch (Exception e) {
-            // Stampa lo stack trace in caso di eccezione
             e.printStackTrace();
-            // Crea un oggetto JSON per rappresentare l'errore
             JSONObject errorJson = new JSONObject();
             errorJson.put("error", "Server error occurred: " + e.getMessage());
             json = errorJson.toString();
         } finally {
-            // Chiude l'EntityManager per liberare le risorse
             em.close();
         }
         return json;

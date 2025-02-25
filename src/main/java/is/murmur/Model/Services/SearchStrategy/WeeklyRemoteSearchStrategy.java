@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +23,6 @@ import java.util.Map;
  * I criteri di ricerca includono la professione, il range di tariffa oraria, le date di inizio e fine,
  * e gli intervalli orari per ciascun giorno della settimana.
  * </p>
- *
- 
  */
 public class WeeklyRemoteSearchStrategy implements SearchStrategy {
 
@@ -43,7 +42,6 @@ public class WeeklyRemoteSearchStrategy implements SearchStrategy {
      */
     @Override
     public String search(Criteria criteria) {
-        // Ottiene l'EntityManager per interagire con il database
         EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
         String json = "";
         try {
@@ -55,7 +53,59 @@ public class WeeklyRemoteSearchStrategy implements SearchStrategy {
             LocalDate endDate = criteria.getEndDate();
             Map<String, TimeInterval> weeklyIntervals = criteria.getWeeklyIntervals();
 
-            // Prepara liste per i giorni della settimana e relativi intervalli (opzionale)
+            // Controlli sul parametro "profession"
+            if (profession == null || profession.isEmpty()) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "profession is required");
+                return errorJson.toString(2);
+            } else {
+                // Verifica che non contenga digits o caratteri speciali (solo lettere e spazi)
+                for (char c : profession.toCharArray()) {
+                    if (Character.isDigit(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "profession contains digits");
+                        return errorJson.toString(2);
+                    }
+                    if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
+                        JSONObject errorJson = new JSONObject();
+                        errorJson.put("results", "profession contains special characters");
+                        return errorJson.toString(2);
+                    }
+                }
+            }
+
+            // Controllo sul range di tariffa oraria
+            if (hourlyRateMax < hourlyRateMin) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "the hourlyRateMax must be greater than or equal to the hourlyRateMin");
+                return errorJson.toString(2);
+            }
+
+            // Controllo sulle date
+            if (startDate == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "StartDate cannot be null");
+                return errorJson.toString(2);
+            }
+            if (endDate == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "EndDate cannot be null");
+                return errorJson.toString(2);
+            }
+            if (endDate.isBefore(startDate)) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "EndDate cannot be before startDate");
+                return errorJson.toString(2);
+            }
+
+            // Controllo sugli intervalli settimanali
+            if (weeklyIntervals == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "WeeklyIntervals cannot be null");
+                return errorJson.toString(2);
+            }
+
+            // Prepara liste per i giorni della settimana e relativi intervalli
             List<String> dayOfWeekList = new ArrayList<>();
             List<LocalTime> dayOfWeekStartTimes = new ArrayList<>();
             List<LocalTime> dayOfWeekEndTimes = new ArrayList<>();
@@ -65,10 +115,24 @@ public class WeeklyRemoteSearchStrategy implements SearchStrategy {
                 dayOfWeekList.add(dayOfWeek);
                 dayOfWeekStartTimes.add(interval.getStart());
                 dayOfWeekEndTimes.add(interval.getEnd());
+                // Controlla che l'intervallo orario sia corretto
+                if (interval.getEnd().isAfter(interval.getStart())) {
+                    JSONObject errorJson = new JSONObject();
+                    errorJson.put("results", "the endHour must be after the StartHour");
+                    return errorJson.toString(2);
+                }
             }
-            // Verifica che gli intervalli settimanali non siano vuoti
             if (dayOfWeekList.isEmpty()) {
-                throw new IllegalArgumentException("Weekly intervals cannot be empty for a weekly search.");
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "WeeklyIntervals cannot be empty");
+                return errorJson.toString(2);
+            }
+            for (List<LocalTime> localTimes : Arrays.asList(dayOfWeekStartTimes, dayOfWeekEndTimes)) {
+                if (localTimes.isEmpty()) {
+                    JSONObject errorJson = new JSONObject();
+                    errorJson.put("results", "WeeklyIntervals cannot be empty");
+                    return errorJson.toString(2);
+                }
             }
 
             // Crea la query per selezionare gli utenti e le loro carriere
@@ -81,7 +145,7 @@ public class WeeklyRemoteSearchStrategy implements SearchStrategy {
                                     "where u.type = 'WORKER' " +
                                     "and c.profession.name = :profession " +
                                     "and c.hourlyRate > :hourlyRateMin " +
-                                    "and c.hourlyRate < :hourlyRateMax ")
+                                    "and c.hourlyRate < :hourlyRateMax")
                     .setParameter("profession", profession)
                     .setParameter("hourlyRateMin", hourlyRateMin)
                     .setParameter("hourlyRateMax", hourlyRateMax);
@@ -101,7 +165,6 @@ public class WeeklyRemoteSearchStrategy implements SearchStrategy {
                 // Controlla per ogni giorno compreso tra startDate ed endDate
                 for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
                     String dayOfWeek = date.getDayOfWeek().name();
-
                     // Se esiste un intervallo per il giorno corrente, verifica la collisione
                     if (weeklyIntervals.containsKey(dayOfWeek)) {
                         TimeInterval interval = weeklyIntervals.get(dayOfWeek);
@@ -158,19 +221,22 @@ public class WeeklyRemoteSearchStrategy implements SearchStrategy {
                 resultJson.put("career", result.getCareer());
                 resultsArray.put(resultJson);
             }
+
+            if(resultsArray.isEmpty()){
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("results", "No Results Found");
+                return errorJson.toString(2);
+            }
             output.put("results", resultsArray);
 
             // Converte l'oggetto JSON in una stringa con indentazione (2 spazi)
             json = output.toString(2);
         } catch (Exception e) {
-            // Stampa lo stack trace in caso di eccezione
             e.printStackTrace();
-            // Crea un oggetto JSON per rappresentare l'errore
             JSONObject errorJson = new JSONObject();
             errorJson.put("error", "Server error occurred: " + e.getMessage());
             json = errorJson.toString();
         } finally {
-            // Chiude l'EntityManager per liberare le risorse
             em.close();
         }
         return json;

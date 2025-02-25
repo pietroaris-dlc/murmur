@@ -95,7 +95,6 @@ public class SearchServlet extends HttpServlet {
             // Invoca il servizio ClientSide con i criteri costruiti
             String resultJson = ClientSide.search(criteria);
 
-
             // Imposta il content type e restituisce il JSON al client
             response.setContentType("application/json");
             response.getWriter().write(resultJson);

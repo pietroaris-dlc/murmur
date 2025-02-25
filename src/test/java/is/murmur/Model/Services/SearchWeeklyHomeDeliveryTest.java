@@ -1,12 +1,24 @@
 package is.murmur.Model.Services;
 
+import is.murmur.Model.Beans.*;
 import is.murmur.Model.Helpers.*;
+import is.murmur.Model.Services.SearchStrategy.WeeklyHomeDeliverySearchStrategy;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -94,7 +106,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testProfessionNull() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", null, 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), validDistrict(), validRegion(), validCountry())
@@ -111,7 +123,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testProfessionEmpty() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), validDistrict(), validRegion(), validCountry())
@@ -129,7 +141,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testProfessionContainsDigits() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Idraulico23" contiene un digit
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico23", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -148,7 +160,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testProfessionContainsSpecialCharacters() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Idr@ulico" contiene il carattere speciale '@'
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idr@ulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -166,7 +178,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testHourlyRateMaxLessThanMin() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // Valori tariffari errati: hourlyRateMax (20) < hourlyRateMin (30)
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 30, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -183,7 +195,7 @@ class SearchWeeklyHomeDeliveryTest {
      */
     @Test
     void testStartDateNull() {
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 // Passa null per la data di inizio
                 .weekly(null, endDate, getValidWeekdays())
@@ -218,7 +230,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testEndDateBeforeStartDate() {
         LocalDate startDate = LocalDate.of(2025, 3, 15);
-        LocalDate endDate   = LocalDate.of(2025, 2, 10);
+        LocalDate endDate = LocalDate.of(2025, 2, 10);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), validDistrict(), validRegion(), validCountry())
@@ -235,7 +247,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testWeeklyIntervalsNull() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 // Passa null per gli intervalli settimanali
                 .weekly(startDate, endDate, null)
@@ -253,7 +265,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testWeeklyIntervalsEmpty() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Map<String, TimeInterval> emptyWeekdays = new HashMap<>();
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, emptyWeekdays)
@@ -272,7 +284,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testWeeklyIntervalInvalid() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // Usa un intervallo non valido: end è dopo start
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getInvalidWeekdays())
@@ -290,7 +302,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testCityNull() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // Passa null per la city
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -309,7 +321,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testCityContainsDigits() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Fisc14no" contiene un digit
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -328,7 +340,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testCityContainsSpecialCharacters() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Fis!ciano" contiene '!'
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -346,7 +358,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testStreetNull() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), null, validDistrict(), validRegion(), validCountry())
@@ -363,7 +375,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testStreetEmpty() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), "", validDistrict(), validRegion(), validCountry())
@@ -380,14 +392,10 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testStreetTooLong() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
-        StringBuilder longStreet = new StringBuilder();
-        for (int i = 0; i < 130; i++) {
-            longStreet.append("a");
-        }
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
-                .notRemote(validCity(), longStreet.toString(), validDistrict(), validRegion(), validCountry())
+                .notRemote(validCity(), "a".repeat(130), validDistrict(), validRegion(), validCountry())
                 .build();
         String result = ClientSide.search(testCriteria);
         JSONObject json = new JSONObject(result);
@@ -401,7 +409,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testDistrictNull() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), null, validRegion(), validCountry())
@@ -418,7 +426,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testDistrictEmpty() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), "", validRegion(), validCountry())
@@ -436,7 +444,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testDistrictContainsDigits() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Sal3rno" contiene un digit
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -455,7 +463,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testDistrictContainsSpecialCharacters() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Sal!erno" contiene '!'
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -473,7 +481,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testRegionNull() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), validDistrict(), null, validCountry())
@@ -490,7 +498,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testRegionEmpty() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), validDistrict(), "", validCountry())
@@ -508,7 +516,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testRegionContainsDigits() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Camp4nia" contiene un digit
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -527,7 +535,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testRegionContainsSpecialCharacters() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Camp@nia" contiene '@'
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -545,7 +553,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testCountryNull() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), validDistrict(), validRegion(), null)
@@ -562,7 +570,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testCountryEmpty() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
                 .notRemote(validCity(), validStreet(), validDistrict(), validRegion(), "")
@@ -580,7 +588,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testCountryContainsDigits() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Itali4" contiene un digit
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -599,7 +607,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testCountryContainsSpecialCharacters() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // "Ital!a" contiene '!'
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())
@@ -618,7 +626,7 @@ class SearchWeeklyHomeDeliveryTest {
     @Test
     void testNoResultsFound() {
         LocalDate startDate = LocalDate.of(2025, 2, 10);
-        LocalDate endDate   = LocalDate.of(2025, 3, 15);
+        LocalDate endDate = LocalDate.of(2025, 3, 15);
         // Dati validi ma si assume che non esista alcun lavoratore corrispondente nel DB.
         Criteria testCriteria = new Criteria.Builder("WEEKLY", "HOMEDELIVERY", "Idraulico", 10, 20)
                 .weekly(startDate, endDate, getValidWeekdays())

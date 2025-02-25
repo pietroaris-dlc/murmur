@@ -381,4 +381,8 @@ public class ContractsManagement {
             return newOffer.getContract();
         }
     }
+
+    public static Review getReview(Contract expired) {
+        return expired.getReview();
+    }
 }
