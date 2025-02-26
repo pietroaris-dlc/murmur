@@ -1,5 +1,5 @@
-<%@ page import="is.murmur.Model.Beans.Registereduser" %>
-<%@ page import="is.murmur.Model.Beans.Workercomponent" %>
+<%@ page import="is.murmur.Storage.DAO.Registereduser" %>
+<%@ page import="is.murmur.Storage.DAO.Workercomponent" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>

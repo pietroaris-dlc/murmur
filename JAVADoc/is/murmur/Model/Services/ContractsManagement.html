@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2025-02-25">
-<meta name="description" content="declaration: package: is.murmur.Model.Services, class: ContractsManagement">
+<meta name="description" content="declaration: package: is.murmur.Storage.Services, class: ContractsManagement">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -82,11 +82,11 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Model.Services</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Storage.Services</a></div>
 <h1 title="Class ContractsManagement" class="title">Class ContractsManagement</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">is.murmur.Services.ContractsManagement</div>
+<div class="inheritance">is.murmur.Storage.Services.ContractsManagement</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -132,31 +132,31 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#defineOffer(is.murmur.Model.Beans.Contract,boolean)" class="member-name-link">defineOffer</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;offer,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#defineOffer(is.murmur.Model.Beans.Contract,boolean)" class="member-name-link">defineOffer</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;offer,
  boolean&nbsp;approval)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Definisce un'offerta a partire da un contratto in stato "OFFER".</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deleteDraft(is.murmur.Model.Beans.Contract)" class="member-name-link">deleteDraft</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;draft)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deleteDraft(is.murmur.Model.Beans.Contract)" class="member-name-link">deleteDraft</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;draft)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Elimina una bozza (draft) di contratto.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getContracts(is.murmur.Model.Beans.User,java.lang.String)" class="member-name-link">getContracts</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getContracts(is.murmur.Model.Beans.User,java.lang.String)" class="member-name-link">getContracts</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;status)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Recupera una lista di contratti in base all'utente e allo stato specificato.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendOffer(is.murmur.Model.Beans.Contract,java.lang.String)" class="member-name-link">sendOffer</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;draft,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendOffer(is.murmur.Model.Beans.Contract,java.lang.String)" class="member-name-link">sendOffer</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;draft,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;specialRequests)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Invia un'offerta a partire da un draft e delle richieste speciali.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writeDraft(is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result)" class="member-name-link">writeDraft</a><wbr>(<a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria,
- <a href="../Helpers/Result.html" title="class in is.murmur.Model.Helpers">Result</a>&nbsp;result)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#writeDraft(is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result)" class="member-name-link">writeDraft</a><wbr>(<a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria,
+ <a href="../Helpers/Result.html" title="class in is.murmur.Storage.Helpers">Result</a>&nbsp;result)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Crea una bozza (DraftBuffer) a partire dai criteri di ricerca e da un risultato selezionato.</div>
 </div>
@@ -194,7 +194,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getContracts(is.murmur.Model.Beans.User,java.lang.String)">
 <h3>getContracts</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&gt;</span>&nbsp;<span class="element-name">getContracts</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&gt;</span>&nbsp;<span class="element-name">getContracts</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;status)</span></div>
 <div class="block">Recupera una lista di contratti in base all'utente e allo stato specificato.</div>
 <dl class="notes">
@@ -202,14 +202,14 @@ loadScripts(document, 'script');</script>
 <dd><code>user</code> - L'utente per cui recuperare i contratti.</dd>
 <dd><code>status</code> - Lo stato del contratto (es. "DRAFT", "OFFER", "EXPIRED").</dd>
 <dt>Returns:</dt>
-<dd>Una lista di <a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans"><code>Contract</code></a> che corrispondono ai criteri di ricerca.</dd>
+<dd>Una lista di <a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO"><code>Contract</code></a> che corrispondono ai criteri di ricerca.</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="defineOffer(is.murmur.Model.Beans.Contract,boolean)">
 <h3>defineOffer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">defineOffer</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;offer,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">defineOffer</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;offer,
  boolean&nbsp;approval)</span></div>
 <div class="block">Definisce un'offerta a partire da un contratto in stato "OFFER".
  <p>
@@ -230,7 +230,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="deleteDraft(is.murmur.Model.Beans.Contract)">
 <h3>deleteDraft</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">deleteDraft</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;draft)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">deleteDraft</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;draft)</span></div>
 <div class="block">Elimina una bozza (draft) di contratto.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -243,8 +243,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="writeDraft(is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result)">
 <h3>writeDraft</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a></span>&nbsp;<span class="element-name">writeDraft</span><wbr><span class="parameters">(<a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria,
- <a href="../Helpers/Result.html" title="class in is.murmur.Model.Helpers">Result</a>&nbsp;result)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a></span>&nbsp;<span class="element-name">writeDraft</span><wbr><span class="parameters">(<a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria,
+ <a href="../Helpers/Result.html" title="class in is.murmur.Storage.Helpers">Result</a>&nbsp;result)</span></div>
 <div class="block">Crea una bozza (DraftBuffer) a partire dai criteri di ricerca e da un risultato selezionato.
  <p>
  Viene costruito un nuovo contratto in stato "DRAFT" e popolato con i dati relativi a Daily o Weekly
@@ -255,20 +255,20 @@ loadScripts(document, 'script');</script>
 <dd><code>criteria</code> - I criteri di ricerca utilizzati.</dd>
 <dd><code>result</code> - Il risultato della ricerca selezionato.</dd>
 <dt>Returns:</dt>
-<dd>Un <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers"><code>DraftBuffer</code></a> contenente il contratto di bozza e le relative informazioni.</dd>
+<dd>Un <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers"><code>DraftBuffer</code></a> contenente il contratto di bozza e le relative informazioni.</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="sendOffer(is.murmur.Model.Beans.Contract,java.lang.String)">
 <h3>sendOffer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></span>&nbsp;<span class="element-name">sendOffer</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;draft,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></span>&nbsp;<span class="element-name">sendOffer</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;draft,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;specialRequests)</span></div>
 <div class="block">Invia un'offerta a partire da un draft e delle richieste speciali.
  <p>
  Effettua controlli di collisione sui contratti (sia per schedule DAILY che WEEKLY).
  Se viene rilevata una collisione, il draft viene rimosso e viene restituito <code>null</code>.
- Altrimenti, lo stato del draft viene aggiornato a "OFFER", viene creato un oggetto <a href="../Beans/Offer.html" title="class in is.murmur.Model.Beans"><code>Offer</code></a>
+ Altrimenti, lo stato del draft viene aggiornato a "OFFER", viene creato un oggetto <a href="../Beans/Offer.html" title="class in is.murmur.Storage.DAO"><code>Offer</code></a>
  e l'offerta viene inviata.
  </p></div>
 <dl class="notes">

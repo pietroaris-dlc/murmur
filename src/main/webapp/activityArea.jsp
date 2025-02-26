@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="is.murmur.Model.Beans.Activityarea" %>
-<%@ page import="is.murmur.Model.Beans.Location" %>
+<%@ page import="is.murmur.Storage.DAO.Activityarea" %>
+<%@ page import="is.murmur.Storage.DAO.Location" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>

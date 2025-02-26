@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2025-02-25">
-<meta name="description" content="declaration: package: is.murmur.Model.Services, class: AccountManagement">
+<meta name="description" content="declaration: package: is.murmur.Storage.Services, class: AccountManagement">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -82,11 +82,11 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Model.Services</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Storage.Services</a></div>
 <h1 title="Class AccountManagement" class="title">Class AccountManagement</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">is.murmur.Services.AccountManagement</div>
+<div class="inheritance">is.murmur.Storage.Services.AccountManagement</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -126,35 +126,35 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#accountDeletion(is.murmur.Model.Beans.User)" class="member-name-link">accountDeletion</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#accountDeletion(is.murmur.Model.Beans.User)" class="member-name-link">accountDeletion</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Richiede la cancellazione dell'account di un utente.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#cancelApplication(is.murmur.Model.Beans.Application)" class="member-name-link">cancelApplication</a><wbr>(<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#cancelApplication(is.murmur.Model.Beans.Application)" class="member-name-link">cancelApplication</a><wbr>(<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Cancella un'applicazione.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#collabApplication(is.murmur.Model.Beans.User,java.lang.String)" class="member-name-link">collabApplication</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#collabApplication(is.murmur.Model.Beans.User,java.lang.String)" class="member-name-link">collabApplication</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;docsUrl)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Invia una richiesta di collaborazione (collab).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#logIn(java.lang.String%5B%5D,java.util.List)" class="member-name-link">logIn</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;loginInputs,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Effettua il login di un utente.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#logout(is.murmur.Model.Beans.User,java.util.List)" class="member-name-link">logout</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;toLogout,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#logout(is.murmur.Model.Beans.User,java.util.List)" class="member-name-link">logout</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;toLogout,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Esegue il logout di un utente.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#personalInfosView(is.murmur.Model.Beans.User)" class="member-name-link">personalInfosView</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#personalInfosView(is.murmur.Model.Beans.User)" class="member-name-link">personalInfosView</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Visualizza le informazioni personali di un utente.</div>
 </div>
@@ -164,20 +164,20 @@ loadScripts(document, 'script');</script>
 <div class="block">Registra un nuovo utente (sign in).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#startCollab(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Application)" class="member-name-link">startCollab</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;collabApplication)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#startCollab(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Application)" class="member-name-link">startCollab</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;collabApplication)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Avvia la collaborazione per un utente.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#upgradeAccount(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Upgradeapplication)" class="member-name-link">upgradeAccount</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Model.Beans">Upgradeapplication</a>&nbsp;upgradeApplication)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#upgradeAccount(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Upgradeapplication)" class="member-name-link">upgradeAccount</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Storage.DAO">Upgradeapplication</a>&nbsp;upgradeApplication)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Aggiorna l'account di un utente in seguito a una richiesta di upgrade.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#upgradeApplication(java.lang.String%5B%5D,is.murmur.Model.Beans.User)" class="member-name-link">upgradeApplication</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;upgradeInputs,
- <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user)</code></div>
+ <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Invia una richiesta di upgrade.</div>
 </div>
@@ -241,8 +241,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="logIn(java.lang.String[],java.util.List)">
 <h3>logIn</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a></span>&nbsp;<span class="element-name">logIn</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;loginInputs,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a></span>&nbsp;<span class="element-name">logIn</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;loginInputs,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</span></div>
 <div class="block">Effettua il login di un utente.
  <p>
  Il metodo recupera l'utente tramite l'email, verifica la password usando BCrypt e,
@@ -253,17 +253,17 @@ loadScripts(document, 'script');</script>
 <dd><code>loginInputs</code> - Array di stringhe contenente i dati di login:
                     [0] - email,
                     [1] - password.</dd>
-<dd><code>drafts</code> - Lista di <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers"><code>DraftBuffer</code></a> da salvare per l'utente.</dd>
+<dd><code>drafts</code> - Lista di <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers"><code>DraftBuffer</code></a> da salvare per l'utente.</dd>
 <dt>Returns:</dt>
-<dd>L'oggetto <a href="../Beans/User.html" title="class in is.murmur.Model.Beans"><code>User</code></a> se il login avviene con successo, <code>null</code> altrimenti.</dd>
+<dd>L'oggetto <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO"><code>User</code></a> se il login avviene con successo, <code>null</code> altrimenti.</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="logout(is.murmur.Model.Beans.User,java.util.List)">
 <h3>logout</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">logout</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;toLogout,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">logout</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;toLogout,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&gt;&nbsp;drafts)</span></div>
 <div class="block">Esegue il logout di un utente.
  <p>
  Il metodo salva le bozze (drafts) lato client e avvia la transazione di logout.
@@ -271,7 +271,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>toLogout</code> - L'utente da disconnettere.</dd>
-<dd><code>drafts</code> - Lista di <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers"><code>DraftBuffer</code></a> da salvare.</dd>
+<dd><code>drafts</code> - Lista di <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers"><code>DraftBuffer</code></a> da salvare.</dd>
 <dt>Returns:</dt>
 <dd><code>true</code> se il logout avviene con successo.</dd>
 </dl>
@@ -280,7 +280,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="accountDeletion(is.murmur.Model.Beans.User)">
 <h3>accountDeletion</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">accountDeletion</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">accountDeletion</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user)</span></div>
 <div class="block">Richiede la cancellazione dell'account di un utente.
  <p>
  Il metodo verifica che non esistano contratti attivi (DRAFT, OFFER, ACTIVE) relativi all'utente.
@@ -297,7 +297,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="cancelApplication(is.murmur.Model.Beans.Application)">
 <h3>cancelApplication</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">cancelApplication</span><wbr><span class="parameters">(<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">cancelApplication</span><wbr><span class="parameters">(<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application)</span></div>
 <div class="block">Cancella un'applicazione.
  <p>
  Il metodo rimuove un'applicazione dal database.
@@ -314,10 +314,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="upgradeApplication(java.lang.String[],is.murmur.Model.Beans.User)">
 <h3>upgradeApplication</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">upgradeApplication</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;upgradeInputs,
- <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user)</span></div>
+ <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user)</span></div>
 <div class="block">Invia una richiesta di upgrade.
  <p>
- Il metodo crea una nuova applicazione di tipo "UPGRADE" e un oggetto <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Model.Beans"><code>Upgradeapplication</code></a>
+ Il metodo crea una nuova applicazione di tipo "UPGRADE" e un oggetto <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Storage.DAO"><code>Upgradeapplication</code></a>
  con i dati forniti, e li persiste nel database.
  </p></div>
 <dl class="notes">
@@ -341,7 +341,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="collabApplication(is.murmur.Model.Beans.User,java.lang.String)">
 <h3>collabApplication</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">collabApplication</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">collabApplication</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;docsUrl)</span></div>
 <div class="block">Invia una richiesta di collaborazione (collab).
  <p>
@@ -359,8 +359,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="upgradeAccount(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Upgradeapplication)">
 <h3>upgradeAccount</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">upgradeAccount</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Model.Beans">Upgradeapplication</a>&nbsp;upgradeApplication)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">upgradeAccount</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Storage.DAO">Upgradeapplication</a>&nbsp;upgradeApplication)</span></div>
 <div class="block">Aggiorna l'account di un utente in seguito a una richiesta di upgrade.
  <p>
  Il metodo aggiorna il tipo dell'utente a "WORKER", approva l'applicazione di upgrade e
@@ -369,7 +369,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>user</code> - L'utente da aggiornare.</dd>
-<dd><code>upgradeApplication</code> - L'oggetto <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Model.Beans"><code>Upgradeapplication</code></a> contenente i dettagli dell'upgrade.</dd>
+<dd><code>upgradeApplication</code> - L'oggetto <a href="../Beans/Upgradeapplication.html" title="class in is.murmur.Storage.DAO"><code>Upgradeapplication</code></a> contenente i dettagli dell'upgrade.</dd>
 <dt>Returns:</dt>
 <dd><code>true</code> se l'upgrade viene eseguito con successo, <code>false</code> altrimenti.</dd>
 </dl>
@@ -378,8 +378,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="startCollab(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Application)">
 <h3>startCollab</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">startCollab</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;collabApplication)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">startCollab</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;collabApplication)</span></div>
 <div class="block">Avvia la collaborazione per un utente.
  <p>
  Il metodo imposta l'utente come amministratore e approva l'applicazione di collaborazione.
@@ -396,7 +396,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="personalInfosView(is.murmur.Model.Beans.User)">
 <h3>personalInfosView</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">personalInfosView</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">personalInfosView</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user)</span></div>
 <div class="block">Visualizza le informazioni personali di un utente.
  <p>
  Il metodo restituisce un array di stringhe contenente le informazioni personali dell'utente.

@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="is.murmur.Model.Beans.Application" %>
-<%@ page import="is.murmur.Model.Beans.Upgradecomponent" %>
+<%@ page import="is.murmur.Storage.DAO.Application" %>
+<%@ page import="is.murmur.Storage.DAO.Upgradecomponent" %>
 <%@ page import="java.util.ArrayList" %>
 <%
     // Recupera la lista dei componenti di upgrade dalla sessione (assicurati che il nome dell'attributo sia coerente)
