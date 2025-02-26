@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2025-02-25">
-<meta name="description" content="declaration: package: is.murmur.Model.Services, class: AdminSide">
+<meta name="description" content="declaration: package: is.murmur.Storage.Services, class: AdminSide">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -82,11 +82,11 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Model.Services</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Storage.Services</a></div>
 <h1 title="Class AdminSide" class="title">Class AdminSide</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">is.murmur.Services.AdminSide</div>
+<div class="inheritance">is.murmur.Storage.Services.AdminSide</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -126,23 +126,23 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#approveApplication(is.murmur.Model.Beans.Application)" class="member-name-link">approveApplication</a><wbr>(<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#approveApplication(is.murmur.Model.Beans.Application)" class="member-name-link">approveApplication</a><wbr>(<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Approva un'applicazione.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#documentationCheck(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Application)" class="member-name-link">documentationCheck</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;admin,
- <a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#documentationCheck(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Application)" class="member-name-link">documentationCheck</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;admin,
+ <a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Effettua il controllo della documentazione di un'applicazione.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getApplications(is.murmur.Model.Beans.User,java.lang.String)" class="member-name-link">getApplications</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;admin,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getApplications(is.murmur.Model.Beans.User,java.lang.String)" class="member-name-link">getApplications</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;admin,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Recupera le applicazioni in attesa per un determinato tipo.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getUser(java.lang.String)" class="member-name-link">getUser</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;email)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Recupera un utente in base alla sua email.</div>
@@ -153,7 +153,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Blocca o sblocca un utente in base al suo attuale stato.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rejectApplication(is.murmur.Model.Beans.Application,java.lang.String)" class="member-name-link">rejectApplication</a><wbr>(<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rejectApplication(is.murmur.Model.Beans.Application,java.lang.String)" class="member-name-link">rejectApplication</a><wbr>(<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;rejectionNote)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Rifiuta un'applicazione fornendo una nota di rifiuto.</div>
@@ -192,7 +192,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getApplications(is.murmur.Model.Beans.User,java.lang.String)">
 <h3>getApplications</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&gt;</span>&nbsp;<span class="element-name">getApplications</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;admin,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&gt;</span>&nbsp;<span class="element-name">getApplications</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;admin,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type)</span></div>
 <div class="block">Recupera le applicazioni in attesa per un determinato tipo.
  <p>
@@ -204,15 +204,15 @@ loadScripts(document, 'script');</script>
 <dd><code>admin</code> - L'amministratore che effettua la richiesta.</dd>
 <dd><code>type</code> - Il tipo di applicazione da filtrare.</dd>
 <dt>Returns:</dt>
-<dd>Una lista di <a href="../Beans/Application.html" title="class in is.murmur.Model.Beans"><code>Application</code></a> che corrispondono ai criteri specificati.</dd>
+<dd>Una lista di <a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO"><code>Application</code></a> che corrispondono ai criteri specificati.</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="documentationCheck(is.murmur.Model.Beans.User,is.murmur.Model.Beans.Application)">
 <h3>documentationCheck</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">documentationCheck</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;admin,
- <a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">documentationCheck</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;admin,
+ <a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application)</span></div>
 <div class="block">Effettua il controllo della documentazione di un'applicazione.
  <p>
  Il metodo imposta lo stato dell'applicazione a "CHECKED" e crea un record in Checkedapplication,
@@ -230,7 +230,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="approveApplication(is.murmur.Model.Beans.Application)">
 <h3>approveApplication</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">approveApplication</span><wbr><span class="parameters">(<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">approveApplication</span><wbr><span class="parameters">(<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application)</span></div>
 <div class="block">Approva un'applicazione.
  <p>
  Il metodo imposta lo stato dell'applicazione a "APPROVED" e, in base al tipo di applicazione,
@@ -248,7 +248,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="rejectApplication(is.murmur.Model.Beans.Application,java.lang.String)">
 <h3>rejectApplication</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">rejectApplication</span><wbr><span class="parameters">(<a href="../Beans/Application.html" title="class in is.murmur.Model.Beans">Application</a>&nbsp;application,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">rejectApplication</span><wbr><span class="parameters">(<a href="../Beans/Application.html" title="class in is.murmur.Storage.DAO">Application</a>&nbsp;application,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;rejectionNote)</span></div>
 <div class="block">Rifiuta un'applicazione fornendo una nota di rifiuto.
  <p>
@@ -283,7 +283,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getUser(java.lang.String)">
 <h3>getUser</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a></span>&nbsp;<span class="element-name">getUser</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;email)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a></span>&nbsp;<span class="element-name">getUser</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;email)</span></div>
 <div class="block">Recupera un utente in base alla sua email.
  <p>
  Il metodo esegue una query per trovare l'utente con l'email specificata.
@@ -292,7 +292,7 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>email</code> - L'email dell'utente da recuperare.</dd>
 <dt>Returns:</dt>
-<dd>L'oggetto <a href="../Beans/User.html" title="class in is.murmur.Model.Beans"><code>User</code></a> corrispondente all'email, oppure lancia un'eccezione se non viene trovato.</dd>
+<dd>L'oggetto <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO"><code>User</code></a> corrispondente all'email, oppure lancia un'eccezione se non viene trovato.</dd>
 </dl>
 </section>
 </li>

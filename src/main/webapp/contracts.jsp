@@ -1,5 +1,5 @@
 <%@ page import="java.util.List" %>
-<%@ page import="is.murmur.Model.Beans.Career" %>
+<%@ page import="is.murmur.Storage.DAO.Career" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>

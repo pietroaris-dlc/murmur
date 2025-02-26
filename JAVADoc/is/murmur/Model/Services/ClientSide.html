@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2025-02-25">
-<meta name="description" content="declaration: package: is.murmur.Model.Services, class: ClientSide">
+<meta name="description" content="declaration: package: is.murmur.Storage.Services, class: ClientSide">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -82,11 +82,11 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Model.Services</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Storage.Services</a></div>
 <h1 title="Class ClientSide" class="title">Class ClientSide</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">is.murmur.Services.ClientSide</div>
+<div class="inheritance">is.murmur.Storage.Services.ClientSide</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -126,73 +126,73 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addDailySchedule(is.murmur.Model.Beans.User,java.time.LocalDate,is.murmur.Model.Helpers.TimeInterval)" class="member-name-link">addDailySchedule</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addDailySchedule(is.murmur.Model.Beans.User,java.time.LocalDate,is.murmur.Model.Helpers.TimeInterval)" class="member-name-link">addDailySchedule</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;day,
- <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&nbsp;timeInterval)</code></div>
+ <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&nbsp;timeInterval)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Aggiunge uno schedule giornaliero per un utente.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addDailySchedule(jakarta.persistence.EntityManager,is.murmur.Model.Beans.User,java.time.LocalDate,is.murmur.Model.Helpers.TimeInterval)" class="member-name-link">addDailySchedule</a><wbr>(jakarta.persistence.EntityManager&nbsp;em,
- <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+ <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;day,
- <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&nbsp;timeInterval)</code></div>
+ <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&nbsp;timeInterval)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Versione sovraccaricata di addDailySchedule che utilizza un EntityManager già esistente.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addWeeklySchedule(is.murmur.Model.Beans.User,java.time.LocalDate,java.time.LocalDate,java.util.Map)" class="member-name-link">addWeeklySchedule</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addWeeklySchedule(is.murmur.Model.Beans.User,java.time.LocalDate,java.time.LocalDate,java.util.Map)" class="member-name-link">addWeeklySchedule</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Aggiunge uno schedule settimanale per un utente.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addWeeklySchedule(jakarta.persistence.EntityManager,is.murmur.Model.Beans.User,java.time.LocalDate,java.time.LocalDate,java.util.Map)" class="member-name-link">addWeeklySchedule</a><wbr>(jakarta.persistence.EntityManager&nbsp;em,
- <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+ <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Versione sovraccaricata di addWeeklySchedule che utilizza un EntityManager già esistente.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Review.html" title="class in is.murmur.Model.Beans">Review</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#doReview(is.murmur.Model.Beans.Contract,java.lang.String,int)" class="member-name-link">doReview</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;expired,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Review.html" title="class in is.murmur.Storage.DAO">Review</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#doReview(is.murmur.Model.Beans.Contract,java.lang.String,int)" class="member-name-link">doReview</a><wbr>(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;expired,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  int&nbsp;rating)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Effettua una recensione su un contratto scaduto.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#draftResult(is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result)" class="member-name-link">draftResult</a><wbr>(<a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria,
- <a href="../Helpers/Result.html" title="class in is.murmur.Model.Helpers">Result</a>&nbsp;result)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#draftResult(is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result)" class="member-name-link">draftResult</a><wbr>(<a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria,
+ <a href="../Helpers/Result.html" title="class in is.murmur.Storage.Helpers">Result</a>&nbsp;result)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Genera una bozza (DraftBuffer) a partire dai criteri e dal risultato ottenuto.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#offerDraft(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.DraftBuffer,java.lang.String)" class="member-name-link">offerDraft</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&nbsp;buffer,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#offerDraft(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.DraftBuffer,java.lang.String)" class="member-name-link">offerDraft</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&nbsp;buffer,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;specialRequests)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Invia un'offerta basata su una bozza (DraftBuffer).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#offerResult(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result,java.lang.String)" class="member-name-link">offerResult</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria,
- <a href="../Helpers/Result.html" title="class in is.murmur.Model.Helpers">Result</a>&nbsp;result,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#offerResult(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result,java.lang.String)" class="member-name-link">offerResult</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria,
+ <a href="../Helpers/Result.html" title="class in is.murmur.Storage.Helpers">Result</a>&nbsp;result,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;specialRequests)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Crea e invia un'offerta basata su un DraftBuffer e delle richieste speciali.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveDraft(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.DraftBuffer)" class="member-name-link">saveDraft</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&nbsp;buffer)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveDraft(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.DraftBuffer)" class="member-name-link">saveDraft</a><wbr>(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&nbsp;buffer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Salva una bozza (draft) di contratto.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#search(is.murmur.Model.Helpers.Criteria)" class="member-name-link">search</a><wbr>(<a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#search(is.murmur.Model.Helpers.Criteria)" class="member-name-link">search</a><wbr>(<a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Esegue una ricerca utilizzando la strategia appropriata in base ai criteri.</div>
 </div>
@@ -230,7 +230,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="search(is.murmur.Model.Helpers.Criteria)">
 <h3>search</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">search</span><wbr><span class="parameters">(<a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">search</span><wbr><span class="parameters">(<a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria)</span></div>
 <div class="block">Esegue una ricerca utilizzando la strategia appropriata in base ai criteri.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -243,8 +243,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="saveDraft(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.DraftBuffer)">
 <h3>saveDraft</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></span>&nbsp;<span class="element-name">saveDraft</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&nbsp;buffer)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></span>&nbsp;<span class="element-name">saveDraft</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&nbsp;buffer)</span></div>
 <div class="block">Salva una bozza (draft) di contratto.
  <p>
  Questo metodo persiste il contratto di bozza e le relative entità associate come
@@ -262,8 +262,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="draftResult(is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result)">
 <h3>draftResult</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a></span>&nbsp;<span class="element-name">draftResult</span><wbr><span class="parameters">(<a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria,
- <a href="../Helpers/Result.html" title="class in is.murmur.Model.Helpers">Result</a>&nbsp;result)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a></span>&nbsp;<span class="element-name">draftResult</span><wbr><span class="parameters">(<a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria,
+ <a href="../Helpers/Result.html" title="class in is.murmur.Storage.Helpers">Result</a>&nbsp;result)</span></div>
 <div class="block">Genera una bozza (DraftBuffer) a partire dai criteri e dal risultato ottenuto.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -277,9 +277,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="offerResult(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.Criteria,is.murmur.Model.Helpers.Result,java.lang.String)">
 <h3>offerResult</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></span>&nbsp;<span class="element-name">offerResult</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria,
- <a href="../Helpers/Result.html" title="class in is.murmur.Model.Helpers">Result</a>&nbsp;result,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></span>&nbsp;<span class="element-name">offerResult</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria,
+ <a href="../Helpers/Result.html" title="class in is.murmur.Storage.Helpers">Result</a>&nbsp;result,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;specialRequests)</span></div>
 <div class="block">Crea e invia un'offerta basata su un DraftBuffer e delle richieste speciali.</div>
 <dl class="notes">
@@ -296,8 +296,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="offerDraft(is.murmur.Model.Beans.User,is.murmur.Model.Helpers.DraftBuffer,java.lang.String)">
 <h3>offerDraft</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a></span>&nbsp;<span class="element-name">offerDraft</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
- <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Model.Helpers">DraftBuffer</a>&nbsp;buffer,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a></span>&nbsp;<span class="element-name">offerDraft</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
+ <a href="../Helpers/DraftBuffer.html" title="class in is.murmur.Storage.Helpers">DraftBuffer</a>&nbsp;buffer,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;specialRequests)</span></div>
 <div class="block">Invia un'offerta basata su una bozza (DraftBuffer).</div>
 <dl class="notes">
@@ -313,7 +313,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="doReview(is.murmur.Model.Beans.Contract,java.lang.String,int)">
 <h3>doReview</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Review.html" title="class in is.murmur.Model.Beans">Review</a></span>&nbsp;<span class="element-name">doReview</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Model.Beans">Contract</a>&nbsp;expired,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Beans/Review.html" title="class in is.murmur.Storage.DAO">Review</a></span>&nbsp;<span class="element-name">doReview</span><wbr><span class="parameters">(<a href="../Beans/Contract.html" title="class in is.murmur.Storage.DAO">Contract</a>&nbsp;expired,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  int&nbsp;rating)</span></div>
 <div class="block">Effettua una recensione su un contratto scaduto.</div>
@@ -323,16 +323,16 @@ loadScripts(document, 'script');</script>
 <dd><code>description</code> - La descrizione della recensione.</dd>
 <dd><code>rating</code> - Il punteggio della recensione (da 0 a 10).</dd>
 <dt>Returns:</dt>
-<dd>L'oggetto <a href="../Beans/Review.html" title="class in is.murmur.Model.Beans"><code>Review</code></a> creato.</dd>
+<dd>L'oggetto <a href="../Beans/Review.html" title="class in is.murmur.Storage.DAO"><code>Review</code></a> creato.</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="addDailySchedule(is.murmur.Model.Beans.User,java.time.LocalDate,is.murmur.Model.Helpers.TimeInterval)">
 <h3>addDailySchedule</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addDailySchedule</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addDailySchedule</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;day,
- <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&nbsp;timeInterval)</span></div>
+ <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&nbsp;timeInterval)</span></div>
 <div class="block">Aggiunge uno schedule giornaliero per un utente.
  <p>
  Verifica che non vi siano collisioni con altri schedule, quindi crea e persiste
@@ -352,9 +352,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="addDailySchedule(jakarta.persistence.EntityManager,is.murmur.Model.Beans.User,java.time.LocalDate,is.murmur.Model.Helpers.TimeInterval)">
 <h3>addDailySchedule</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addDailySchedule</span><wbr><span class="parameters">(jakarta.persistence.EntityManager&nbsp;em,
- <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+ <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;day,
- <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&nbsp;timeInterval)</span></div>
+ <a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&nbsp;timeInterval)</span></div>
 <div class="block">Versione sovraccaricata di addDailySchedule che utilizza un EntityManager già esistente.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -370,10 +370,10 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="addWeeklySchedule(is.murmur.Model.Beans.User,java.time.LocalDate,java.time.LocalDate,java.util.Map)">
 <h3>addWeeklySchedule</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addWeeklySchedule</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addWeeklySchedule</span><wbr><span class="parameters">(<a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</span></div>
 <div class="block">Aggiunge uno schedule settimanale per un utente.
  <p>
  Per ogni giorno compreso tra la data di inizio e fine, verifica se il giorno corrente
@@ -395,10 +395,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="addWeeklySchedule(jakarta.persistence.EntityManager,is.murmur.Model.Beans.User,java.time.LocalDate,java.time.LocalDate,java.util.Map)">
 <h3>addWeeklySchedule</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">addWeeklySchedule</span><wbr><span class="parameters">(jakarta.persistence.EntityManager&nbsp;em,
- <a href="../Beans/User.html" title="class in is.murmur.Model.Beans">User</a>&nbsp;user,
+ <a href="../Beans/User.html" title="class in is.murmur.Storage.DAO">User</a>&nbsp;user,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;startDate,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/time/LocalDate.html" title="class or interface in java.time" class="external-link">LocalDate</a>&nbsp;endDate,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Model.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../Helpers/TimeInterval.html" title="class in is.murmur.Storage.Helpers">TimeInterval</a>&gt;&nbsp;weekdays)</span></div>
 <div class="block">Versione sovraccaricata di addWeeklySchedule che utilizza un EntityManager già esistente.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

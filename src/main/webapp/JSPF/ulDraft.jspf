@@ -1,5 +1,5 @@
-<%@ page import="is.murmur.Model.Beans.Contract" %>
-<%@ page import="is.murmur.Model.Beans.Notremotecomponent" %><%
+<%@ page import="is.murmur.Storage.DAO.Contract" %>
+<%@ page import="is.murmur.Storage.DAO.Notremotecomponent" %><%
     List<Contract> drafts = new ArrayList<>();
     List<Notremotecomponent> notremotecomponents = new ArrayList<Notremotecomponent>();
     if(session.getAttribute("drafts") != null)

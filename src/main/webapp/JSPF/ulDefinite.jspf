@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="is.murmur.Model.Beans.*" %>
+<%@ page import="is.murmur.Storage.DAO.*" %>
 <%
     List<Checkedcomponent> checkedComponentsRejected = new ArrayList<>();
     List<Upgradecomponent> upgradeComponentsRejected = new ArrayList<>();

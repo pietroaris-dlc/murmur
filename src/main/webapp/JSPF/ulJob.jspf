@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="is.murmur.Model.Beans.Application" %>
-<%@ page import="is.murmur.Model.Beans.Jobcomponent" %>
+<%@ page import="is.murmur.Storage.DAO.Application" %>
+<%@ page import="is.murmur.Storage.DAO.Jobcomponent" %>
 <%@ page import="java.util.ArrayList" %>
 <%
     List<Jobcomponent> jobComponents = new ArrayList<Jobcomponent>();

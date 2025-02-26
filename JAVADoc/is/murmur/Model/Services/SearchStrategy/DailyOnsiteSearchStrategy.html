@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2025-02-25">
-<meta name="description" content="declaration: package: is.murmur.Model.Services.SearchStrategy, class: DailyOnsiteSearchStrategy">
+<meta name="description" content="declaration: package: is.murmur.Storage.Services.SearchStrategy, class: DailyOnsiteSearchStrategy">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -82,24 +82,24 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Model.Services.SearchStrategy</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">is.murmur.Storage.Services.SearchStrategy</a></div>
 <h1 title="Class DailyOnsiteSearchStrategy" class="title">Class DailyOnsiteSearchStrategy</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">is.murmur.Services.SearchStrategy.DailyOnsiteSearchStrategy</div>
+<div class="inheritance">is.murmur.Storage.Services.SearchStrategy.DailyOnsiteSearchStrategy</div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="SearchStrategy.html" title="interface in is.murmur.Model.Services.SearchStrategy">SearchStrategy</a></code></dd>
+<dd><code><a href="SearchStrategy.html" title="interface in is.murmur.Storage.Services.SearchStrategy">SearchStrategy</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DailyOnsiteSearchStrategy</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="SearchStrategy.html" title="interface in is.murmur.Model.Services.SearchStrategy">SearchStrategy</a></span></div>
+implements <a href="SearchStrategy.html" title="interface in is.murmur.Storage.Services.SearchStrategy">SearchStrategy</a></span></div>
 <div class="block">Implementazione della strategia di ricerca onsite giornaliera.
  <p>
- Questa classe implementa l'interfaccia <a href="SearchStrategy.html" title="interface in is.murmur.Model.Services.SearchStrategy"><code>SearchStrategy</code></a> e definisce la logica
+ Questa classe implementa l'interfaccia <a href="SearchStrategy.html" title="interface in is.murmur.Storage.Services.SearchStrategy"><code>SearchStrategy</code></a> e definisce la logica
  per eseguire una ricerca di lavoratori (worker) che offrono il servizio onsite,
  filtrando in base a criteri quali la professione, il range di tariffa oraria,
  l'orario specificato e la localizzazione.
@@ -132,7 +132,7 @@ implements <a href="SearchStrategy.html" title="interface in is.murmur.Model.Ser
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#search(is.murmur.Model.Helpers.Criteria)" class="member-name-link">search</a><wbr>(<a href="../../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#search(is.murmur.Model.Helpers.Criteria)" class="member-name-link">search</a><wbr>(<a href="../../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Esegue la ricerca dei lavoratori in base ai criteri specificati per il servizio onsite.</div>
 </div>
@@ -170,7 +170,7 @@ implements <a href="SearchStrategy.html" title="interface in is.murmur.Model.Ser
 <li>
 <section class="detail" id="search(is.murmur.Model.Helpers.Criteria)">
 <h3>search</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">search</span><wbr><span class="parameters">(<a href="../../Helpers/Criteria.html" title="class in is.murmur.Model.Helpers">Criteria</a>&nbsp;criteria)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">search</span><wbr><span class="parameters">(<a href="../../Helpers/Criteria.html" title="class in is.murmur.Storage.Helpers">Criteria</a>&nbsp;criteria)</span></div>
 <div class="block">Esegue la ricerca dei lavoratori in base ai criteri specificati per il servizio onsite.
  <p>
  Il metodo esegue una query sul database utilizzando JPA per recuperare
@@ -181,7 +181,7 @@ implements <a href="SearchStrategy.html" title="interface in is.murmur.Model.Ser
  </p></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="SearchStrategy.html#search(is.murmur.Model.Helpers.Criteria)">search</a></code>&nbsp;in interface&nbsp;<code><a href="SearchStrategy.html" title="interface in is.murmur.Model.Services.SearchStrategy">SearchStrategy</a></code></dd>
+<dd><code><a href="SearchStrategy.html#search(is.murmur.Model.Helpers.Criteria)">search</a></code>&nbsp;in interface&nbsp;<code><a href="SearchStrategy.html" title="interface in is.murmur.Storage.Services.SearchStrategy">SearchStrategy</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>criteria</code> - I criteri di ricerca che includono informazioni quali la professione,
                  la tariffa oraria minima e massima, il giorno, l'intervallo orario e

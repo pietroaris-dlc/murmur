@@ -1,7 +1,7 @@
-is.murmur.Controller
-is.murmur.Controller.ClientSide
-is.murmur.Controller.Router
-is.murmur.Model.Beans
-is.murmur.Model.Helpers
-is.murmur.Model.Services
-is.murmur.Model.Services.SearchStrategy
+is.murmur.Application
+is.murmur.Application.ClientSide
+is.murmur.Application.Router
+is.murmur.Storage.DAO
+is.murmur.Storage.Helpers
+is.murmur.Storage.Services
+is.murmur.Storage.Services.SearchStrategy
